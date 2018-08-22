@@ -81,13 +81,10 @@ public class Utils {
         return new String(new char[times]).replace("\0", str);
     }
 
-    public static int occurrences(String haystack, char needle)
-    {
+    public static int occurrences(String haystack, char needle) {
         int count = 0;
-        for (int i=0; i < haystack.length(); i++)
-        {
-            if (haystack.charAt(i) == needle)
-            {
+        for (int i = 0; i < haystack.length(); i++) {
+            if (haystack.charAt(i) == needle) {
                 count++;
             }
         }
@@ -364,16 +361,15 @@ public class Utils {
         return ret;
     }
 
-    public static boolean writeToFile(Context context, String fileName, String data) {
+    public static String writeToFile(Context context, String fileName, String data) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
             outputStreamWriter.close();
-            return true;
         }
-        catch (IOException e) {
-            return false;
+        catch (IOException ignored) {
         }
+        return data;
     }
     public static boolean isNullOrEmpty(String s) {
         return s == null || s.trim().length() == 0;

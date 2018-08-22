@@ -127,9 +127,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
                 try {
                     String content = Utils.readFromFile(getActivity(), Constants.ITEMIDLIST_FILE_NAME);
                     if (Utils.isNullOrEmpty(content)) {
-                        Utils.writeToFile(getActivity(), Constants.ITEMIDLIST_FILE_NAME, result);
-                        showToast(getResources().getString(R.string.updated_list_of_items), Toast.LENGTH_LONG);
-                        return;
+                        content = Utils.writeToFile(getActivity(), Constants.ITEMIDLIST_FILE_NAME, result);
                     }
                     Date fileDate = getDateFromItemIdList(content);
                     Date resultDate = getDateFromItemIdList(result);
