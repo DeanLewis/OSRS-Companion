@@ -9,6 +9,7 @@
         android:id="@+id/notes_edittext"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:imeOptions="flagNoExtractUi"
         android:background="@android:color/transparent"
         android:gravity="top"
         android:padding="10dp"

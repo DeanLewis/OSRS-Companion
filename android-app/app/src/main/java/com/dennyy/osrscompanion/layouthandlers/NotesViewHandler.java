@@ -57,7 +57,6 @@ public class NotesViewHandler extends BaseViewHandler implements TextWatcher {
     }
 
     private void saveAndPublishNotes() {
-        note = String.format("%s%s", note, Utils.repeat("\n", getNewlinesToAppend()));
         final int cursorPosition = notesEditText.getSelectionStart();
         new WriteNote(context).execute(note);
         notesEditText.post(new Runnable() {
@@ -69,26 +68,6 @@ public class NotesViewHandler extends BaseViewHandler implements TextWatcher {
         });
         EventBus.getDefault().post(new NoteChangeEvent(note));
     }
-
-    private int getNewlinesToAppend() {
-        // Append 10 newlines at the end for floating view service for when the keyboard hides the view
-        int newLinesAppend = 10;
-        String lastCharacters = note.substring(Math.max(0, note.length() - newLinesAppend));
-
-        int existingNewLines = 0;
-        for (int i = 0; i < lastCharacters.length(); i++) {
-            char c = lastCharacters.charAt(i);
-            if (c == '\n') {
-                existingNewLines++;
-            }
-            else {
-                existingNewLines = 0;
-            }
-        }
-        int newlinesToAppend = newLinesAppend - existingNewLines;
-        return newlinesToAppend;
-    }
-
 
     private static class LoadNote extends AsyncTask<String, Void, String> {
         private WeakReference<Context> context;
