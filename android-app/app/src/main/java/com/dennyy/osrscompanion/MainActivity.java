@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.dennyy.osrscompanion.fragments.BaseFragment;
 import com.dennyy.osrscompanion.fragments.HomeFragment;
+import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.interfaces.IBackButtonHandler;
 
 import java.lang.ref.WeakReference;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements IBackButtonHandle
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AdBlocker.init();
         setContentView(R.layout.main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");

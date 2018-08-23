@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.layouthandlers.BaseViewHandler;
@@ -76,13 +77,14 @@ public class FloatingViewService extends Service implements WindowManagerContain
     @Override
     public void onCreate() {
         super.onCreate();
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(FloatingViewService.this);
-        EventBus.getDefault().register(this);
         initIconsMap();
         initNamesMap();
         if (namesMap.size() != iconsMap.size()) {
             throw new IllegalStateException("Names map or icons map is missing something to initialize the floating views");
         }
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(FloatingViewService.this);
+        EventBus.getDefault().register(this);
+        AdBlocker.init();
         windowManagerContainer = new WindowManagerContainer(this);
         windowManagerContainer.setListener(this);
         chatHeadManager = new DefaultChatHeadManager(this, windowManagerContainer, getFloatingViewPreferences(preferences));

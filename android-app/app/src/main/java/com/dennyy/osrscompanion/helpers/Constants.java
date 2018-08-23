@@ -82,11 +82,10 @@ public class Constants {
 
     public static final String NOTES_FILE_NAME = "notes.txt";
     public static final String ITEMIDLIST_FILE_NAME = "itemidlist.json";
-    public static final String UPDATE_NOTE_ACTION = BuildConfig.APPLICATION_ID.concat(".UPDATE_NOTE_ACTION");
+    public static final String HOSTS_FILE_NAME = "hosts.txt";
 
     public static final int MAX_EXP = 200_000_000;
     public static final double DEFAULT_COMBAT = 3.4;
 
     public static DecimalFormatSymbols LOCALE = DecimalFormatSymbols.getInstance(Locale.US);
 }
-

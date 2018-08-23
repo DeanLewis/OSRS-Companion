@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dennyy.osrscompanion.R;
+import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Utils;
 
 import im.delight.android.webview.AdvancedWebView;
@@ -66,6 +67,7 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
                 progressBar.setProgress(newProgress);
             }
         });
+        webView.setWebViewClient(AdBlocker.getWebViewClient());
     }
 
 

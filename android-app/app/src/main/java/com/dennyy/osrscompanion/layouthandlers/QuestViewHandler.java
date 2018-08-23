@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.NothingSelectedSpinnerAdapter;
 import com.dennyy.osrscompanion.adapters.QuestSelectorSpinnerAdapter;
+import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.General.Quest;
 
@@ -72,6 +73,7 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
             }
 
         });
+        webView.setWebViewClient(AdBlocker.getWebViewClient());
         webView.setOnTouchListener(this);
     }
 
