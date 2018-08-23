@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
@@ -46,7 +45,8 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     private QuestSelectorSpinnerAdapter questSelectorSpinnerAdapter;
     private boolean canInteract;
     private boolean clearHistory;
-    private CountDownTimer pageFinishedTimer;
+    private final Handler handler = new Handler();
+    private Runnable runnable;
 
     public QuestViewHandler(final Context context, View view, QuestsLoadedCallback questsLoadedCallback) {
         super(context, view);
@@ -57,7 +57,7 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         initQuests(questsLoadedCallback);
         initWebView();
     }
-    
+
     public void initWebView() {
         webView.addPermittedHostname("oldschoolrunescape.wikia.com");
         webView.setThirdPartyCookiesEnabled(false);
@@ -173,18 +173,14 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
 
     @Override
     public void onPageFinished(String url) {
-        if (pageFinishedTimer != null) {
-            pageFinishedTimer.cancel();
-        }
-        pageFinishedTimer = new CountDownTimer(1500, 1500) {
+        handler.removeCallbacks(runnable);
+        runnable = new Runnable() {
             @Override
-            public void onTick(long millisUntilFinished) { }
-
-            @Override
-            public void onFinish() {
+            public void run() {
                 handlePageTimerFinished();
             }
-        }.start();
+        };
+        handler.postDelayed(runnable, 1500);
     }
 
     private void handlePageTimerFinished() {
@@ -240,9 +236,7 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     @Override
     public void cancelVolleyRequests() {
         if (webView != null) {
-            if (pageFinishedTimer != null) {
-                pageFinishedTimer.cancel();
-            }
+            handler.removeCallbacks(runnable);
             webView.clearHistory();
             webView.clearCache(true);
             webView.loadUrl("about:blank");

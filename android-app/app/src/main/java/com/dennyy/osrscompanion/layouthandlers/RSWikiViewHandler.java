@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
@@ -27,11 +26,10 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
 
     private ProgressBar progressBar;
     private boolean clearHistory;
-    private CountDownTimer pageFinishedTimer;
     private String currentUrl;
     private TextView navBarTitle;
-    private ImageButton navBarLeft;
-    private ImageButton navBarRight;
+    private final Handler handler = new Handler();
+    private Runnable runnable;
 
     public RSWikiViewHandler(final Context context, View view, boolean isFloatingView) {
         super(context, view);
@@ -40,8 +38,8 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
         webView = view.findViewById(R.id.webview);
         progressBar = view.findViewById(R.id.progressBar);
         navBarTitle = view.findViewById(R.id.webview_navbar_title);
-        navBarLeft = view.findViewById(R.id.webview_navbar_left);
-        navBarRight = view.findViewById(R.id.webview_navbar_right);
+        ImageButton navBarLeft = view.findViewById(R.id.webview_navbar_left);
+        ImageButton navBarRight = view.findViewById(R.id.webview_navbar_right);
         if (isFloatingView) {
             navBarLeft.setOnClickListener(this);
             navBarRight.setOnClickListener(this);
@@ -70,7 +68,6 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
         webView.setWebViewClient(AdBlocker.getWebViewClient());
     }
 
-
     @Override
     public void onClick(View view) {
         int id = view.getId();
@@ -96,18 +93,15 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
     @Override
     public void onPageFinished(String url) {
         navBarTitle.setText(Utils.isNullOrEmpty(webView.getTitle()) ? getString(R.string.osrs_wiki) : webView.getTitle());
-        if (pageFinishedTimer != null) {
-            pageFinishedTimer.cancel();
-        }
-        pageFinishedTimer = new CountDownTimer(1500, 1500) {
-            @Override
-            public void onTick(long millisUntilFinished) { }
+        handler.removeCallbacks(runnable);
 
+        runnable = new Runnable() {
             @Override
-            public void onFinish() {
+            public void run() {
                 handlePageTimerFinished();
             }
-        }.start();
+        };
+        handler.postDelayed(runnable, 1500);
     }
 
     private void handlePageTimerFinished() {
@@ -164,9 +158,7 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
     @Override
     public void cancelVolleyRequests() {
         if (webView != null) {
-            if (pageFinishedTimer != null) {
-                pageFinishedTimer.cancel();
-            }
+            handler.removeCallbacks(runnable);
             webView.clearHistory();
             webView.clearCache(true);
             webView.loadUrl("about:blank");
