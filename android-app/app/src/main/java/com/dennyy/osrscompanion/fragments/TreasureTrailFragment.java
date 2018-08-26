@@ -3,30 +3,19 @@ package com.dennyy.osrscompanion.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.layouthandlers.TreasureTrailViewHandler;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrail;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrails;
 
-import java.util.ArrayList;
-
 public class TreasureTrailFragment extends BaseFragment {
 
-    public static final String CLUE_ADAPTER_INDEX_KEY = "CLUE_ADAPTER_INDEX_KEY";
-    public static final String CLUE_ADAPTER_ITEMS_KEY = "CLUE_ADAPTER_ITEMS_KEY";
     public static final String CLUE_DATA_KEY = "CLUE_DATA_KEY";
-    public static final String CLUE_COORDS_KEY = "CLUE_COORDS_KEY";
-    public static final String CLUE_USER_LOADED_IMG_KEY = "CLUE_USER_LOADED_IMG_KEY";
-
 
     private TreasureTrailViewHandler treasureTrailViewHandler;
     private View view;
@@ -55,9 +44,7 @@ public class TreasureTrailFragment extends BaseFragment {
             }
 
             @Override
-            public void onLoadError() {
-
-            }
+            public void onLoadError() { }
         });
     }
 
@@ -67,14 +54,8 @@ public class TreasureTrailFragment extends BaseFragment {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }
         if (savedInstanceState != null) {
-            ArrayList<TreasureTrail> adapterItems = (ArrayList<TreasureTrail>) savedInstanceState.getSerializable(CLUE_ADAPTER_ITEMS_KEY);
-            treasureTrailViewHandler.clueCoords = savedInstanceState.getString(CLUE_COORDS_KEY);
             treasureTrailViewHandler.treasureTrail = (TreasureTrail) savedInstanceState.getSerializable(CLUE_DATA_KEY);
-            treasureTrailViewHandler.selectedAdapterIndex = savedInstanceState.getInt(CLUE_ADAPTER_INDEX_KEY);
-            treasureTrailViewHandler.adapter.updateItems(adapterItems);
-            if (treasureTrailViewHandler.treasureTrail != null) {
-                treasureTrailViewHandler.reloadData();
-            }
+            treasureTrailViewHandler.reloadData();
         }
     }
 
@@ -87,11 +68,6 @@ public class TreasureTrailFragment extends BaseFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(CLUE_COORDS_KEY, treasureTrailViewHandler.clueCoords);
         outState.putSerializable(CLUE_DATA_KEY, treasureTrailViewHandler.treasureTrail);
-        outState.putInt(CLUE_ADAPTER_INDEX_KEY, treasureTrailViewHandler.selectedAdapterIndex);
-        outState.putSerializable(CLUE_ADAPTER_ITEMS_KEY, treasureTrailViewHandler.adapter.getItems());
     }
-
 }
-

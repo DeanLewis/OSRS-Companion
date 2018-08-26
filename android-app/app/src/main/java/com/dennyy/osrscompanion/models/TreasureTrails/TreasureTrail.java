@@ -23,12 +23,16 @@ public class TreasureTrail implements Serializable {
         return "";
     }
 
-    public String getCoordinatesFormattedShort() {
+    private String getCoordinatesFormattedShort() {
         if (type == TreasureTrailType.COORDINATES && text.length() == 10) {
-            String formattedCoords = (String.format("%s.%s, %s.%s", text.substring(0, 2), text.substring(2, 5), text.substring(5, 7), text.substring(7, 10))).toUpperCase();
-            return formattedCoords;
+            String formattedCoords = String.format("%s.%s, %s.%s", text.substring(0, 2), text.substring(2, 5), text.substring(5, 7), text.substring(7, 10));
+            return formattedCoords.toUpperCase();
         }
         return "";
+    }
+
+    public String getCoordinatesFormattedForUrl() {
+        return getCoordinatesFormattedShort().replace(", ","_");
     }
 
     public boolean containsCoordinates(String search) {

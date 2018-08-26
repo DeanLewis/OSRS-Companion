@@ -1,5 +1,6 @@
 package com.dennyy.osrscompanion.layouthandlers;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.view.ViewPager;
@@ -39,16 +40,14 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class TreasureTrailViewHandler extends BaseViewHandler implements TextWatcher, View.OnClickListener, TreasureTrailMapAdapter.AdapterImageClickListener {
+public class TreasureTrailViewHandler extends BaseViewHandler implements View.OnClickListener, TreasureTrailMapAdapter.AdapterImageClickListener {
     public TreasureTrail treasureTrail;
-    public TreasureTrailSearchAdapter adapter;
-    public int selectedAdapterIndex = -1;
-    public String clueCoords;
 
     private static final String TT_REQUEST_TAG = "TT_REQUEST_TAG";
 
+    private TreasureTrailSearchAdapter adapter;
+    private int selectedAdapterIndex = -1;
     private TreasureTrailMapAdapter treasureTrailMapAdapter;
-    private ArrayList<TreasureTrail> searchAdapterItems = new ArrayList<>();
     private AutoCompleteTextView autoCompleteTextView;
     private TreasureTrails allItems = new TreasureTrails();
     private ViewPager viewPager;
@@ -75,7 +74,8 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements TextWat
         }).execute();
     }
 
-    public void updateView(View view) {
+    @SuppressLint("ClickableViewAccessibility")
+    private void updateView(View view) {
         this.view = view;
         mapsListView = view.findViewById(R.id.tt_maps_listview);
         expandedImageView = view.findViewById(R.id.expanded_image);
@@ -114,14 +114,13 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements TextWat
                 return false;
             }
         });
-        autoCompleteTextView.addTextChangedListener(this);
         dimView.setOnClickListener(this);
         expandedImageView.setOnClickListener(this);
         view.findViewById(R.id.tt_fab).setOnClickListener(this);
         viewPager = view.findViewById(R.id.viewPager);
     }
 
-    public void updateItem() {
+    private void updateItem() {
         treasureTrail = adapter.getItem(selectedAdapterIndex);
         if (treasureTrail != null && treasureTrail.type == null)
             return;
@@ -129,11 +128,14 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements TextWat
     }
 
     public void reloadData() {
+        if (treasureTrail == null) {
+            return;
+        }
         ((TextView) view.findViewById(R.id.treasure_trail_clue)).setText(treasureTrail.text);
         ((TextView) view.findViewById(R.id.treasure_trail_type)).setText(treasureTrail.type.getValue());
 
-        TextView answerTextView = (TextView) view.findViewById(R.id.treasure_trail_answer);
-        LinearLayout answerLinearLayout = (LinearLayout) view.findViewById(R.id.tt_answer_layout);
+        TextView answerTextView = view.findViewById(R.id.treasure_trail_answer);
+        LinearLayout answerLinearLayout = view.findViewById(R.id.tt_answer_layout);
         if (treasureTrail.answer == null) {
             answerLinearLayout.setVisibility(View.GONE);
         }
@@ -142,8 +144,8 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements TextWat
             answerLinearLayout.setVisibility(View.VISIBLE);
         }
 
-        TextView npcTextView = (TextView) view.findViewById(R.id.treasure_trail_npc);
-        LinearLayout npcLinearLayout = (LinearLayout) view.findViewById(R.id.tt_npc_layout);
+        TextView npcTextView = view.findViewById(R.id.treasure_trail_npc);
+        LinearLayout npcLinearLayout = view.findViewById(R.id.tt_npc_layout);
         if (treasureTrail.npc == null) {
             npcLinearLayout.setVisibility(View.GONE);
         }
@@ -153,8 +155,8 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements TextWat
 
         }
 
-        TextView locationTextView = (TextView) view.findViewById(R.id.treasure_trail_location);
-        LinearLayout locationLinearLayout = (LinearLayout) view.findViewById(R.id.tt_location_layout);
+        TextView locationTextView = view.findViewById(R.id.treasure_trail_location);
+        LinearLayout locationLinearLayout = view.findViewById(R.id.tt_location_layout);
         if (treasureTrail.location == null) {
             locationLinearLayout.setVisibility(View.GONE);
         }
@@ -177,33 +179,12 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements TextWat
 
     private void loadTreasureTrailImages() {
         ArrayList<String> imageUrls = new ArrayList<>();
-        String coords = treasureTrail.text;
-        clueCoords = (coords.substring(0, 2) + "." + coords.substring(2, 5) + "_" + coords.substring(5, 7) + "." + coords.substring(7, 10)).toUpperCase();
-        imageUrls.add(Constants.CLUE_MAP_URL(clueCoords));
-        imageUrls.add(Constants.CLUE_LOC_URL(clueCoords));
+        imageUrls.add(Constants.CLUE_MAP_URL(treasureTrail.getCoordinatesFormattedForUrl()));
+        imageUrls.add(Constants.CLUE_LOC_URL(treasureTrail.getCoordinatesFormattedForUrl()));
         viewPager.setAdapter(new ImageSliderAdapter(AppController.getInstance().getApplicationContext(), imageUrls));
-        CirclePageIndicator indicator = (CirclePageIndicator) view.findViewById(R.id.indicator);
+        CirclePageIndicator indicator = view.findViewById(R.id.indicator);
         indicator.setViewPager(viewPager);
         indicator.setRadius(Utils.convertDpToPixel(5, AppController.getInstance().getApplicationContext()));
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        if (s.toString().trim().length() == 0) {
-            adapter.resetItems();
-            searchAdapterItems.clear();
-            searchAdapterItems.trimToSize();
-        }
     }
 
     @Override
