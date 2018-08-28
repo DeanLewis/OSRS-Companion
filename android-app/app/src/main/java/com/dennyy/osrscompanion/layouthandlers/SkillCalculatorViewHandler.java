@@ -68,7 +68,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
         selectedHiscoreType = hiscoreTypeSelectorLayout.getHiscoreType();
 
         skillSelectorSpinner = view.findViewById(R.id.skill_selector_spinner);
-        skills = new ArrayList<>(Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23));
+        skills = new ArrayList<>(Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23));
 
         skillSelectorSpinner.setAdapter(new NothingSelectedSpinnerAdapter(new SkillSelectorSpinnerAdapter(context, skills), getString(R.string.select_a_skill), context));
         skillSelectorSpinner.setOnItemSelectedListener(this);
