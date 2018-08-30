@@ -1,6 +1,7 @@
 package com.dennyy.osrscompanion.layouthandlers;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,20 +24,24 @@ import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.DiariesLoadedCallback;
+import com.dennyy.osrscompanion.models.AchievementDiary.Diaries;
+import com.dennyy.osrscompanion.models.AchievementDiary.DiariesMap;
 import com.dennyy.osrscompanion.models.AchievementDiary.Diary;
-import com.dennyy.osrscompanion.models.AchievementDiary.DiaryLevel;
 import com.dennyy.osrscompanion.models.AchievementDiary.DiaryRequirement;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
+import java.util.List;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-public class DiaryCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectorLayout.HiscoreTypeSelectedListener, View.OnClickListener {
+public class DiaryCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectorLayout.HiscoreTypeSelectedListener, View.OnClickListener, ExpandableListView.OnGroupExpandListener, DiariesLoadedCallback {
     public String hiscoresData;
     public HiscoreType selectedHiscoreType;
     public int lastExpandedPosition = -1;
@@ -50,47 +55,54 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
     private MaterialProgressBar refreshLayout;
     private DiaryListAdapter adapter;
     private ExpandableListView diaryListView;
+    private DiariesLoadedCallback diariesLoadedCallback;
 
-    public DiaryCalculatorViewHandler(final Context context, final View view) {
+    public DiaryCalculatorViewHandler(final Context context, final View view, DiariesLoadedCallback callback) {
         super(context, view);
 
         rsnEditText = ((ClearableEditText) view.findViewById(R.id.rsn_input)).getEditText();
         refreshLayout = view.findViewById(R.id.progressBar);
         diaryListView = view.findViewById(R.id.expandable_diary_listview);
-        adapter = new DiaryListAdapter(context, new Diary());
-        diaryListView.setAdapter(adapter);
-        diaryListView.collapseGroup(lastExpandedPosition);
-        diaryListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                if (lastExpandedPosition != -1 && groupPosition != lastExpandedPosition) {
-                    diaryListView.collapseGroup(lastExpandedPosition);
-                }
-                lastExpandedPosition = groupPosition;
-                setListViewHeight(diaryListView, groupPosition);
-            }
-        });
         view.findViewById(R.id.get_stats_button).setOnClickListener(this);
         hiscoreTypeSelectorLayout = view.findViewById(R.id.hiscore_type_selector);
         hiscoreTypeSelectorLayout.setOnTypeSelectedListener(this);
         selectedHiscoreType = hiscoreTypeSelectorLayout.getHiscoreType();
-
+        diariesLoadedCallback = callback;
 
         initializeListeners();
-        if (!defaultRsn.isEmpty()) {
-            initializeUser(defaultRsn);
-        }
+        new LoadDiaries(context, this).execute();
         hideKeyboard();
     }
 
-    private void initializeUser(String rsn) {
-        rsnEditText.setText(rsn);
-        UserStats cachedData = AppDb.getInstance(context).getUserStats(rsn, hiscoreTypeSelectorLayout.getHiscoreType());
-        if (cachedData == null) {
-            return;
+    @Override
+    public void onDiariesLoaded(DiariesMap diariesMap) {
+        adapter = new DiaryListAdapter(context, diariesMap);
+        diaryListView.setAdapter(adapter);
+        diaryListView.collapseGroup(lastExpandedPosition);
+        diaryListView.setOnGroupExpandListener(DiaryCalculatorViewHandler.this);
+        String inputRsn = rsnEditText.getText().toString();
+        initializeUser(Utils.isNullOrEmpty(inputRsn) ? defaultRsn: inputRsn);
+        if (diariesLoadedCallback != null) {
+            diariesLoadedCallback.onDiariesLoaded(diariesMap);
         }
-        showToast(resources.getString(R.string.last_updated_at, Utils.convertTime(cachedData.dateModified)), Toast.LENGTH_LONG);
-        handleHiscoresData(cachedData.stats);
+    }
+
+    @Override
+    public void onDiariesLoadError() {
+        showToast(getString(R.string.unexpected_error_try_reload), Toast.LENGTH_LONG);
+    }
+
+    private void initializeUser(String rsn) {
+        if (!rsn.isEmpty()) {
+            rsnEditText.setText(rsn);
+            UserStats cachedData = AppDb.getInstance(context).getUserStats(rsn, hiscoreTypeSelectorLayout.getHiscoreType());
+            if (cachedData == null) {
+                return;
+            }
+            showToast(resources.getString(R.string.last_updated_at, Utils.convertTime(cachedData.dateModified)), Toast.LENGTH_LONG);
+            handleHiscoresData(cachedData.stats);
+        }
+        setListViewHeight(diaryListView);
     }
 
     private void initializeListeners() {
@@ -111,53 +123,13 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
 
     public void handleHiscoresData(String result) {
         String[] stats = result.split("\n");
-        if (stats.length < 20) {
+        if (stats.length < Constants.REQUIRED_STATS_LENGTH) {
             showToast(resources.getString(R.string.player_not_found), Toast.LENGTH_LONG);
             return;
         }
-        Diary diaries = getDiaries(stats);
-        adapter.updateList(diaries);
+
+        adapter.updateStats(stats);
         setListViewHeight(diaryListView);
-    }
-
-    private Diary getDiaries(String[] stats) {
-        DiaryType[] levelMap = new DiaryType[]{ DiaryType.EASY, DiaryType.MEDIUM, DiaryType.HARD, DiaryType.ELITE };
-        Diary diary = new Diary();
-
-        try {
-            JSONObject diariesJson = new JSONObject(Utils.readFromAssets(context, "diary_reqs.json"));
-            Iterator diariesIterator = diariesJson.keys();
-            while (diariesIterator.hasNext()) {
-                String diaryName = (String) diariesIterator.next();
-                JSONObject diaryJson = diariesJson.getJSONObject(diaryName);
-                ArrayList<DiaryLevel> diaryLevels = new ArrayList<>();
-                for (int j = 0; j < 4; j++) {
-                    Iterator skills = diaryJson.keys();
-                    DiaryLevel diaryLevel = new DiaryLevel();
-                    diaryLevel.diaryType = levelMap[j];
-                    int i = 1;
-                    while (skills.hasNext()) {
-                        String skillName = (String) skills.next();
-                        String[] line = stats[i].split(",");
-                        int level = Integer.parseInt(line[1]);
-                        int reqLvl = diaryJson.getJSONArray(skillName).getInt(j);
-                        i++;
-                        if (level < reqLvl) {
-                            DiaryRequirement diaryRequirement = new DiaryRequirement(skillName, level, reqLvl);
-                            diaryLevel.missingRequirements.add(diaryRequirement);
-                        }
-                        if (!skills.hasNext()) {
-                            diaryLevels.add(diaryLevel);
-                        }
-                    }
-                }
-                diary.put(diaryName, diaryLevels);
-            }
-        }
-        catch (JSONException e) {
-            return null;
-        }
-        return diary;
     }
 
     private void setListViewHeight(ExpandableListView listView) {
@@ -222,7 +194,6 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
             lastRefreshTimeMs = System.currentTimeMillis();
         refreshCount++;
     }
-
 
     public void updateUser() {
         final String rsn = rsnEditText.getText().toString();
@@ -298,5 +269,88 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
 
     public void updateIndicators() {
         hiscoreTypeSelectorLayout.setHiscoreType(selectedHiscoreType);
+    }
+
+    private static class LoadDiaries extends AsyncTask<String, Void, DiariesMap> {
+        private WeakReference<Context> context;
+        private DiariesLoadedCallback diariesLoadedCallback;
+
+        private LoadDiaries(Context context, DiariesLoadedCallback diariesLoadedCallback) {
+            this.context = new WeakReference<>(context);
+            this.diariesLoadedCallback = diariesLoadedCallback;
+        }
+
+        @Override
+        protected DiariesMap doInBackground(String... params) {
+            DiaryType[] levelMap = new DiaryType[]{ DiaryType.EASY, DiaryType.MEDIUM, DiaryType.HARD, DiaryType.ELITE };
+            DiariesMap diariesMap = new DiariesMap();
+
+            try {
+                JSONObject diariesJson = new JSONObject(Utils.readFromAssets(context.get(), "diary_reqs.json"));
+                Iterator diariesIterator = diariesJson.keys();
+                while (diariesIterator.hasNext()) {
+                    String diaryName = (String) diariesIterator.next();
+                    JSONObject diaryJson = diariesJson.getJSONObject(diaryName);
+                    Diaries diaries = new Diaries();
+                    for (int j = 0; j < 4; j++) {
+                        Iterator skills = diaryJson.keys();
+                        Diary diary = new Diary();
+                        diary.diaryType = levelMap[j];
+                        int i = 1;
+                        while (skills.hasNext()) {
+                            String skillName = (String) skills.next();
+                            int reqLvl = diaryJson.getJSONArray(skillName).getInt(j);
+                            if (reqLvl > 1) {
+                                DiaryRequirement diaryRequirement = new DiaryRequirement(i, skillName, reqLvl);
+                                diary.requirements.add(diaryRequirement);
+                            }
+                            i++;
+                            if (!skills.hasNext()) {
+                                diaries.add(diary);
+                            }
+                        }
+                    }
+                    diariesMap.put(diaryName, diaries);
+                }
+
+                JSONObject diariesQuestsJson = new JSONObject(Utils.readFromAssets(context.get(), "diary_quest_reqs.json"));
+                Iterator diariesQuestsIterator = diariesQuestsJson.keys();
+                while (diariesQuestsIterator.hasNext()) {
+                    String diaryName = (String) diariesQuestsIterator.next();
+                    JSONArray diaryQuestsArray = diariesQuestsJson.getJSONArray(diaryName);
+                    for (int i = 0; i < 4; i++) {
+                        JSONArray quests = (JSONArray) diaryQuestsArray.get(i);
+                        List<String> list = Utils.jsonArrayToList(quests);
+                        DiaryType diaryType = levelMap[i];
+                        Diaries diaries = diariesMap.get(diaryName);
+                        Diary diary = diaries.getByType(diaryType);
+                        diary.questRequirements.addAll(list);
+                    }
+                }
+            }
+            catch (JSONException ignored) {
+
+            }
+            return diariesMap;
+        }
+
+        @Override
+        protected void onPostExecute(DiariesMap diariesMap) {
+            if (diariesMap.size() > 0) {
+                diariesLoadedCallback.onDiariesLoaded(diariesMap);
+            }
+            else {
+                diariesLoadedCallback.onDiariesLoadError();
+            }
+        }
+    }
+
+    @Override
+    public void onGroupExpand(int groupPosition) {
+        if (lastExpandedPosition != -1 && groupPosition != lastExpandedPosition) {
+            diaryListView.collapseGroup(lastExpandedPosition);
+        }
+        lastExpandedPosition = groupPosition;
+        setListViewHeight(diaryListView, groupPosition);
     }
 }

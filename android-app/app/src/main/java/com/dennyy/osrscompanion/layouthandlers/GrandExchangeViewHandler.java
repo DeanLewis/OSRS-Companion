@@ -177,7 +177,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     public void updateItem(String id) {
         setJsonItem(id);
         if (jsonItem == null) {
-            showToast(getString(R.string.unexpected_error, getString(R.string.try_reloading_this_page)), Toast.LENGTH_SHORT);
+            showToast(getString(R.string.unexpected_error_try_reload), Toast.LENGTH_SHORT);
             return;
         }
         activateRefreshCooldown();

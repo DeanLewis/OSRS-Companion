@@ -1,7 +1,28 @@
 package com.dennyy.osrscompanion.models.AchievementDiary;
 
-import java.util.ArrayList;
-import java.util.TreeMap;
+import com.dennyy.osrscompanion.enums.DiaryType;
+import com.dennyy.osrscompanion.helpers.Constants;
 
-public class Diary extends TreeMap<String, ArrayList<DiaryLevel>> {
+import java.util.ArrayList;
+
+public class Diary {
+    public DiaryType diaryType;
+    public ArrayList<DiaryRequirement> requirements = new ArrayList<>();
+    public ArrayList<String> questRequirements = new ArrayList<>();
+
+    public ArrayList<MissingRequirement> getMissingRequirements(String[] stats) {
+        ArrayList<MissingRequirement> missingRequirements = new ArrayList<>();
+        if (stats.length < Constants.REQUIRED_STATS_LENGTH)
+        {
+            return null;
+        }
+        for (DiaryRequirement requirement : requirements) {
+            String[] line = stats[requirement.skillId].split(",");
+            int level = Integer.parseInt(line[1]);
+            if (level < requirement.requiredLevel) {
+                missingRequirements.add(new MissingRequirement(requirement.skill, requirement.requiredLevel, level));
+            }
+        }
+        return missingRequirements;
+    }
 }

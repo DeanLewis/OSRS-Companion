@@ -18,6 +18,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.customviews.InfoDialog;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,8 +31,10 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 public class Utils {
@@ -388,5 +391,16 @@ public class Utils {
         catch (IOException e) {
             return "";
         }
+    }
+
+    public static List<String> jsonArrayToList(JSONArray jsonArray) throws JSONException {
+        List<String> list = new ArrayList<>();
+        if (jsonArray == null) {
+            return list;
+        }
+        for (int i = 0; i < jsonArray.length(); i++) {
+            list.add(jsonArray.getString(i));
+        }
+        return list;
     }
 }

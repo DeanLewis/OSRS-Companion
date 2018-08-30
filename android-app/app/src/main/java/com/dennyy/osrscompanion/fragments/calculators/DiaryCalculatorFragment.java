@@ -12,7 +12,9 @@ import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.fragments.BaseFragment;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.DiariesLoadedCallback;
 import com.dennyy.osrscompanion.layouthandlers.DiaryCalculatorViewHandler;
+import com.dennyy.osrscompanion.models.AchievementDiary.DiariesMap;
 
 public class DiaryCalculatorFragment extends BaseFragment {
 
@@ -36,11 +38,25 @@ public class DiaryCalculatorFragment extends BaseFragment {
         return view;
     }
 
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.diary_calculator));
 
-        diaryCalculatorViewHandler = new DiaryCalculatorViewHandler(getActivity(), view);
+        diaryCalculatorViewHandler = new DiaryCalculatorViewHandler(getActivity(), view, new DiariesLoadedCallback() {
+            @Override
+            public void onDiariesLoaded(DiariesMap ignored) {
+                loadFragment(savedInstanceState);
+            }
+
+            @Override
+            public void onDiariesLoadError() {
+                // handled in viewhandler
+            }
+        });
+
+    }
+
+    private void loadFragment(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             diaryCalculatorViewHandler.selectedHiscoreType = HiscoreType.fromValue(savedInstanceState.getInt(HISCORE_TYPE_KEY));
             diaryCalculatorViewHandler.hiscoresData = savedInstanceState.getString(HISCORE_DATA_KEY);

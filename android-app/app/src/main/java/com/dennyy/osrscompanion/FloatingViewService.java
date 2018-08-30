@@ -145,7 +145,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     }
                     else if (key.equals(diaryCalcHeadName)) {
                         cachedView = inflater.inflate(R.layout.diary_calculator_layout, parent, false);
-                        new DiaryCalculatorViewHandler(FloatingViewService.this, cachedView);
+                        new DiaryCalculatorViewHandler(FloatingViewService.this, cachedView, null);
                     }
                     else if (key.equals(rswikiHeadName)) {
                         cachedView = inflater.inflate(R.layout.rswiki_layout, parent, false);

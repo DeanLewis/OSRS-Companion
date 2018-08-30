@@ -10,36 +10,40 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dennyy.osrscompanion.R;
+import com.dennyy.osrscompanion.models.AchievementDiary.Diaries;
+import com.dennyy.osrscompanion.models.AchievementDiary.DiariesMap;
 import com.dennyy.osrscompanion.models.AchievementDiary.Diary;
-import com.dennyy.osrscompanion.models.AchievementDiary.DiaryLevel;
 import com.dennyy.osrscompanion.models.AchievementDiary.DiaryRequirement;
+import com.dennyy.osrscompanion.models.AchievementDiary.MissingRequirement;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 public class DiaryListAdapter extends BaseExpandableListAdapter {
     private Context context;
-    private Diary diaries;
+    private DiariesMap diariesMap;
     private ArrayList<String> headers = new ArrayList<>();
     private LayoutInflater inflater;
+    private String[] stats;
 
-    public DiaryListAdapter(Context context, Diary diaries) {
+    public DiaryListAdapter(Context context, DiariesMap diariesMap) {
         this.context = context;
-        this.diaries = diaries;
+        this.diariesMap = diariesMap;
         this.inflater = LayoutInflater.from(context);
-        for (Map.Entry<String, ArrayList<DiaryLevel>> kvp : diaries.entrySet()) {
+        this.stats = new String[]{};
+        for (Map.Entry<String, Diaries> kvp : diariesMap.entrySet()) {
             headers.add(kvp.getKey());
         }
     }
 
     @Override
     public int getGroupCount() {
-        return diaries.size();
+        return diariesMap.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return diaries.get(headers.get(groupPosition)).size();
+        return diariesMap.get(headers.get(groupPosition)).size();
     }
 
     @Override
@@ -48,8 +52,8 @@ public class DiaryListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public DiaryLevel getChild(int groupPosition, int childPosition) {
-        return diaries.get(headers.get(groupPosition)).get(childPosition);
+    public Diary getChild(int groupPosition, int childPosition) {
+        return diariesMap.get(headers.get(groupPosition)).get(childPosition);
     }
 
     @Override
@@ -91,23 +95,20 @@ public class DiaryListAdapter extends BaseExpandableListAdapter {
         ImageView statusImage = convertView.findViewById(R.id.diary_calc_list_item_status);
         final TextView reqsTextView = convertView.findViewById(R.id.diary_calc_list_item_reqs);
 
-        final DiaryLevel diaryLevel = getChild(groupPosition, childPosition);
-        textViewWrapper.setBackground(context.getDrawable(diaryLevel.canComplete() ? R.drawable.diary_can_complete_background : R.drawable.diary_cannot_complete_background));
-        statusImage.setImageDrawable(context.getDrawable(diaryLevel.canComplete() ? R.drawable.baseline_done_24 : R.drawable.baseline_close_24));
-        textView.setText(diaryLevel.diaryType.toString());
+        final Diary diary = getChild(groupPosition, childPosition);
+        final ArrayList<MissingRequirement> missingRequirements = diary.getMissingRequirements(stats);
+        boolean canComplete = missingRequirements != null && missingRequirements.size() < 1;
+        textViewWrapper.setBackground(context.getDrawable(canComplete ? R.drawable.diary_can_complete_background : R.drawable.diary_cannot_complete_background));
+        statusImage.setImageDrawable(context.getDrawable(canComplete ? R.drawable.baseline_done_24 : R.drawable.baseline_close_24));
+        textView.setText(diary.diaryType.toString());
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (diaryLevel.canComplete() || reqsTextView.getVisibility() == View.VISIBLE) {
+                if (reqsTextView.getVisibility() == View.VISIBLE) {
                     reqsTextView.setVisibility(View.GONE);
                     return;
                 }
-                StringBuilder sb = new StringBuilder();
-                sb.append("\n").append(context.getString(R.string.diary_requirements));
-                for (DiaryRequirement diaryRequirement : diaryLevel.missingRequirements) {
-                    sb.append("\n").append(context.getString(R.string.diary_level_needed, diaryRequirement.skill, diaryRequirement.requiredLevel, diaryRequirement.getDifference(), diaryRequirement.currentLevel));
-                }
-                reqsTextView.setText(sb.toString());
+                reqsTextView.setText(getRequirements(diary, missingRequirements));
                 reqsTextView.setVisibility(View.VISIBLE);
             }
         });
@@ -119,14 +120,32 @@ public class DiaryListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
-    public void updateList(Diary diaries) {
-        this.diaries.clear();
-        this.diaries.putAll(diaries);
-        this.headers.clear();
-        for (Map.Entry<String, ArrayList<DiaryLevel>> kvp : diaries.entrySet()) {
-            headers.add(kvp.getKey());
-        }
+    public void updateStats(String[] stats) {
+        this.stats = stats;
         notifyDataSetChanged();
+    }
+
+    private String getRequirements(Diary diary, ArrayList<MissingRequirement> missingRequirements) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n").append(context.getString(R.string.diary_requirements));
+        if (missingRequirements != null) {
+            for (MissingRequirement missingRequirement : missingRequirements) {
+                sb.append("\n").append(context.getString(R.string.diary_level_needed, missingRequirement.skill, missingRequirement.requiredLevel, missingRequirement.getDifference(), missingRequirement.currentLevel));
+            }
+        }
+        else {
+            for (DiaryRequirement diaryRequirement : diary.requirements) {
+                sb.append("\n").append(context.getString(R.string.diary_skill_requirement, diaryRequirement.requiredLevel, diaryRequirement.skill));
+            }
+        }
+        //sb.append("\n");
+
+        //sb.append("\n\n").append(context.getString(R.string.quest_requirements));
+
+        for (String questRequirement : diary.questRequirements) {
+            sb.append("\n").append(questRequirement);
+        }
+        return sb.toString();
     }
 
     private static class ViewHolder {

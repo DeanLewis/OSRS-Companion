@@ -231,10 +231,12 @@
     <string name="fairy_ring_poi">Points of interest</string>
     <string name="diary_calculator">Diary Calculator</string>
     <string name="diary_requirements">Requirements:</string>
-    <string name="diary_level_needed">%1$s %2$d: %3$d levels needed (%4$d)</string>
+    <string name="quest_requirements">Quest requirements:</string>
+    <string name="diary_level_needed">%2$d %1$s: %3$d levels needed (%4$d)</string>
+    <string name="diary_skill_requirement">%1$d %2$s </string>
     <string name="diary_dialog_info">NOTE: The calculator does not take in consideration the additional requirements such as quest points, combat levels or minigame completions</string>
     <string name="osrs_wiki">OSRS Wiki</string>
-    <string name="try_reloading_this_page">try reloading this page</string>
+    <string name="unexpected_error_try_reload">Unexpected error: try reloading this page or restarting the service</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

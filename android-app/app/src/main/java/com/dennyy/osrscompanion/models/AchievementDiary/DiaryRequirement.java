@@ -1,17 +1,13 @@
 package com.dennyy.osrscompanion.models.AchievementDiary;
 
 public class DiaryRequirement {
-    public String skill;
-    public int currentLevel;
-    public int requiredLevel;
+    public final int skillId;
+    public final String skill;
+    public final int requiredLevel;
 
-    public DiaryRequirement(String skill, int currentLevel, int requiredLevel) {
+    public DiaryRequirement(int skillId, String skill, int requiredLevel) {
+        this.skillId = skillId;
         this.skill = skill;
-        this.currentLevel = currentLevel;
         this.requiredLevel = requiredLevel;
-    }
-
-    public int getDifference() {
-        return requiredLevel - currentLevel;
     }
 }
