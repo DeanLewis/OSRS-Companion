@@ -176,6 +176,10 @@ public class FloatingViewService extends Service implements WindowManagerContain
 
             @Override
             public Drawable getChatHeadDrawable(String key) {
+                if (iconsMap == null) {
+                    iconsMap = new HashMap<>();
+                    initIconsMap();
+                }
                 int resourceId = iconsMap.get(key);
                 Drawable drawable = getResources().getDrawable(resourceId);
                 return drawable;
