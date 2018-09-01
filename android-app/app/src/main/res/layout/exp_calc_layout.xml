@@ -40,6 +40,7 @@
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="0.5"
+                    android:imeOptions="flagNoExtractUi"
                     android:inputType="number"/>
             </LinearLayout>
 
@@ -124,6 +125,7 @@
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="0.5"
+                    android:imeOptions="flagNoExtractUi"
                     android:inputType="number"/>
 
                 <TextView
@@ -140,6 +142,7 @@
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="0.5"
+                    android:imeOptions="flagNoExtractUi"
                     android:inputType="number"/>
             </LinearLayout>
 
