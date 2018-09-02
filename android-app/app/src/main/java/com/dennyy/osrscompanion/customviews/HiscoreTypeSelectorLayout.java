@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.interfaces.HiscoreTypeSelectedListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -111,10 +112,6 @@ public class HiscoreTypeSelectorLayout extends LinearLayout implements View.OnCl
             ((LineIndicatorButton) findViewById(entry.getValue())).setActive(false);
         }
         ((LineIndicatorButton) findViewById(indicators.get(hiscoreType))).setActive(true);
-    }
-
-    public interface HiscoreTypeSelectedListener {
-        void onHiscoreTypeSelected(HiscoreType type);
     }
 
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {

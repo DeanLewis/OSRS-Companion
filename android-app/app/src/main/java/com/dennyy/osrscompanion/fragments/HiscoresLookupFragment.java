@@ -91,6 +91,4 @@ public class HiscoresLookupFragment extends BaseFragment {
         super.onDetach();
         hiscoresLookupViewHandler.cancelVolleyRequests();
     }
-
-
 }

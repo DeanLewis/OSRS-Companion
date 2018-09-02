@@ -25,12 +25,13 @@ import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.HiscoreTypeSelectedListener;
 import com.dennyy.osrscompanion.models.General.Combat;
 import com.dennyy.osrscompanion.models.General.NextLevel;
 import com.dennyy.osrscompanion.models.General.PlayerStats;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 
-public class CombatCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectorLayout.HiscoreTypeSelectedListener, View.OnClickListener {
+public class CombatCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectedListener, View.OnClickListener {
     public String hiscoresData;
     public String selectedRsn;
     public HiscoreType selectedHiscoreType;

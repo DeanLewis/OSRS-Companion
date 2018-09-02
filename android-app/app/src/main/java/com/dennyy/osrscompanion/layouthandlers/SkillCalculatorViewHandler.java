@@ -32,6 +32,7 @@ import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.HiscoreTypeSelectedListener;
 import com.dennyy.osrscompanion.models.General.Action;
 import com.dennyy.osrscompanion.models.General.PlayerStats;
 import com.dennyy.osrscompanion.models.General.Skill;
@@ -40,7 +41,7 @@ import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SkillCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectorLayout.HiscoreTypeSelectedListener, View.OnClickListener, AdapterView.OnItemSelectedListener, TextWatcher {
+public class SkillCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectedListener, View.OnClickListener, AdapterView.OnItemSelectedListener, TextWatcher {
     public String hiscoresData;
     public HiscoreType selectedHiscoreType;
     public int selectedSkillId;

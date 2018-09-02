@@ -25,6 +25,7 @@ import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.DiariesLoadedCallback;
+import com.dennyy.osrscompanion.interfaces.HiscoreTypeSelectedListener;
 import com.dennyy.osrscompanion.models.AchievementDiary.Diaries;
 import com.dennyy.osrscompanion.models.AchievementDiary.DiariesMap;
 import com.dennyy.osrscompanion.models.AchievementDiary.Diary;
@@ -41,7 +42,7 @@ import java.util.List;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-public class DiaryCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectorLayout.HiscoreTypeSelectedListener, View.OnClickListener, ExpandableListView.OnGroupExpandListener, DiariesLoadedCallback {
+public class DiaryCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectedListener, View.OnClickListener, ExpandableListView.OnGroupExpandListener, DiariesLoadedCallback {
     public String hiscoresData;
     public HiscoreType selectedHiscoreType;
     public int lastExpandedPosition = -1;

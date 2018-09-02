@@ -21,23 +21,21 @@ import com.android.volley.VolleyError;
 import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.customviews.ClearableEditText;
-import com.dennyy.osrscompanion.customviews.LineIndicatorButton;
+import com.dennyy.osrscompanion.customviews.HiscoreTypeSelectorLayout;
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.HiscoreTypeSelectedListener;
 import com.dennyy.osrscompanion.models.General.Combat;
 import com.dennyy.osrscompanion.models.General.PlayerStats;
 import com.dennyy.osrscompanion.models.General.Skill;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 
-import java.util.HashMap;
-import java.util.Map;
 
-
-public class HiscoresLookupViewHandler extends BaseViewHandler implements View.OnClickListener {
+public class HiscoresLookupViewHandler extends BaseViewHandler implements View.OnClickListener, HiscoreTypeSelectedListener {
 
     public String hiscoresData;
     public HiscoreType selectedHiscore = HiscoreType.NORMAL;
@@ -49,7 +47,7 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
     private TableLayout hiscoresMinigameTable;
     private SwipeRefreshLayout refreshLayout;
     private TableRow.LayoutParams rowParams;
-    private HashMap<HiscoreType, Integer> indicators;
+    private HiscoreTypeSelectorLayout hiscoreTypeSelectorLayout;
 
     private long lastRefreshTimeMs;
     private int refreshCount;
@@ -58,9 +56,19 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
         super(context, view);
 
         rowParams = new TableRow.LayoutParams(0, (int) Utils.convertDpToPixel(35, context), 1f);
-
+        hiscoreTypeSelectorLayout = view.findViewById(R.id.hiscore_type_selector);
         scrollView = view.findViewById(R.id.hiscores_scrollview);
         rsnEditText = ((ClearableEditText) view.findViewById(R.id.hiscores_rsn_input)).getEditText();
+        hiscoresTable = view.findViewById(R.id.hiscores_table);
+        hiscoresMinigameTable = view.findViewById(R.id.hiscores_minigame_table);
+        refreshLayout = view.findViewById(R.id.hiscores_refresh_layout);
+
+        initializeListeners();
+        initializeUser(defaultRsn);
+    }
+
+    private void initializeListeners() {
+        hiscoreTypeSelectorLayout.setOnTypeSelectedListener(this);
         rsnEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -74,9 +82,6 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
             }
         });
 
-        hiscoresTable = view.findViewById(R.id.hiscores_table);
-        hiscoresMinigameTable = view.findViewById(R.id.hiscores_minigame_table);
-        refreshLayout = view.findViewById(R.id.hiscores_refresh_layout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -85,26 +90,18 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
             }
         });
         view.findViewById(R.id.hiscores_lookup_button).setOnClickListener(this);
-        indicators = new HashMap<>();
-        indicators.put(HiscoreType.NORMAL, R.id.hiscores_normal);
-        indicators.put(HiscoreType.IRONMAN, R.id.hiscores_ironman);
-        indicators.put(HiscoreType.HCIM, R.id.hiscores_hardcore_ironman);
-        indicators.put(HiscoreType.UIM, R.id.hiscores_ultimate_ironman);
-        indicators.put(HiscoreType.DMM, R.id.hiscores_dmm);
-        indicators.put(HiscoreType.SDMM, R.id.hiscores_sdmm);
+    }
 
-        for (Map.Entry<HiscoreType, Integer> entry : indicators.entrySet()) {
-            view.findViewById(entry.getValue()).setOnClickListener(this);
-        }
-        clearTables();
-        if (!defaultRsn.isEmpty()) {
-            rsnEditText.setText(defaultRsn);
-            UserStats cachedData = AppDb.getInstance(context).getUserStats(defaultRsn, selectedHiscore);
+    private void initializeUser(String rsn) {
+        if (!rsn.isEmpty()) {
+            rsnEditText.setText(rsn);
+            UserStats cachedData = AppDb.getInstance(context).getUserStats(rsn, selectedHiscore);
             if (cachedData == null) {
                 return;
             }
+            hiscoresData = cachedData.stats;
             showToast(resources.getString(R.string.last_updated_at, Utils.convertTime(cachedData.dateModified)), Toast.LENGTH_LONG);
-            handleHiscoresData(cachedData.stats);
+            handleHiscoresData(hiscoresData);
             view.findViewById(R.id.hiscores_data_layout).setVisibility(View.VISIBLE);
         }
     }
@@ -124,82 +121,7 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
                 if (allowUpdateUser())
                     updateUser();
                 break;
-            case R.id.hiscores_normal:
-            case R.id.hiscores_ironman:
-            case R.id.hiscores_hardcore_ironman:
-            case R.id.hiscores_ultimate_ironman:
-            case R.id.hiscores_sdmm:
-            case R.id.hiscores_dmm:
-                updateUserFromHiscoreType(id);
-                break;
         }
-    }
-
-    private void updateUserFromHiscoreType(int selectedButtonResourceId) {
-        if (!allowUpdateUser())
-            return;
-        HiscoreType mode = getHiscoresMode(selectedButtonResourceId);
-        if (selectedHiscore == mode)
-            return;
-        selectedHiscore = mode;
-        updateIndicators();
-        updateUser();
-    }
-
-    public void updateIndicators() {
-        for (Map.Entry<HiscoreType, Integer> entry : indicators.entrySet()) {
-            ((LineIndicatorButton) view.findViewById(entry.getValue())).setActive(false);
-        }
-        ((LineIndicatorButton) view.findViewById(indicators.get(selectedHiscore))).setActive(true);
-    }
-
-    private String getHiscoresUrl(HiscoreType mode) {
-        String url;
-        switch (mode) {
-            case UIM:
-                url = Constants.RS_HISCORES_UIM_URL;
-                break;
-            case IRONMAN:
-                url = Constants.RS_HISCORES_IRONMAN_URL;
-                break;
-            case HCIM:
-                url = Constants.RS_HISCORES_HCIM_URL;
-                break;
-            case DMM:
-                url = Constants.RS_HISCORES_DMM_URL;
-                break;
-            case SDMM:
-                url = Constants.RS_HISCORES_SDMM_URL;
-                break;
-            default:
-                url = Constants.RS_HISCORES_URL;
-        }
-        return url;
-    }
-
-    private HiscoreType getHiscoresMode(int buttonId) {
-        HiscoreType mode;
-        switch (buttonId) {
-            case R.id.hiscores_ultimate_ironman:
-                mode = HiscoreType.UIM;
-                break;
-            case R.id.hiscores_ironman:
-                mode = HiscoreType.IRONMAN;
-                break;
-            case R.id.hiscores_hardcore_ironman:
-                mode = HiscoreType.HCIM;
-                break;
-            case R.id.hiscores_dmm:
-                mode = HiscoreType.DMM;
-                break;
-            case R.id.hiscores_sdmm:
-                mode = HiscoreType.SDMM;
-                break;
-            default:
-                mode = HiscoreType.NORMAL;
-                break;
-        }
-        return mode;
     }
 
     public boolean allowUpdateUser() {
@@ -227,12 +149,11 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
         defaultRsn = rsn;
         refreshLayout.setRefreshing(true);
         wasRequesting = true;
-        Utils.getString(getHiscoresUrl(selectedHiscore) + rsn, HISCORES_REQUEST_TAG, new Utils.VolleyCallback() {
+        Utils.getString(hiscoreTypeSelectorLayout.getHiscoresUrl() + rsn, HISCORES_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
                 hiscoresData = result;
                 refreshLayout.setRefreshing(false);
-                clearTables();
                 handleHiscoresData(result);
                 AppDb.getInstance(context).insertOrUpdateUserStats(new UserStats(rsn, result, selectedHiscore));
                 view.findViewById(R.id.hiscores_data_layout).setVisibility(View.VISIBLE);
@@ -241,7 +162,6 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
             @Override
             public void onError(VolleyError error) {
                 refreshLayout.setRefreshing(false);
-                clearTables();
                 if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
                     showToast(resources.getString(R.string.player_not_found), Toast.LENGTH_LONG);
                     AppDb.getInstance(context).insertOrUpdateUserStats(new UserStats(rsn, "", selectedHiscore));
@@ -269,6 +189,7 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
     }
 
     public void handleHiscoresData(String result) {
+        clearTables();
         PlayerStats playerStats = new PlayerStats(result);
         if (playerStats.isUnranked()) {
             showToast(resources.getString(R.string.player_not_found), Toast.LENGTH_LONG);
@@ -341,5 +262,17 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
     @Override
     public void cancelVolleyRequests() {
         AppController.getInstance().cancelPendingRequests(HISCORES_REQUEST_TAG);
+    }
+
+    public void updateIndicators() {
+        hiscoreTypeSelectorLayout.setHiscoreType(selectedHiscore);
+    }
+
+    @Override
+    public void onHiscoreTypeSelected(HiscoreType type) {
+        if (!allowUpdateUser())
+            return;
+        selectedHiscore = type;
+        updateUser();
     }
 }
