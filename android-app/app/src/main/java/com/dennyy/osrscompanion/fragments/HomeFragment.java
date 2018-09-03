@@ -30,6 +30,7 @@ import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.TileAdapter;
 import com.dennyy.osrscompanion.customviews.CheckboxDialogPreference;
 import com.dennyy.osrscompanion.fragments.calculators.CalculatorsFragment;
+import com.dennyy.osrscompanion.fragments.hiscores.HiscoresFragment;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.General.TileData;
@@ -180,7 +181,7 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
             fragment = new TrackerFragment();
         }
         if (tileData.text.equals(getString(R.string.hiscores))) {
-            fragment = new HiscoresFragmentViewPager();
+            fragment = new HiscoresFragment();
         }
         if (tileData.text.equals(getString(R.string.calculators))) {
             fragment = new CalculatorsFragment();

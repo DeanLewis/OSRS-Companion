@@ -5,7 +5,7 @@
               android:layout_height="match_parent"
               android:background="@color/background"
               android:orientation="vertical"
-              tools:context="com.dennyy.osrscompanion.fragments.HiscoresLookupFragment">
+              tools:context="com.dennyy.osrscompanion.fragments.hiscores.HiscoresLookupFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,7 +26,6 @@
                 android:layout_weight="1"
                 app:flagNoExtractUiOn="true"
                 app:hint="@string/player_one"/>
-
 
             <com.dennyy.osrscompanion.customviews.ClearableEditText
                 android:id="@+id/hiscores_compare_rsn_2"
@@ -74,59 +73,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
                     android:orientation="vertical">
 
-                    <LinearLayout
+                    <com.dennyy.osrscompanion.customviews.HiscoreTypeSelectorLayout
+                        android:id="@+id/hiscore_type_selector"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="10dp"
-                        android:background="@drawable/input_background"
-                        android:orientation="horizontal">
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
 
-                        <com.dennyy.osrscompanion.customviews.LineIndicatorButton
-                            android:id="@+id/hiscores_compare_normal"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            app:active="true"
-                            app:buttonText="@string/hiscores_normal"/>
-
-                        <com.dennyy.osrscompanion.customviews.LineIndicatorButton
-                            android:id="@+id/hiscores_compare_ironman"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            app:buttonText="@string/hiscores_ironman"/>
-
-                        <com.dennyy.osrscompanion.customviews.LineIndicatorButton
-                            android:id="@+id/hiscores_compare_hardcore_ironman"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            app:buttonText="@string/hiscores_hardcore_ironman"/>
-
-                        <com.dennyy.osrscompanion.customviews.LineIndicatorButton
-                            android:id="@+id/hiscores_compare_ultimate_ironman"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            app:buttonText="@string/hiscores_ultimate_ironman"/>
-
-                        <com.dennyy.osrscompanion.customviews.LineIndicatorButton
-                            android:id="@+id/hiscores_compare_dmm"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            app:buttonText="@string/hiscores_dmm"/>
-
-                        <com.dennyy.osrscompanion.customviews.LineIndicatorButton
-                            android:id="@+id/hiscores_compare_sdmm"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            app:buttonText="@string/hiscores_sdmm"/>
-
-                    </LinearLayout>
+                    </com.dennyy.osrscompanion.customviews.HiscoreTypeSelectorLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -136,7 +93,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_margin="10dp"
+                            android:layout_marginBottom="10dp"
                             android:background="@drawable/input_background"
                             android:orientation="horizontal">
 
@@ -167,7 +124,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_margin="10dp"
+                            android:layout_marginBottom="10dp"
                             android:background="@drawable/input_background"
                             android:orientation="vertical">
 
@@ -226,7 +183,6 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_margin="10dp"
                             android:background="@drawable/input_background"
                             android:orientation="vertical">
 

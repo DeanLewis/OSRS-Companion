@@ -237,6 +237,8 @@
     <string name="diary_dialog_info">NOTE: The calculator does not take in consideration the additional requirements such as quest points, combat levels or minigame completions</string>
     <string name="osrs_wiki">OSRS Wiki</string>
     <string name="unexpected_error_try_reload">Unexpected error: try reloading this page or restarting the service</string>
+    <string name="hiscore_lookup">Hiscore lookup</string>
+    <string name="hiscore_compare">Hiscore compare</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

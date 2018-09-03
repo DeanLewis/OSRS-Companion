@@ -1,4 +1,4 @@
-package com.dennyy.osrscompanion.fragments;
+package com.dennyy.osrscompanion.fragments.hiscores;
 
 
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.CompareMode;
 import com.dennyy.osrscompanion.enums.HiscoreType;
+import com.dennyy.osrscompanion.fragments.BaseFragment;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.layouthandlers.HiscoresCompareViewHandler;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
@@ -22,7 +23,7 @@ public class HiscoresCompareFragment extends BaseFragment {
     private static final String COMPARE_P2_DATA_KEY = "COMAPREP2DATAKEY";
     private static final String COMPARE_HISCORE_TYPE_KEY = "COMAPREP1DATADAY";
     private static final String COMPARE_TYPE_KEY = "COMPARETYPEKEY";
-    private static final String COMPARE_WAS_REQUESTING_KEY = "COMPARETYPEKEY";
+    private static final String COMPARE_WAS_REQUESTING_KEY = "COMPARE_WAS REQUESTING";
 
 
     private HiscoresCompareViewHandler hiscoresCompareViewHandler;
@@ -46,7 +47,7 @@ public class HiscoresCompareFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        toolbarTitle.setText(getResources().getString(R.string.hiscores));
+        toolbarTitle.setText(getResources().getString(R.string.hiscore_compare));
 
         hiscoresCompareViewHandler = new HiscoresCompareViewHandler(getActivity(), view);
         if (savedInstanceState != null) {
@@ -71,11 +72,8 @@ public class HiscoresCompareFragment extends BaseFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.hiscores_compare_layout, container, false);
-
-
         return view;
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

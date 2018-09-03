@@ -6,8 +6,8 @@ import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
 
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.fragments.HiscoresCompareFragment;
-import com.dennyy.osrscompanion.fragments.HiscoresLookupFragment;
+import com.dennyy.osrscompanion.fragments.hiscores.HiscoresCompareFragment;
+import com.dennyy.osrscompanion.fragments.hiscores.HiscoresLookupFragment;
 
 
 public class HiscoresViewPagerAdapter extends FragmentPagerAdapter {

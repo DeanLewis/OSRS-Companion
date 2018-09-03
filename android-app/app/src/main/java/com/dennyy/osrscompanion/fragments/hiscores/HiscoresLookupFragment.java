@@ -1,4 +1,4 @@
-package com.dennyy.osrscompanion.fragments;
+package com.dennyy.osrscompanion.fragments.hiscores;
 
 
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.HiscoreType;
+import com.dennyy.osrscompanion.fragments.BaseFragment;
 import com.dennyy.osrscompanion.layouthandlers.HiscoresLookupViewHandler;
 
 
@@ -50,7 +51,7 @@ public class HiscoresLookupFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        toolbarTitle.setText(getResources().getString(R.string.hiscores));
+        toolbarTitle.setText(getResources().getString(R.string.hiscore_lookup));
         hiscoresLookupViewHandler = new HiscoresLookupViewHandler(getActivity(), view);
         if (savedInstanceState != null) {
             defaultRsn = savedInstanceState.getString(HISCORES_RSN_DATA_KEY);
