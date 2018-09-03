@@ -87,6 +87,7 @@ public class Constants {
     public static final int MAX_EXP = 200_000_000;
     public static final double DEFAULT_COMBAT = 3.4;
     public static final int REQUIRED_STATS_LENGTH = 24;
+    public static final int MIN_TOTAL_LEVEL = 32;
 
     public static DecimalFormatSymbols LOCALE = DecimalFormatSymbols.getInstance(Locale.US);
 }

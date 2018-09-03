@@ -1,6 +1,7 @@
 package com.dennyy.osrscompanion.enums;
 
 import com.dennyy.osrscompanion.R;
+import com.dennyy.osrscompanion.helpers.Constants;
 
 public enum SkillType {
     OVERALL(0, R.drawable.stats_icon),
@@ -52,6 +53,8 @@ public enum SkillType {
     public int getDrawable() {
         return drawable;
     }
+
+    public boolean isMinigame() { return getId() >= Constants.REQUIRED_STATS_LENGTH;}
 
     public static SkillType fromId(int id) {
         for (SkillType skillType : SkillType.values()) {

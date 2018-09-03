@@ -6,7 +6,7 @@
         android:layout_height="match_parent">
 
         <EditText
-            android:id="@+id/clearable_edittext"
+            android:tag="@string/clearable_edittext"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -21,7 +21,7 @@
             android:textColorHint="@color/textSecondary"/>
 
         <Button
-            android:id="@+id/clearable_edittext_clear_button"
+            android:tag="@string/clearable_edittext_clear_button"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_alignParentEnd="true"

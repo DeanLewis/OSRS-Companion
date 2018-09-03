@@ -239,6 +239,8 @@
     <string name="unexpected_error_try_reload">Unexpected error: try reloading this page or restarting the service</string>
     <string name="hiscore_lookup">Hiscore lookup</string>
     <string name="hiscore_compare">Hiscore compare</string>
+    <string name="clearable_edittext">clearable_edittext</string>
+    <string name="clearable_edittext_clear_button">clearable_edittext_clear_button</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

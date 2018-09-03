@@ -2,6 +2,7 @@ package com.dennyy.osrscompanion.models.General;
 
 import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
 
 import java.util.LinkedHashMap;
@@ -44,7 +45,17 @@ public class PlayerStats extends LinkedHashMap<SkillType, Skill> {
     }
 
     public Skill getSkill(SkillType skillType) {
-        return get(skillType);
+        Skill skill = get(skillType);
+        if (skill != null) {
+            return skill;
+        }
+        else if (skillType.isMinigame()) {
+            return new Skill(skillType, 0, -1);
+        }
+        else if (skillType == SkillType.HITPOINTS) {
+            return new Skill(skillType, 0, 10, RsUtils.exp(10));
+        }
+        return new Skill(skillType, 0, 1, 0);
     }
 
     public int getLevel(SkillType skillType) {
@@ -87,7 +98,7 @@ public class PlayerStats extends LinkedHashMap<SkillType, Skill> {
     }
 
     public int getTotalLevel() {
-        return totalLevel;
+        return Math.max(totalLevel, Constants.MIN_TOTAL_LEVEL);
     }
 
     public long getTotalExp() {

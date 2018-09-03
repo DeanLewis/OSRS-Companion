@@ -1,7 +1,6 @@
 package com.dennyy.osrscompanion.models.General;
 
 import com.dennyy.osrscompanion.enums.SkillType;
-import com.dennyy.osrscompanion.helpers.Constants;
 
 public class Skill {
     private SkillType skillType;
@@ -52,6 +51,6 @@ public class Skill {
     }
 
     public boolean isMinigame() {
-        return skillType.getId() >= Constants.REQUIRED_STATS_LENGTH;
+        return skillType.isMinigame();
     }
 }

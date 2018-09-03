@@ -1,7 +1,6 @@
 package com.dennyy.osrscompanion.layouthandlers;
 
 import android.content.Context;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -21,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.customviews.ClearableEditText;
+import com.dennyy.osrscompanion.customviews.HiscoreTypeSelectorLayout;
 import com.dennyy.osrscompanion.customviews.LineIndicatorButton;
 import com.dennyy.osrscompanion.enums.CompareMode;
 import com.dennyy.osrscompanion.enums.HiscoreType;
@@ -29,44 +29,43 @@ import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.HiscoreTypeSelectedListener;
 import com.dennyy.osrscompanion.models.General.PlayerStats;
 import com.dennyy.osrscompanion.models.General.Skill;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
-public class HiscoresCompareViewHandler extends BaseViewHandler implements View.OnClickListener {
+public class HiscoresCompareViewHandler extends BaseViewHandler implements View.OnClickListener, HiscoreTypeSelectedListener {
     private EditText rsnEditText;
     private EditText rsn2EditText;
     private TableLayout hiscoresTable;
     private TableLayout hiscoresMinigameTable;
-    private NestedScrollView scrollView;
     private SwipeRefreshLayout refreshLayout;
     private TableRow.LayoutParams rowParams;
-    private HashMap<HiscoreType, Integer> indicators;
-
-    public HiscoreType selectedHiscore = HiscoreType.NORMAL;
+    private HiscoreTypeSelectorLayout hiscoreTypeSelectorLayout;
     private HashMap<CompareMode, Integer> comparisonIndicators;
 
+    public HiscoreType selectedHiscore = HiscoreType.NORMAL;
     public CompareMode selectedComparison = CompareMode.LEVEL;
     public UserStats playerOneStats;
     public UserStats playerTwoStats;
-    private boolean lastLoadedFromCache;
 
     private long lastRefreshTimeMs;
     private int refreshCount;
 
     private static final String COMPARE_REQUEST_P1_TAG = "comparerequest";
     private static final String COMPARE_REQUEST_P2_TAG = "comparerequest2";
-    private boolean wasRequestingp2;
 
     public HiscoresCompareViewHandler(final Context context, View view) {
         super(context, view);
         rowParams = new TableRow.LayoutParams(0, (int) Utils.convertDpToPixel(35, context), 1f);
 
-        scrollView = view.findViewById(R.id.hiscores_compare_scrollview);
+        hiscoreTypeSelectorLayout = view.findViewById(R.id.hiscore_type_selector);
+        hiscoreTypeSelectorLayout.setOnTypeSelectedListener(this);
         rsnEditText = ((ClearableEditText) view.findViewById(R.id.hiscores_compare_rsn_1)).getEditText();
         rsn2EditText = ((ClearableEditText) view.findViewById(R.id.hiscores_compare_rsn_2)).getEditText();
         rsnEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -103,16 +102,8 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
             }
         });
         view.findViewById(R.id.hiscores_compare_lookup_button).setOnClickListener(this);
-        indicators = new HashMap<>();
+
         comparisonIndicators = new HashMap<>();
-
-        indicators.put(HiscoreType.NORMAL, R.id.hiscores_compare_normal);
-        indicators.put(HiscoreType.IRONMAN, R.id.hiscores_compare_ironman);
-        indicators.put(HiscoreType.HCIM, R.id.hiscores_compare_hardcore_ironman);
-        indicators.put(HiscoreType.UIM, R.id.hiscores_compare_ultimate_ironman);
-        indicators.put(HiscoreType.DMM, R.id.hiscores_compare_dmm);
-        indicators.put(HiscoreType.SDMM, R.id.hiscores_compare_sdmm);
-
         comparisonIndicators.put(CompareMode.LEVEL, R.id.hiscores_compare_lvl);
         comparisonIndicators.put(CompareMode.RANK, R.id.hiscores_compare_rank);
         comparisonIndicators.put(CompareMode.EXP, R.id.hiscores_compare_exp);
@@ -120,18 +111,15 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
         for (Map.Entry<CompareMode, Integer> entry : comparisonIndicators.entrySet()) {
             view.findViewById(entry.getValue()).setOnClickListener(this);
         }
-
-        for (Map.Entry<HiscoreType, Integer> entry : indicators.entrySet()) {
-            view.findViewById(entry.getValue()).setOnClickListener(this);
-        }
-        if (!defaultRsn.isEmpty())
+        if (!defaultRsn.isEmpty()) {
             rsnEditText.setText(defaultRsn);
+        }
         clearTables();
     }
 
     @Override
     public boolean wasRequesting() {
-        return wasRequesting || wasRequestingp2;
+        return wasRequesting;
     }
 
     @Override
@@ -144,33 +132,12 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
                 if (allowUpdateUser())
                     getPlayerOneStats();
                 break;
-            case R.id.hiscores_compare_normal:
-            case R.id.hiscores_compare_ironman:
-            case R.id.hiscores_compare_hardcore_ironman:
-            case R.id.hiscores_compare_ultimate_ironman:
-            case R.id.hiscores_compare_sdmm:
-            case R.id.hiscores_compare_dmm:
-                updateUserFromHiscoreType(id);
-
-                break;
             case R.id.hiscores_compare_exp:
             case R.id.hiscores_compare_lvl:
             case R.id.hiscores_compare_rank:
                 updateUserFromComparisonType(id);
                 break;
         }
-    }
-
-    private void updateUserFromHiscoreType(int selectedButtonResourceId) {
-        if (!allowUpdateUser())
-            return;
-        HiscoreType mode = getHiscoresMode(selectedButtonResourceId);
-        if (selectedHiscore == mode)
-            return;
-
-        selectedHiscore = mode;
-        updateIndicators();
-        getPlayerOneStats();
     }
 
     private void updateUserFromComparisonType(int selectedButtonResourceId) {
@@ -187,10 +154,8 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
     }
 
     public void updateIndicators() {
-        for (Map.Entry<HiscoreType, Integer> entry : indicators.entrySet()) {
-            ((LineIndicatorButton) view.findViewById(entry.getValue())).setActive(false);
-        }
-        ((LineIndicatorButton) view.findViewById(indicators.get(selectedHiscore))).setActive(true);
+        hiscoreTypeSelectorLayout.setHiscoreType(hiscoreTypeSelectorLayout.getHiscoreType());
+
         for (Map.Entry<CompareMode, Integer> entry : comparisonIndicators.entrySet()) {
             ((LineIndicatorButton) view.findViewById(entry.getValue())).setActive(false);
         }
@@ -228,10 +193,9 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
         cancelVolleyRequests();
         refreshLayout.setRefreshing(true);
         wasRequesting = true;
-        Utils.getString(getHiscoresUrl(selectedHiscore) + rsn, COMPARE_REQUEST_P1_TAG, new Utils.VolleyCallback() {
+        Utils.getString(hiscoreTypeSelectorLayout.getHiscoresUrl() + rsn, COMPARE_REQUEST_P1_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                lastLoadedFromCache = false;
                 getPlayerTwoStats(rsn, result, rsn2);
                 playerOneStats = new UserStats(rsn, result, selectedHiscore);
                 AppDb.getInstance(context).insertOrUpdateUserStats(playerOneStats);
@@ -252,7 +216,6 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
                     else {
                         showToast(resources.getString(R.string.using_cached_data, Utils.convertTime(cachedData.dateModified)), Toast.LENGTH_LONG);
                     }
-                    lastLoadedFromCache = true;
                     getPlayerTwoStats(rsn, cachedData == null ? "" : cachedData.stats, rsn2);
                 }
                 else {
@@ -269,11 +232,10 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
     }
 
     private void getPlayerTwoStats(final String rsn, final String playerOneStats, final String rsn2) {
-        wasRequestingp2 = true;
-        Utils.getString(getHiscoresUrl(selectedHiscore) + rsn2, COMPARE_REQUEST_P2_TAG, new Utils.VolleyCallback() {
+        wasRequesting = true;
+        Utils.getString(hiscoreTypeSelectorLayout.getHiscoresUrl() + rsn2, COMPARE_REQUEST_P2_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                lastLoadedFromCache = false;
                 refreshLayout.setRefreshing(false);
                 clearTables();
                 handleHiscoresData(rsn, playerOneStats, rsn2, result);
@@ -298,7 +260,6 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
                     else {
                         showToast(resources.getString(R.string.using_cached_data, Utils.convertTime(cachedData.dateModified)), Toast.LENGTH_LONG);
                     }
-                    lastLoadedFromCache = true;
                     clearTables();
                     handleHiscoresData(rsn, playerOneStats, rsn2, cachedData == null ? "" : cachedData.stats);
                 }
@@ -309,7 +270,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
 
             @Override
             public void always() {
-                wasRequestingp2 = false;
+                wasRequesting = false;
                 refreshLayout.setRefreshing(false);
             }
         });
@@ -324,6 +285,8 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
             return;
         }
         view.findViewById(R.id.hiscores_compare_data_layout).setVisibility(View.VISIBLE);
+        rsnEditText.setText(rsn);
+        rsn2EditText.setText(rsn2);
         ((TextView) view.findViewById(R.id.hiscores_compare_player_one_name)).setText(rsn);
         ((TextView) view.findViewById(R.id.hiscores_compare_player_two_name)).setText(rsn2);
         ((TextView) view.findViewById(R.id.hiscores_compare_minigame_player_one_name)).setText(rsn);
@@ -336,7 +299,12 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
             hiscoresTable.addView(createRow(-1, (int) playerOneStats.getCombat().getLevel(), (int) playerTwoStats.getCombat().getLevel(), false));
         if (selectedComparison == CompareMode.EXP)
             hiscoresTable.addView(createRow(-1, playerOneStats.getCombatExp(), playerTwoStats.getCombatExp(), false));
-        for (SkillType skillType : playerOneStats.keySet()) {
+
+        Set<SkillType> keySet = playerOneStats.keySet();
+        if (keySet.size() < playerTwoStats.size()) {
+            keySet = playerTwoStats.keySet();
+        }
+        for (SkillType skillType : keySet) {
             int skillId = skillType.getId();
             Skill playerOneSkill = playerOneStats.getSkill(skillType);
             Skill playerTwoSkill = playerTwoStats.getSkill(skillType);
@@ -436,55 +404,6 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
         hiscoresMinigameTable.removeAllViews();
     }
 
-    private String getHiscoresUrl(HiscoreType mode) {
-        String url;
-        switch (mode) {
-            case UIM:
-                url = Constants.RS_HISCORES_UIM_URL;
-                break;
-            case IRONMAN:
-                url = Constants.RS_HISCORES_IRONMAN_URL;
-                break;
-            case HCIM:
-                url = Constants.RS_HISCORES_HCIM_URL;
-                break;
-            case DMM:
-                url = Constants.RS_HISCORES_DMM_URL;
-                break;
-            case SDMM:
-                url = Constants.RS_HISCORES_SDMM_URL;
-                break;
-            default:
-                url = Constants.RS_HISCORES_URL;
-        }
-        return url;
-    }
-
-    private HiscoreType getHiscoresMode(int buttonId) {
-        HiscoreType mode;
-        switch (buttonId) {
-            case R.id.hiscores_compare_ultimate_ironman:
-                mode = HiscoreType.UIM;
-                break;
-            case R.id.hiscores_compare_ironman:
-                mode = HiscoreType.IRONMAN;
-                break;
-            case R.id.hiscores_compare_hardcore_ironman:
-                mode = HiscoreType.HCIM;
-                break;
-            case R.id.hiscores_compare_dmm:
-                mode = HiscoreType.DMM;
-                break;
-            case R.id.hiscores_compare_sdmm:
-                mode = HiscoreType.SDMM;
-                break;
-            default:
-                mode = HiscoreType.NORMAL;
-                break;
-        }
-        return mode;
-    }
-
     private CompareMode getComparisonMode(int buttonId) {
         CompareMode mode;
         switch (buttonId) {
@@ -505,5 +424,14 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
     public void cancelVolleyRequests() {
         AppController.getInstance().cancelPendingRequests(COMPARE_REQUEST_P1_TAG);
         AppController.getInstance().cancelPendingRequests(COMPARE_REQUEST_P2_TAG);
+    }
+
+    @Override
+    public void onHiscoreTypeSelected(HiscoreType type) {
+        if (!allowUpdateUser())
+            return;
+        selectedHiscore = type;
+        updateIndicators();
+        getPlayerOneStats();
     }
 }

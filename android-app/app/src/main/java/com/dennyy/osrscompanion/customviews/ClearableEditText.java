@@ -2,6 +2,8 @@ package com.dennyy.osrscompanion.customviews;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -16,16 +18,20 @@ import com.dennyy.osrscompanion.R;
 
 
 public class ClearableEditText extends RelativeLayout implements TextWatcher, View.OnClickListener {
+    private final static String INSTANCE_STATE_KEY = "instance_state";
+    private final static String TEXT_KEY = "text_key";
+
     boolean flagNoExtractUiOn;
     private Button clearButton;
     private EditText editText;
-private String hint;
+    private String hint;
+
     public ClearableEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.ClearableEditText, 0, 0);
         try {
             flagNoExtractUiOn = ta.getBoolean(R.styleable.ClearableEditText_flagNoExtractUiOn, false);
-        hint = ta.getString(R.styleable.ClearableEditText_hint);
+            hint = ta.getString(R.styleable.ClearableEditText_hint);
         }
         finally {
             ta.recycle();
@@ -37,15 +43,16 @@ private String hint;
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        clearButton = (Button) findViewById(R.id.clearable_edittext_clear_button);
+        clearButton = findViewWithTag(getResources().getString(R.string.clearable_edittext_clear_button));
         clearButton.setOnClickListener(this);
-        editText = (EditText) findViewById(R.id.clearable_edittext);
+        editText = findViewWithTag(getResources().getString(R.string.clearable_edittext));
         editText.addTextChangedListener(this);
         editText.setHint(hint);
 
         if (flagNoExtractUiOn)
-            ((EditText) findViewById(R.id.clearable_edittext)).setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+            getEditText().setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
     }
+
     public EditText getEditText() {
         return editText;
     }
@@ -73,6 +80,27 @@ private String hint;
     @Override
     public void onClick(View v) {
         editText.setText("");
+    }
+
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(INSTANCE_STATE_KEY, super.onSaveInstanceState());
+        bundle.putString(TEXT_KEY, editText.getText().toString());
+        return bundle;
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            editText.setText(bundle.getString(TEXT_KEY));
+            super.onRestoreInstanceState(bundle.getParcelable(INSTANCE_STATE_KEY));
+            return;
+        }
+        super.onRestoreInstanceState(state);
     }
 }
 
