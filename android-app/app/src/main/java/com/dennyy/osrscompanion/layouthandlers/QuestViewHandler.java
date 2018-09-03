@@ -55,8 +55,8 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
 
         webView = view.findViewById(R.id.webview);
         progressBar = view.findViewById(R.id.progressBar);
-        questSelectorSpinner.setOnItemSelectedListener(this);
         questSelectorSpinner = view.findViewById(R.id.quest_selector_spinner);
+        questSelectorSpinner.setOnItemSelectedListener(this);
         view.findViewById(R.id.navigate_back_button).setOnClickListener(this);
         this.questsLoadedCallback = questsLoadedCallback;
         new LoadQuests(context, this).execute();
