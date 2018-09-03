@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.dennyy.osrscompanion.helpers.Constants;
@@ -12,10 +13,10 @@ import com.dennyy.osrscompanion.helpers.Utils;
 
 public abstract class BaseViewHandler {
     private Toast toast;
+    private final String defaultRsn;
     protected Context context;
     protected View view;
     protected Resources resources;
-    protected String defaultRsn;
     protected boolean wasRequesting;
 
     BaseViewHandler(Context context, View view) {
@@ -48,6 +49,24 @@ public abstract class BaseViewHandler {
                 Utils.hideKeyboard(context, view);
             }
         }, 500);
+    }
+
+    /**
+     * Try to get text from edittext as rsn else it uses the defaultRsn that the user set in the settings
+     * Check the result of this method also for null or empty and handle accordingly
+     *
+     * @param editText The edittext to get the text from
+     * @return String with the rsn
+     */
+    protected String getRsn(EditText editText) {
+        String result = editText.getText().toString();
+        if (Utils.isNullOrEmpty(result)) {
+            result = defaultRsn;
+        }
+        if (!Utils.isNullOrEmpty(result)) {
+            editText.setText(result);
+        }
+        return result;
     }
 
     public abstract boolean wasRequesting();

@@ -111,9 +111,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
         for (Map.Entry<CompareMode, Integer> entry : comparisonIndicators.entrySet()) {
             view.findViewById(entry.getValue()).setOnClickListener(this);
         }
-        if (!defaultRsn.isEmpty()) {
-            rsnEditText.setText(defaultRsn);
-        }
+        getRsn(rsnEditText);
         clearTables();
     }
 

@@ -82,9 +82,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
         actionsListView.setAdapter(adapter);
 
         initializeListeners();
-        if (!defaultRsn.isEmpty()) {
-            initializeUser(defaultRsn);
-        }
+        initializeCachedUser();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -94,9 +92,9 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
         }, 500);
     }
 
-    private void initializeUser(String rsn) {
-        rsnEditText.setText(rsn);
-        UserStats cachedData = AppDb.getInstance(context).getUserStats(rsn, hiscoreTypeSelectorLayout.getHiscoreType());
+    private void initializeCachedUser() {
+        String inputRsn = getRsn(rsnEditText);
+        UserStats cachedData = AppDb.getInstance(context).getUserStats(inputRsn, hiscoreTypeSelectorLayout.getHiscoreType());
         if (cachedData == null) {
             return;
         }
@@ -183,7 +181,6 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
 
     public void updateUser() {
         final String rsn = rsnEditText.getText().toString();
-        defaultRsn = rsn;
         refreshLayout.setRefreshing(true);
         wasRequesting = true;
         Utils.getString(hiscoreTypeSelectorLayout.getHiscoresUrl() + rsn, HISCORES_REQUEST_TAG, new Utils.VolleyCallback() {

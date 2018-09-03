@@ -74,17 +74,12 @@ public class CombatCalculatorViewHandler extends BaseViewHandler implements Hisc
         hiscoreTypeSelectorLayout.setOnTypeSelectedListener(this);
         selectedHiscoreType = hiscoreTypeSelectorLayout.getHiscoreType();
         initializeListeners();
-        if (selectedRsn != null && !selectedRsn.isEmpty()) {
-            initializeUser(selectedRsn);
-        }
-        else if (!defaultRsn.isEmpty()) {
-            initializeUser(defaultRsn);
-        }
+        initializeUser();
     }
 
-    private void initializeUser(String rsn) {
-        rsnEditText.setText(rsn);
-        UserStats cachedData = AppDb.getInstance(context).getUserStats(rsn, hiscoreTypeSelectorLayout.getHiscoreType());
+    private void initializeUser() {
+        final String inputRsn = getRsn(rsnEditText);
+        UserStats cachedData = AppDb.getInstance(context).getUserStats(inputRsn, hiscoreTypeSelectorLayout.getHiscoreType());
         if (cachedData == null) {
             return;
         }
@@ -218,7 +213,6 @@ public class CombatCalculatorViewHandler extends BaseViewHandler implements Hisc
 
     public void updateUser() {
         final String rsn = rsnEditText.getText().toString();
-        defaultRsn = rsn;
         refreshLayout.setRefreshing(true);
         wasRequesting = true;
         final HiscoreType hiscoreType = hiscoreTypeSelectorLayout.getHiscoreType();

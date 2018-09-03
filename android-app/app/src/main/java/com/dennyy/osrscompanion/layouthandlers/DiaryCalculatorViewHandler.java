@@ -81,8 +81,8 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
         diaryListView.setAdapter(adapter);
         diaryListView.collapseGroup(lastExpandedPosition);
         diaryListView.setOnGroupExpandListener(DiaryCalculatorViewHandler.this);
-        String inputRsn = rsnEditText.getText().toString();
-        initializeUser(Utils.isNullOrEmpty(inputRsn) ? defaultRsn: inputRsn);
+        String inputRsn = getRsn(rsnEditText);
+        initializeUser(inputRsn);
         if (diariesLoadedCallback != null) {
             diariesLoadedCallback.onDiariesLoaded(diariesMap);
         }
@@ -198,7 +198,6 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
 
     public void updateUser() {
         final String rsn = rsnEditText.getText().toString();
-        defaultRsn = rsn;
         refreshLayout.setVisibility(View.VISIBLE);
         wasRequesting = true;
         Utils.getString(hiscoreTypeSelectorLayout.getHiscoresUrl() + rsn, HISCORES_REQUEST_TAG, new Utils.VolleyCallback() {

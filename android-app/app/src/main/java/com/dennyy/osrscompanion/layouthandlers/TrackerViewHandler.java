@@ -88,9 +88,9 @@ public class TrackerViewHandler extends BaseViewHandler implements View.OnClickL
         rowParams = new TableRow.LayoutParams(0, (int) Utils.convertDpToPixel(30, context), 1f);
         trackerTable.removeAllViews();
 
-
-        if (!defaultRsn.isEmpty()) {
-            rsnEditText.setText(defaultRsn);
+        String inputRsn = getRsn(rsnEditText);
+        if (!Utils.isNullOrEmpty(inputRsn)) {
+            rsnEditText.setText(inputRsn);
             loadTrackDataFromDb();
             if (trackData.get(TrackDurationType.WEEK) != null)
                 updateUserFromPeriod(R.id.tracker_period_week, true);

@@ -64,7 +64,7 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
         refreshLayout = view.findViewById(R.id.hiscores_refresh_layout);
 
         initializeListeners();
-        initializeUser(defaultRsn);
+        initializeCachedUser();
     }
 
     private void initializeListeners() {
@@ -92,18 +92,21 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
         view.findViewById(R.id.hiscores_lookup_button).setOnClickListener(this);
     }
 
-    private void initializeUser(String rsn) {
-        if (!rsn.isEmpty()) {
-            rsnEditText.setText(rsn);
-            UserStats cachedData = AppDb.getInstance(context).getUserStats(rsn, selectedHiscore);
-            if (cachedData == null) {
-                return;
-            }
-            hiscoresData = cachedData.stats;
-            showToast(resources.getString(R.string.last_updated_at, Utils.convertTime(cachedData.dateModified)), Toast.LENGTH_LONG);
-            handleHiscoresData(hiscoresData);
-            view.findViewById(R.id.hiscores_data_layout).setVisibility(View.VISIBLE);
+    private void initializeCachedUser() {
+        String inputRsn = getRsn(rsnEditText);
+        if (Utils.isNullOrEmpty(inputRsn)) {
+            return;
         }
+        rsnEditText.setText(inputRsn);
+        UserStats cachedData = AppDb.getInstance(context).getUserStats(inputRsn, selectedHiscore);
+        if (cachedData == null) {
+            return;
+        }
+        hiscoresData = cachedData.stats;
+        showToast(resources.getString(R.string.last_updated_at, Utils.convertTime(cachedData.dateModified)), Toast.LENGTH_LONG);
+        handleHiscoresData(hiscoresData);
+        view.findViewById(R.id.hiscores_data_layout).setVisibility(View.VISIBLE);
+
     }
 
     @Override
@@ -146,7 +149,6 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
 
     public void updateUser() {
         final String rsn = rsnEditText.getText().toString();
-        defaultRsn = rsn;
         refreshLayout.setRefreshing(true);
         wasRequesting = true;
         Utils.getString(hiscoreTypeSelectorLayout.getHiscoresUrl() + rsn, HISCORES_REQUEST_TAG, new Utils.VolleyCallback() {
