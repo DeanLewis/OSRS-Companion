@@ -44,7 +44,7 @@ public class FairyRingFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        fairyRingViewHandler.cancelVolleyRequests();
+        fairyRingViewHandler.cancelRunningTasks();
     }
 
     @Override

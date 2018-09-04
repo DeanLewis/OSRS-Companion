@@ -584,7 +584,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
         AppController.getInstance().cancelPendingRequests(GE_REQUEST_TAG);
         AppController.getInstance().cancelPendingRequests(GEUPDATE_REQUEST_TAG);
         AppController.getInstance().cancelPendingRequests(GEGRAPH_REQUEST_TAG);

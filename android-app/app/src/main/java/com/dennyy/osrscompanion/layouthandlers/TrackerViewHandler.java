@@ -400,7 +400,7 @@ public class TrackerViewHandler extends BaseViewHandler implements View.OnClickL
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
         AppController.getInstance().cancelPendingRequests(TRACK_REQUEST_TAG);
     }
 }

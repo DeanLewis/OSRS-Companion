@@ -87,6 +87,6 @@ public class HiscoresLookupFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        hiscoresLookupViewHandler.cancelVolleyRequests();
+        hiscoresLookupViewHandler.cancelRunningTasks();
     }
 }

@@ -115,6 +115,6 @@ public class GrandExchangeFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        grandExchangeViewHandler.cancelVolleyRequests();
+        grandExchangeViewHandler.cancelRunningTasks();
     }
 }

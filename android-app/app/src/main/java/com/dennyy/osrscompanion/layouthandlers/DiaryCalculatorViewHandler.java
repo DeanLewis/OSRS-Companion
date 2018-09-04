@@ -251,7 +251,7 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
         AppController.getInstance().cancelPendingRequests(HISCORES_REQUEST_TAG);
     }
 

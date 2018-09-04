@@ -188,7 +188,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
     public void getPlayerOneStats() {
         final String rsn = rsnEditText.getText().toString();
         final String rsn2 = rsn2EditText.getText().toString();
-        cancelVolleyRequests();
+        cancelRunningTasks();
         refreshLayout.setRefreshing(true);
         wasRequesting = true;
         Utils.getString(hiscoreTypeSelectorLayout.getHiscoresUrl() + rsn, COMPARE_REQUEST_P1_TAG, new Utils.VolleyCallback() {
@@ -419,7 +419,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
         AppController.getInstance().cancelPendingRequests(COMPARE_REQUEST_P1_TAG);
         AppController.getInstance().cancelPendingRequests(COMPARE_REQUEST_P2_TAG);
     }

@@ -274,7 +274,7 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
         AppController.getInstance().cancelPendingRequests(TT_REQUEST_TAG);
     }
 

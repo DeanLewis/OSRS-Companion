@@ -149,7 +149,7 @@ public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
     }
 
     @Override

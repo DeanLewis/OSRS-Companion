@@ -156,7 +156,7 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
         handler.removeCallbacks(runnable);
         if (webView != null) {
             webView.clearHistory();

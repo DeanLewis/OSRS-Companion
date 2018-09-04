@@ -90,6 +90,6 @@ public class TrackerFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        trackerViewHandler.cancelVolleyRequests();
+        trackerViewHandler.cancelRunningTasks();
     }
 }

@@ -63,7 +63,7 @@ public class TreasureTrailFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        treasureTrailViewHandler.cancelVolleyRequests();
+        treasureTrailViewHandler.cancelRunningTasks();
     }
 
     @Override

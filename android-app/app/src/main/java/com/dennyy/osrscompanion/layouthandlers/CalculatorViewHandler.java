@@ -248,7 +248,7 @@ public class CalculatorViewHandler extends BaseViewHandler {
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
 
     }
 }

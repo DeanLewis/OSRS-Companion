@@ -165,7 +165,7 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
 
     }
 }

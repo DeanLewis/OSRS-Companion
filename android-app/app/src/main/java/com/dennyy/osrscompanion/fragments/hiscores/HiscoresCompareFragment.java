@@ -81,7 +81,7 @@ public class HiscoresCompareFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        hiscoresCompareViewHandler.cancelVolleyRequests();
+        hiscoresCompareViewHandler.cancelRunningTasks();
     }
 
     @Override

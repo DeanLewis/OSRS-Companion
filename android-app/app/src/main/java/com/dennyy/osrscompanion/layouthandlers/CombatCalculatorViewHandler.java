@@ -267,7 +267,7 @@ public class CombatCalculatorViewHandler extends BaseViewHandler implements Hisc
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
         AppController.getInstance().cancelPendingRequests(HISCORES_REQUEST_TAG);
     }
 

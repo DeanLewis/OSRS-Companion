@@ -119,7 +119,7 @@ public class NotesViewHandler extends BaseViewHandler implements TextWatcher {
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
 
     }
 

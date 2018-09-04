@@ -239,7 +239,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
             parent.removeView(oldView);
         }
         oldView = null;
-        viewHandler.cancelVolleyRequests();
+        viewHandler.cancelRunningTasks();
         return parent;
     }
 

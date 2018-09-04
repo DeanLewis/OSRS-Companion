@@ -104,6 +104,6 @@ public class QuestFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        questViewHandler.cancelVolleyRequests();
+        questViewHandler.cancelRunningTasks();
     }
 }

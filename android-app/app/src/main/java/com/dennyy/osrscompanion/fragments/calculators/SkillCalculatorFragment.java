@@ -97,6 +97,6 @@ public class SkillCalculatorFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        skillCalculatorViewHandler.cancelVolleyRequests();
+        skillCalculatorViewHandler.cancelRunningTasks();
     }
 }

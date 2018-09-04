@@ -226,7 +226,7 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
         handler.removeCallbacks(runnable);
         if (webView != null) {
             webView.clearHistory();

@@ -262,7 +262,7 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
     }
 
     @Override
-    public void cancelVolleyRequests() {
+    public void cancelRunningTasks() {
         AppController.getInstance().cancelPendingRequests(HISCORES_REQUEST_TAG);
     }
 

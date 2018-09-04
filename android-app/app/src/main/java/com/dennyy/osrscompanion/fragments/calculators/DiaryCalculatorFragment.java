@@ -102,6 +102,6 @@ public class DiaryCalculatorFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        diaryCalculatorViewHandler.cancelVolleyRequests();
+        diaryCalculatorViewHandler.cancelRunningTasks();
     }
 }

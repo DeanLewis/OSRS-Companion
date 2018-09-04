@@ -71,5 +71,5 @@ public abstract class BaseViewHandler {
 
     public abstract boolean wasRequesting();
 
-    public abstract void cancelVolleyRequests();
+    public abstract void cancelRunningTasks();
 }
