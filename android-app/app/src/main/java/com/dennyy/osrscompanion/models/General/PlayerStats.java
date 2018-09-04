@@ -50,12 +50,12 @@ public class PlayerStats extends LinkedHashMap<SkillType, Skill> {
             return skill;
         }
         else if (skillType.isMinigame()) {
-            return new Skill(skillType, 0, -1);
+            return new Skill(skillType, -1, -1);
         }
         else if (skillType == SkillType.HITPOINTS) {
-            return new Skill(skillType, 0, 10, RsUtils.exp(10));
+            return new Skill(skillType, -1, 10, RsUtils.exp(10));
         }
-        return new Skill(skillType, 0, 1, 0);
+        return new Skill(skillType, -1, 1, 0);
     }
 
     public int getLevel(SkillType skillType) {
