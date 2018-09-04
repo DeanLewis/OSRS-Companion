@@ -79,6 +79,7 @@
                 android:id="@+id/expandable_diary_listview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:groupIndicator="@drawable/expandable_group_arrows"
                 android:nestedScrollingEnabled="true">
             </ExpandableListView>
         </LinearLayout>

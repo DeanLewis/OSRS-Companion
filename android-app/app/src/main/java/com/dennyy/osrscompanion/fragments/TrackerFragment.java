@@ -48,25 +48,29 @@ public class TrackerFragment extends BaseFragment {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.tracker));
         trackerViewHandler = new TrackerViewHandler(getActivity(), view);
-        if (savedInstanceState != null) {
-            trackerViewHandler.trackData = (HashMap<TrackDurationType, TrackData>) savedInstanceState.getSerializable(TRACK_DATA_KEY);
-            trackerViewHandler.durationType = TrackDurationType.fromValue(savedInstanceState.getInt(TRACK_PERIOD_KEY));
-            if (savedInstanceState.getBoolean(WASREQUESTING)) {
-                trackerViewHandler.updateUser();
-            }
-            else if (trackerViewHandler.trackData != null && !trackerViewHandler.trackData.isEmpty() && trackerViewHandler.durationType != null) {
-                trackerViewHandler.updateIndicators();
-                getActivity().findViewById(R.id.tracker_data_layout).setVisibility(View.VISIBLE);
-                TrackData trackData = trackerViewHandler.trackData.get(trackerViewHandler.durationType);
-                if (trackData != null) {
-                    trackerViewHandler.handleTrackData(trackData.data);
-                }
+        if (savedInstanceState == null) {
+            return;
+        }
+
+        trackerViewHandler.trackData = (HashMap<TrackDurationType, TrackData>) savedInstanceState.getSerializable(TRACK_DATA_KEY);
+        trackerViewHandler.durationType = TrackDurationType.fromValue(savedInstanceState.getInt(TRACK_PERIOD_KEY));
+        if (savedInstanceState.getBoolean(WASREQUESTING)) {
+            trackerViewHandler.updateUser();
+        }
+        else if (trackerViewHandler.trackData != null && !trackerViewHandler.trackData.isEmpty() && trackerViewHandler.durationType != null) {
+            trackerViewHandler.updateIndicators();
+            getActivity().findViewById(R.id.tracker_data_layout).setVisibility(View.VISIBLE);
+            TrackData trackData = trackerViewHandler.trackData.get(trackerViewHandler.durationType);
+            if (trackData != null) {
+                trackerViewHandler.handleTrackData(trackData.data);
             }
         }
+
     }
 
     @Override
