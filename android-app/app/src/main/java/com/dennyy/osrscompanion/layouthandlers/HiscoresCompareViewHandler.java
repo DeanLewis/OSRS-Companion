@@ -152,7 +152,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
     }
 
     public void updateIndicators() {
-        hiscoreTypeSelectorLayout.setHiscoreType(hiscoreTypeSelectorLayout.getHiscoreType());
+        hiscoreTypeSelectorLayout.setHiscoreType(selectedHiscore);
 
         for (Map.Entry<CompareMode, Integer> entry : comparisonIndicators.entrySet()) {
             ((LineIndicatorButton) view.findViewById(entry.getValue())).setActive(false);
