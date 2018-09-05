@@ -95,9 +95,9 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
         inflater.inflate(R.menu.menu_main, menu);
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        final String selected = preferences.getString("pref_floating_views", "");
+        final String selected = preferences.getString(Constants.PREF_FLOATING_VIEWS, "");
 
-        final Switch mainSwitch = ((Switch) menu.findItem(R.id.myswitch).getActionView().findViewById(R.id.switchForActionBar));
+        final Switch mainSwitch = menu.findItem(R.id.myswitch).getActionView().findViewById(R.id.switchForActionBar);
 
         mainSwitch.setChecked(Utils.isMyServiceRunning(getActivity(), FloatingViewService.class));
         mainSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -131,7 +131,6 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
                 else {
                     Intent intent = new Intent(getActivity(), FloatingViewService.class);
                     if (isChecked && !Utils.isMyServiceRunning(getActivity(), FloatingViewService.class)) {
-                        String selected = preferences.getString("pref_floating_views", "");
                         int length = selected.split(CheckboxDialogPreference.DEFAULT_SEPARATOR).length;
                         if (length < 1) {
                             showToast(getResources().getString(R.string.no_floating_views_selected), Toast.LENGTH_SHORT);
