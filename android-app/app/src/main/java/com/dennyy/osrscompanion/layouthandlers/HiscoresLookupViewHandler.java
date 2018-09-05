@@ -23,15 +23,17 @@ import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.customviews.ClearableEditText;
 import com.dennyy.osrscompanion.customviews.LineIndicatorButton;
 import com.dennyy.osrscompanion.enums.HiscoreType;
+import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.models.General.Combat;
+import com.dennyy.osrscompanion.models.General.PlayerStats;
+import com.dennyy.osrscompanion.models.General.Skill;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -267,51 +269,24 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
     }
 
     public void handleHiscoresData(String result) {
-        String[] stats = result.split("\n");
-        if (stats.length < 20) {
+        PlayerStats playerStats = new PlayerStats(result);
+        if (playerStats.isUnranked()) {
             showToast(resources.getString(R.string.player_not_found), Toast.LENGTH_LONG);
             return;
         }
-        List<Integer> cmb = new ArrayList<>();
-        int totalLevel = 0;
-        long combatExp = 0;
-        for (int i = 0; i < stats.length; i++) {
-            String[] line = stats[i].split(",");
-            if (line.length == 3) {
-                int level = Integer.parseInt(line[1]);
-                long exp = Long.parseLong(line[2]);
-                cmb.add(level);
-                if (i > 0 && i < 8)
-                    combatExp += exp;
-                totalLevel += level;
-            }
-        }
-        double combat = Constants.DEFAULT_COMBAT;
-        if (cmb.size() > 7) {
-            int att = cmb.get(1);
-            int def = cmb.get(2);
-            int str = cmb.get(3);
-            int hp = cmb.get(4);
-            int range = cmb.get(5);
-            int pray = cmb.get(6);
-            int mage = cmb.get(7);
-            combat = RsUtils.combat(att, def, str, hp, range, pray, mage).level;
-        }
-        hiscoresTable.addView(createRow(-1, (int) combat, -1, combatExp, false));
-        for (int i = 0; i < stats.length; i++) {
-            String[] line = stats[i].split(",");
-            if (line.length == 3) {
-                int rank = Integer.parseInt(line[0]);
-                int level = Integer.parseInt(line[1]);
-                long exp = Long.parseLong(line[2]);
+        Combat combat = playerStats.getCombat();
+        hiscoresTable.addView(createRow(-1, (int) combat.getLevel(), -1, playerStats.getCombatExp(), false));
 
-                hiscoresTable.addView(createRow(i, i == 0 && rank == -1 ? totalLevel : level, rank, exp, false));
+        for (SkillType skillType : playerStats.keySet()) {
+            Skill skill = playerStats.getSkill(skillType);
+            if (skill.isMinigame()) {
+                hiscoresMinigameTable.addView(createRow(skill.getId(), -1, skill.getRank(), skill.getScore(), true));
             }
-            // minigames
-            if (line.length == 2) {
-                int rank = Integer.parseInt(line[0]);
-                int score = Integer.parseInt(line[1]);
-                hiscoresMinigameTable.addView(createRow(i, -1, rank, score, true));
+            else if (skill.isOverall()) {
+                hiscoresTable.addView(createRow(skill.getId(), playerStats.getTotalLevel(), skill.getRank(), playerStats.getTotalExp(), skill.isMinigame()));
+            }
+            else {
+                hiscoresTable.addView(createRow(skill.getId(), skill.getLevel(), skill.getRank(), skill.getExp(), skill.isMinigame()));
             }
         }
     }

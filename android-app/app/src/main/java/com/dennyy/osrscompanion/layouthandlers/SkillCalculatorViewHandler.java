@@ -26,12 +26,15 @@ import com.dennyy.osrscompanion.adapters.SkillSelectorSpinnerAdapter;
 import com.dennyy.osrscompanion.customviews.ClearableEditText;
 import com.dennyy.osrscompanion.customviews.HiscoreTypeSelectorLayout;
 import com.dennyy.osrscompanion.enums.HiscoreType;
+import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.ActionsDb;
 import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.General.Action;
+import com.dennyy.osrscompanion.models.General.PlayerStats;
+import com.dennyy.osrscompanion.models.General.Skill;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 
 import java.util.ArrayList;
@@ -96,8 +99,9 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
         if (cachedData == null) {
             return;
         }
+        hiscoresData = cachedData.stats;
         showToast(resources.getString(R.string.last_updated_at, Utils.convertTime(cachedData.dateModified)), Toast.LENGTH_LONG);
-        handleHiscoresData(cachedData.stats);
+        handleHiscoresData(hiscoresData);
     }
 
     private void initializeListeners() {
@@ -130,8 +134,8 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
 
 
     public void handleHiscoresData(String result) {
-        String[] stats = result.split("\n");
-        if (stats.length < 20) {
+        PlayerStats playerStats = new PlayerStats(result);
+        if (playerStats.isUnranked()) {
             showToast(resources.getString(R.string.player_not_found), Toast.LENGTH_LONG);
             return;
         }
@@ -140,18 +144,11 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
             return;
         }
         int selectedSkillId = skills.get(selectedIndex);
-        for (int i = 0; i < stats.length; i++) {
-            String[] line = stats[i].split(",");
-            if (selectedSkillId == i && line.length == 3) {
-                int level = Integer.parseInt(line[1]);
-                long exp = Long.parseLong(line[2]);
-
-                setValueToEditText(R.id.current_lvl, level);
-                setValueToEditText(R.id.target_lvl, Math.min(126, level + 1));
-                setValueToEditText(R.id.current_exp, exp);
-                setValueToEditText(R.id.target_exp, RsUtils.exp(level + 1));
-            }
-        }
+        Skill skill = playerStats.getSkill(SkillType.fromId(selectedSkillId));
+        setValueToEditText(R.id.current_lvl, skill.getLevel());
+        setValueToEditText(R.id.target_lvl, Math.min(126, skill.getLevel() + 1));
+        setValueToEditText(R.id.current_exp, skill.getExp());
+        setValueToEditText(R.id.target_exp, RsUtils.exp(skill.getLevel() + 1));
         adapter.updateListFromExp(getValueFromEditText(R.id.current_exp, 0, Constants.MAX_EXP), getValueFromEditText(R.id.target_exp, 0, Constants.MAX_EXP));
     }
 

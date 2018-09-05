@@ -24,17 +24,16 @@ import com.dennyy.osrscompanion.customviews.ClearableEditText;
 import com.dennyy.osrscompanion.customviews.LineIndicatorButton;
 import com.dennyy.osrscompanion.enums.CompareMode;
 import com.dennyy.osrscompanion.enums.HiscoreType;
+import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.models.Hiscores.TotalAndCombatInfo;
+import com.dennyy.osrscompanion.models.General.PlayerStats;
+import com.dennyy.osrscompanion.models.General.Skill;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -205,7 +204,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
             showToast(resources.getString(R.string.empty_rsn_error), Toast.LENGTH_SHORT);
             return false;
         }
-         if (rsn2EditText.getText().toString().isEmpty()) {
+        if (rsn2EditText.getText().toString().isEmpty()) {
             refreshLayout.setRefreshing(false);
             showToast(resources.getString(R.string.empty_second_rsn_error), Toast.LENGTH_SHORT);
             return false;
@@ -317,9 +316,9 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
     }
 
     public void handleHiscoresData(String rsn, String result1, String rsn2, String result2) {
-        String[] playerOneStats = result1.split("\n");
-        String[] playerTwoStats = result2.split("\n");
-        if (result1.isEmpty() && result2.isEmpty()) {
+        PlayerStats playerOneStats = new PlayerStats(result1);
+        PlayerStats playerTwoStats = new PlayerStats(result2);
+        if (playerOneStats.isUnranked() && playerTwoStats.isUnranked()) {
             showToast(resources.getString(R.string.hiscores_compare_both_not_ranked), Toast.LENGTH_LONG);
             refreshLayout.setRefreshing(false);
             return;
@@ -332,60 +331,44 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
         addRows(playerOneStats, playerTwoStats);
     }
 
-    private void addRows(final String[] playerOneStats, final String[] playerTwoStats) {
-        TotalAndCombatInfo playerOneInfo = new TotalAndCombatInfo(playerOneStats);
-        TotalAndCombatInfo playerTwoInfo = new TotalAndCombatInfo(playerTwoStats);
+    private void addRows(final PlayerStats playerOneStats, final PlayerStats playerTwoStats) {
         if (selectedComparison == CompareMode.LEVEL || selectedComparison == CompareMode.RANK)
-            hiscoresTable.addView(createRow(-1, (int) playerOneInfo.getCombatLevel(), (int) playerTwoInfo.getCombatLevel(), false));
+            hiscoresTable.addView(createRow(-1, (int) playerOneStats.getCombat().getLevel(), (int) playerTwoStats.getCombat().getLevel(), false));
         if (selectedComparison == CompareMode.EXP)
-            hiscoresTable.addView(createRow(-1, (int) playerOneInfo.getCombatExp(), (int) playerTwoInfo.getCombatExp(), false));
-        List<Integer> lengths = new ArrayList<>();
-        lengths.add(playerOneStats.length);
-        lengths.add(playerTwoStats.length);
-        int max = Collections.max(lengths);
-        for (int i = 0; i < max; i++) {
-            String[] playerOneLine = playerOneStats.length > i ? playerOneStats[i].split(",") : new String[]{};
-            String[] playerTwoLine = playerTwoStats.length > i ? playerTwoStats[i].split(",") : new String[]{};
-            lengths.clear();
-            lengths.add(playerOneLine.length);
-            lengths.add(playerTwoLine.length);
-            int lineMax = Collections.max(lengths);
-            if (lineMax == 3) {
-                int playerOneRank = playerOneLine.length > 2 ? Integer.parseInt(playerOneLine[0]) : -1;
-                int playerOneLevel = playerOneLine.length > 2 ? Integer.parseInt(playerOneLine[1]) : -1;
-                long playerOneExp = playerOneLine.length > 2 ? Long.parseLong(playerOneLine[2]) : -1;
-
-                int playerTwoRank = playerTwoLine.length > 2 ? Integer.parseInt(playerTwoLine[0]) : -1;
-                int playerTwoLevel = playerTwoLine.length > 2 ? Integer.parseInt(playerTwoLine[1]) : -1;
-                long playerTwoExp = playerTwoLine.length > 2 ? Long.parseLong(playerTwoLine[2]) : -1;
-
-                if (selectedComparison == CompareMode.LEVEL) {
-                    // use own calculated total level if the hiscores doesn't provide it
-                    playerOneLevel = i == 0 && playerOneLevel == 0 ? playerOneInfo.getTotalLevel() : playerOneLevel;
-                    playerTwoLevel = i == 0 && playerTwoLevel == 0 ? playerTwoInfo.getTotalLevel() : playerTwoLevel;
-                    hiscoresTable.addView(createRow(i, playerOneLevel, playerTwoLevel, false));
+            hiscoresTable.addView(createRow(-1, playerOneStats.getCombatExp(), playerTwoStats.getCombatExp(), false));
+        for (SkillType skillType : playerOneStats.keySet()) {
+            int skillId = skillType.getId();
+            Skill playerOneSkill = playerOneStats.getSkill(skillType);
+            Skill playerTwoSkill = playerTwoStats.getSkill(skillType);
+            if (selectedComparison == CompareMode.LEVEL) {
+                if (playerOneSkill.isMinigame()) {
+                    hiscoresMinigameTable.addView(createRow(skillId, playerOneSkill.getScore(), playerTwoSkill.getScore(), true));
                 }
-                if (selectedComparison == CompareMode.RANK)
-                    hiscoresTable.addView(createRow(i, playerOneRank, playerTwoRank, false));
-                if (selectedComparison == CompareMode.EXP) {
-                    // use own calculated total exp if the hiscores doesn't provide it
-                    playerOneExp = i == 0 && playerOneExp == 0 ? playerOneInfo.getTotalExp() : playerOneExp;
-                    playerTwoExp = i == 0 && playerTwoExp == 0 ? playerTwoInfo.getTotalExp() : playerTwoExp;
-                    hiscoresTable.addView(createRow(i, playerOneExp, playerTwoExp, false));
+                else if (playerOneSkill.isOverall()) {
+                    hiscoresTable.addView(createRow(skillId, playerOneStats.getTotalLevel(), playerTwoStats.getTotalLevel(), false));
+                }
+                else {
+                    hiscoresTable.addView(createRow(skillId, playerOneSkill.getLevel(), playerTwoSkill.getLevel(), false));
                 }
             }
-            // minigames
-            if (lineMax == 2) {
-                int playerOneRank = playerOneLine.length > 1 ? Integer.parseInt(playerOneLine[0]) : -1;
-                int playerOneScore = playerOneLine.length > 1 ? Integer.parseInt(playerOneLine[1]) : -1;
-
-                int playerTwoRank = playerTwoLine.length > 1 ? Integer.parseInt(playerTwoLine[0]) : -1;
-                int playerTwoScore = playerTwoLine.length > 1 ? Integer.parseInt(playerTwoLine[1]) : -1;
-
-                if (selectedComparison == CompareMode.RANK)
-                    hiscoresMinigameTable.addView(createRow(i, playerOneRank, playerTwoRank, true));
-                if (selectedComparison == CompareMode.EXP || selectedComparison == CompareMode.LEVEL)
-                    hiscoresMinigameTable.addView(createRow(i, playerOneScore, playerTwoScore, true));
+            else if (selectedComparison == CompareMode.RANK) {
+                if (playerOneSkill.isMinigame()) {
+                    hiscoresMinigameTable.addView(createRow(skillId, playerOneSkill.getRank(), playerTwoSkill.getRank(), true));
+                }
+                else {
+                    hiscoresTable.addView(createRow(skillId, playerOneSkill.getRank(), playerTwoSkill.getRank(), false));
+                }
+            }
+            else if (selectedComparison == CompareMode.EXP) {
+                if (playerOneSkill.isMinigame()) {
+                    hiscoresMinigameTable.addView(createRow(skillId, playerOneSkill.getScore(), playerTwoSkill.getScore(), true));
+                }
+                else if (playerOneSkill.isOverall()) {
+                    hiscoresTable.addView(createRow(skillId, playerOneStats.getTotalExp(), playerTwoStats.getTotalExp(), false));
+                }
+                else {
+                    hiscoresTable.addView(createRow(skillId, playerOneSkill.getExp(), playerTwoSkill.getExp(), false));
+                }
             }
         }
     }

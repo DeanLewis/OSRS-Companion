@@ -293,7 +293,7 @@ public class TrackerViewHandler extends BaseViewHandler implements View.OnClickL
 
     public void handleTrackData(String trackerResult) {
         String[] lines = trackerResult.split("\n");
-        if (lines.length < 20) {
+        if (lines.length < Constants.REQUIRED_STATS_LENGTH) {
             showToast(resources.getString(R.string.player_not_found), Toast.LENGTH_LONG);
             return;
         }

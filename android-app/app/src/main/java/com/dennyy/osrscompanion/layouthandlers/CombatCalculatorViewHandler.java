@@ -21,16 +21,14 @@ import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.customviews.ClearableEditText;
 import com.dennyy.osrscompanion.customviews.HiscoreTypeSelectorLayout;
 import com.dennyy.osrscompanion.enums.HiscoreType;
+import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
-import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.General.Combat;
 import com.dennyy.osrscompanion.models.General.NextLevel;
+import com.dennyy.osrscompanion.models.General.PlayerStats;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CombatCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectorLayout.HiscoreTypeSelectedListener, View.OnClickListener {
     public String hiscoresData;
@@ -131,39 +129,18 @@ public class CombatCalculatorViewHandler extends BaseViewHandler implements Hisc
 
 
     public void handleHiscoresData(String result) {
-        String[] stats = result.split("\n");
-        if (stats.length < 20) {
+        PlayerStats playerStats = new PlayerStats(result);
+        if (playerStats.isUnranked()) {
             showToast(resources.getString(R.string.player_not_found), Toast.LENGTH_LONG);
             return;
         }
-        List<Integer> cmb = new ArrayList<>();
-        for (int i = 0; i < stats.length; i++) {
-            String[] line = stats[i].split(",");
-            if (line.length == 3) {
-                int level = Integer.parseInt(line[1]);
-                cmb.add(level);
-            }
-            if (i == 8) {
-                break;
-            }
-        }
-        if (cmb.size() > 7) {
-            int att = cmb.get(1);
-            int def = cmb.get(2);
-            int str = cmb.get(3);
-            int hp = cmb.get(4);
-            int range = cmb.get(5);
-            int pray = cmb.get(6);
-            int mage = cmb.get(7);
-
-            setLevelToEditText(R.id.cmb_calc_att, att);
-            setLevelToEditText(R.id.cmb_calc_str, str);
-            setLevelToEditText(R.id.cmb_calc_def, def);
-            setLevelToEditText(R.id.cmb_calc_hp, hp);
-            setLevelToEditText(R.id.cmb_calc_range, range);
-            setLevelToEditText(R.id.cmb_calc_mage, mage);
-            setLevelToEditText(R.id.cmb_calc_pray, pray);
-        }
+        setLevelToEditText(R.id.cmb_calc_att, playerStats.getLevel(SkillType.ATTACK));
+        setLevelToEditText(R.id.cmb_calc_str, playerStats.getLevel(SkillType.STRENGTH));
+        setLevelToEditText(R.id.cmb_calc_def, playerStats.getLevel(SkillType.DEFENCE));
+        setLevelToEditText(R.id.cmb_calc_hp, playerStats.getLevel(SkillType.HITPOINTS));
+        setLevelToEditText(R.id.cmb_calc_range, playerStats.getLevel(SkillType.RANGED));
+        setLevelToEditText(R.id.cmb_calc_mage, playerStats.getLevel(SkillType.MAGIC));
+        setLevelToEditText(R.id.cmb_calc_pray, playerStats.getLevel(SkillType.PRAYER));
         calculateCombat();
     }
 
@@ -175,10 +152,10 @@ public class CombatCalculatorViewHandler extends BaseViewHandler implements Hisc
         int range = getLevelFromEditText(R.id.cmb_calc_range);
         int mage = getLevelFromEditText(R.id.cmb_calc_mage);
         int pray = getLevelFromEditText(R.id.cmb_calc_pray);
-        Combat combat = RsUtils.combat(att, def, str, hp, range, pray, mage);
-        NextLevel nextLevel = RsUtils.getNextLevel(att, def, str, hp, range, pray, mage);
-        ((TextView) view.findViewById(R.id.cmb_calc_level)).setText(String.format("%s", combat.level));
-        ((TextView) view.findViewById(R.id.cmb_calc_class)).setText(String.format("%s", combat.combatClass.getString()));
+        Combat combat = new Combat(att, def, str, hp, range, pray, mage);
+        NextLevel nextLevel = combat.getNextLevel();
+        ((TextView) view.findViewById(R.id.cmb_calc_level)).setText(String.format("%s", combat.getLevel()));
+        ((TextView) view.findViewById(R.id.cmb_calc_class)).setText(String.format("%s", combat.getCombatClass().getString()));
         ((TextView) view.findViewById(R.id.cmb_calc_nextlvl)).setText(String.format("Attack/Strength: %s\n Defence/Hitpoints: %s\n Prayer: %s\n Range: %s\n Mage: %s", nextLevel.AttackOrStrength, nextLevel.DefenceOrHitpoints, nextLevel.Prayer, nextLevel.Range, nextLevel.Mage));
     }
 
