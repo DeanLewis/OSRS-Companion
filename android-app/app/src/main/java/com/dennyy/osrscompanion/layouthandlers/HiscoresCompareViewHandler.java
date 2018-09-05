@@ -67,7 +67,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
         super(context, view);
         rowParams = new TableRow.LayoutParams(0, (int) Utils.convertDpToPixel(35, context), 1f);
 
-        scrollView = (NestedScrollView) view.findViewById(R.id.hiscores_compare_scrollview);
+        scrollView = view.findViewById(R.id.hiscores_compare_scrollview);
         rsnEditText = ((ClearableEditText) view.findViewById(R.id.hiscores_compare_rsn_1)).getEditText();
         rsn2EditText = ((ClearableEditText) view.findViewById(R.id.hiscores_compare_rsn_2)).getEditText();
         rsnEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -93,9 +93,9 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
                 return false;
             }
         });
-        hiscoresTable = (TableLayout) view.findViewById(R.id.hiscores_compare_table);
-        hiscoresMinigameTable = (TableLayout) view.findViewById(R.id.hiscores_compare_minigame_table);
-        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.hiscores_compare_refresh_layout);
+        hiscoresTable = view.findViewById(R.id.hiscores_compare_table);
+        hiscoresMinigameTable = view.findViewById(R.id.hiscores_compare_minigame_table);
+        refreshLayout = view.findViewById(R.id.hiscores_compare_refresh_layout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -330,13 +330,6 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
         ((TextView) view.findViewById(R.id.hiscores_compare_minigame_player_one_name)).setText(rsn);
         ((TextView) view.findViewById(R.id.hiscores_compare_minigame_player_two_name)).setText(rsn2);
         addRows(playerOneStats, playerTwoStats);
-//        scrollView.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                scrollView.smoothScrollTo(0, (int) Utils.convertDpToPixel(145, context));
-//
-//            }
-//        }, 100);
     }
 
     private void addRows(final String[] playerOneStats, final String[] playerTwoStats) {

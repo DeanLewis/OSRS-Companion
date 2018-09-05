@@ -31,6 +31,7 @@ import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.JsonItemsLoadedCallback;
 import com.dennyy.osrscompanion.models.GrandExchange.CustomLineDataSet;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeData;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeGraphData;
@@ -64,7 +65,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class GrandExchangeViewHandler extends BaseViewHandler implements View.OnClickListener {
+public class GrandExchangeViewHandler extends BaseViewHandler implements View.OnClickListener, JsonItemsLoadedCallback {
     public JsonItem jsonItem;
     public String geItemData;
     public String geupdateData;
@@ -88,9 +89,9 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
     private HashMap<GeGraphDays, Integer> indicators;
     private long lastRefreshTimeMs;
-    private ItemsLoadedCallback itemsLoadedCallback;
+    private JsonItemsLoadedCallback jsonItemsLoadedCallback;
 
-    public GrandExchangeViewHandler(final Context context, final View view, final ItemsLoadedCallback itemsLoadedCallback) {
+    public GrandExchangeViewHandler(final Context context, final View view, final JsonItemsLoadedCallback jsonItemsLoadedCallback) {
         super(context, view);
 
         indicators = new HashMap<>();
@@ -98,24 +99,24 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         indicators.put(GeGraphDays.QUARTER, R.id.ge_graph_show_quarter);
         indicators.put(GeGraphDays.MONTH, R.id.ge_graph_show_month);
         indicators.put(GeGraphDays.WEEK, R.id.ge_graph_show_week);
-
-        new LoadItems(context, new ItemsLoadedCallback() {
-            @Override
-            public void onItemsLoaded(ArrayList<JsonItem> items) {
-                allItems = new ArrayList<>(items);
-                updateView(view);
-                if (itemsLoadedCallback != null)
-                    itemsLoadedCallback.onItemsLoaded(null);
-            }
-
-            @Override
-            public void onLoadError() {
-                showToast(getResources().getString(R.string.exception_occurred, "exception", "loading items from file"), Toast.LENGTH_LONG);
-            }
-        }).execute();
+        this.jsonItemsLoadedCallback = jsonItemsLoadedCallback;
+        new LoadItems(context, this).execute();
         hideKeyboard();
     }
 
+    @Override
+    public void onJsonItemsLoaded(ArrayList<JsonItem> items) {
+        allItems = new ArrayList<>(items);
+        updateView(view);
+        if (jsonItemsLoadedCallback != null) {
+            jsonItemsLoadedCallback.onJsonItemsLoaded(null);
+        }
+    }
+
+    @Override
+    public void onJsonItemsLoadError() {
+        showToast(getResources().getString(R.string.exception_occurred, "exception", "loading items from file"), Toast.LENGTH_LONG);
+    }
 
     public void updateView(View view) {
         this.view = view;
@@ -628,12 +629,12 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
     private static class LoadItems extends AsyncTask<String, Void, ArrayList<JsonItem>> {
         private WeakReference<Context> context;
-        private ItemsLoadedCallback itemsLoadedCallback;
+        private JsonItemsLoadedCallback jsonItemsLoadedCallback;
         private ArrayList<JsonItem> allItems = new ArrayList<>();
 
-        private LoadItems(Context context, ItemsLoadedCallback itemsLoadedCallback) {
+        private LoadItems(Context context, JsonItemsLoadedCallback jsonItemsLoadedCallback) {
             this.context = new WeakReference<>(context);
-            this.itemsLoadedCallback = itemsLoadedCallback;
+            this.jsonItemsLoadedCallback = jsonItemsLoadedCallback;
         }
 
         @Override
@@ -671,21 +672,11 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         @Override
         protected void onPostExecute(ArrayList<JsonItem> items) {
             if (items.size() > 0) {
-                itemsLoadedCallback.onItemsLoaded(items);
+                jsonItemsLoadedCallback.onJsonItemsLoaded(items);
             }
             else {
-                itemsLoadedCallback.onLoadError();
+                jsonItemsLoadedCallback.onJsonItemsLoadError();
             }
         }
-    }
-
-    public interface ItemsLoadedCallback {
-        void onItemsLoaded(ArrayList<JsonItem> items);
-
-        void onLoadError();
-    }
-
-    public void setItemsLoadedCallback(ItemsLoadedCallback listener) {
-        this.itemsLoadedCallback = listener;
     }
 }

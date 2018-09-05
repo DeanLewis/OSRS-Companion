@@ -31,7 +31,7 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
-            Handler handler = new Handler(Looper.getMainLooper() /*UI thread*/);
+            Handler handler = new Handler(Looper.getMainLooper());
             Runnable workRunnable;
 
             @Override
@@ -45,7 +45,7 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
                         }
                     }
                 };
-                handler.postDelayed(workRunnable, 500 /*delay*/);
+                handler.postDelayed(workRunnable, 500);
             }
         });
         final EditText fromLvlInput = view.findViewById(R.id.from_lvl_input);
@@ -57,7 +57,7 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
-            Handler handler = new Handler(Looper.getMainLooper() /*UI thread*/);
+            Handler handler = new Handler(Looper.getMainLooper());
             Runnable workRunnable;
 
             @Override
@@ -71,7 +71,7 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
                         }
                     }
                 };
-                handler.postDelayed(workRunnable, 500 /*delay*/);
+                handler.postDelayed(workRunnable, 500);
             }
         });
         toLvlInput.addTextChangedListener(new TextWatcher() {
@@ -81,7 +81,7 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
-            Handler handler = new Handler(Looper.getMainLooper() /*UI thread*/);
+            Handler handler = new Handler(Looper.getMainLooper());
             Runnable workRunnable;
 
             @Override
@@ -95,12 +95,9 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
                         }
                     }
                 };
-                handler.postDelayed(workRunnable, 500 /*delay*/);
+                handler.postDelayed(workRunnable, 500);
             }
         });
-
-        ListView lv = view.findViewById(R.id.exp_listview);
-
     }
 
     private void calculateDifference() {

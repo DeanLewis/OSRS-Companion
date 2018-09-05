@@ -57,7 +57,7 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
 
         rowParams = new TableRow.LayoutParams(0, (int) Utils.convertDpToPixel(35, context), 1f);
 
-        scrollView = (NestedScrollView) view.findViewById(R.id.hiscores_scrollview);
+        scrollView = view.findViewById(R.id.hiscores_scrollview);
         rsnEditText = ((ClearableEditText) view.findViewById(R.id.hiscores_rsn_input)).getEditText();
         rsnEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -72,9 +72,9 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
             }
         });
 
-        hiscoresTable = (TableLayout) view.findViewById(R.id.hiscores_table);
-        hiscoresMinigameTable = (TableLayout) view.findViewById(R.id.hiscores_minigame_table);
-        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.hiscores_refresh_layout);
+        hiscoresTable = view.findViewById(R.id.hiscores_table);
+        hiscoresMinigameTable = view.findViewById(R.id.hiscores_minigame_table);
+        refreshLayout = view.findViewById(R.id.hiscores_refresh_layout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

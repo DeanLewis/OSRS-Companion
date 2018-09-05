@@ -21,6 +21,7 @@ import com.dennyy.osrscompanion.adapters.NothingSelectedSpinnerAdapter;
 import com.dennyy.osrscompanion.adapters.QuestSelectorSpinnerAdapter;
 import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.QuestsLoadedCallback;
 import com.dennyy.osrscompanion.models.General.Quest;
 
 import org.json.JSONArray;
@@ -34,7 +35,7 @@ import java.util.Comparator;
 
 import im.delight.android.webview.AdvancedWebView;
 
-public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, AdapterView.OnItemSelectedListener, View.OnTouchListener, View.OnClickListener {
+public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, AdapterView.OnItemSelectedListener, View.OnTouchListener, View.OnClickListener, QuestsLoadedCallback {
 
     public AdvancedWebView webView;
     public int selectedQuestIndex;
@@ -47,18 +48,22 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     private boolean clearHistory;
     private final Handler handler = new Handler();
     private Runnable runnable;
+    private QuestsLoadedCallback questsLoadedCallback;
 
     public QuestViewHandler(final Context context, View view, QuestsLoadedCallback questsLoadedCallback) {
         super(context, view);
 
         webView = view.findViewById(R.id.webview);
         progressBar = view.findViewById(R.id.progressBar);
+        questSelectorSpinner.setOnItemSelectedListener(this);
+        questSelectorSpinner = view.findViewById(R.id.quest_selector_spinner);
         view.findViewById(R.id.navigate_back_button).setOnClickListener(this);
-        initQuests(questsLoadedCallback);
+        this.questsLoadedCallback = questsLoadedCallback;
+        new LoadQuests(context, this).execute();
         initWebView();
     }
 
-    public void initWebView() {
+    private void initWebView() {
         webView.addPermittedHostname("oldschoolrunescape.wikia.com");
         webView.setThirdPartyCookiesEnabled(false);
         webView.setMixedContentAllowed(false);
@@ -77,26 +82,19 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         webView.setOnTouchListener(this);
     }
 
-    private void initQuests(final QuestsLoadedCallback questsLoadedCallback) {
-        new LoadQuests(context, new QuestsLoadedCallback() {
-            @Override
-            public void onItemsLoaded(ArrayList<Quest> loadedQuests) {
-                quests = new ArrayList<>(loadedQuests);
-                questSelectorSpinnerAdapter = new QuestSelectorSpinnerAdapter(context, quests);
-                questSelectorSpinner.setAdapter(new NothingSelectedSpinnerAdapter(questSelectorSpinnerAdapter, getString(R.string.select_a_quest), context));
-                if (questsLoadedCallback != null) {
-                    questsLoadedCallback.onItemsLoaded(null);
-                }
-            }
+    @Override
+    public void onQuestsLoaded(ArrayList<Quest> loadedQuests) {
+        quests = new ArrayList<>(loadedQuests);
+        questSelectorSpinnerAdapter = new QuestSelectorSpinnerAdapter(context, quests);
+        questSelectorSpinner.setAdapter(new NothingSelectedSpinnerAdapter(questSelectorSpinnerAdapter, getString(R.string.select_a_quest), context));
+        if (questsLoadedCallback != null) {
+            questsLoadedCallback.onQuestsLoaded(null);
+        }
+    }
 
-            @Override
-            public void onLoadError() {
-                showToast(getString(R.string.failed_to_load_quests), Toast.LENGTH_SHORT);
-            }
-        }).execute();
-
-        questSelectorSpinner = view.findViewById(R.id.quest_selector_spinner);
-        questSelectorSpinner.setOnItemSelectedListener(this);
+    @Override
+    public void onQuestsLoadError() {
+        showToast(getString(R.string.failed_to_load_quests), Toast.LENGTH_SHORT);
     }
 
     @Override
@@ -152,18 +150,12 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         @Override
         protected void onPostExecute(ArrayList<Quest> quests) {
             if (quests.size() > 0) {
-                questsLoadedCallback.onItemsLoaded(quests);
+                questsLoadedCallback.onQuestsLoaded(quests);
             }
             else {
-                questsLoadedCallback.onLoadError();
+                questsLoadedCallback.onQuestsLoadError();
             }
         }
-    }
-
-    public interface QuestsLoadedCallback {
-        void onItemsLoaded(ArrayList<Quest> loadedQuests);
-
-        void onLoadError();
     }
 
     @Override

@@ -17,6 +17,7 @@ import com.dennyy.osrscompanion.adapters.FairyRingSearchAdapter;
 import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.DelayedAutoCompleteTextView;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.FairyRingsLoadedCallback;
 import com.dennyy.osrscompanion.models.FairyRings.FairyRing;
 
 import org.json.JSONArray;
@@ -26,26 +27,26 @@ import org.json.JSONObject;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher, View.OnClickListener {
+public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher {
     public int selectedIndex;
 
     private DelayedAutoCompleteTextView autoCompleteTextView;
-    public ListView listView;
+    private ListView listView;
     private FairyRingSearchAdapter searchAdapter;
     private FairyRingListAdapter listViewAdapter;
     private ArrayList<FairyRing> fairyRings;
 
     public FairyRingViewHandler(Context context, final View view) {
         super(context, view);
-        new LoadItems(context, new FairyRingsLoadedLoadedCallback() {
+        new LoadItems(context, new FairyRingsLoadedCallback() {
             @Override
-            public void onLoaded(ArrayList<FairyRing> items) {
+            public void onFairyRingsLoaded(ArrayList<FairyRing> items) {
                 fairyRings = new ArrayList<>(items);
                 updateView(view);
             }
 
             @Override
-            public void onLoadError() {
+            public void onFairyRingsLoadError() {
                 showToast(resources.getString(R.string.exception_occurred, "exception", "loading items from file"), Toast.LENGTH_LONG);
             }
         }).execute();
@@ -102,26 +103,17 @@ public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher
     @Override
     public void afterTextChanged(Editable s) {
         if (s.toString().trim().length() == 0) {
-
             searchAdapter.resetItems();
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        switch (id) {
-
         }
     }
 
     private static class LoadItems extends AsyncTask<String, Void, ArrayList<FairyRing>> {
         private WeakReference<Context> context;
-        private FairyRingsLoadedLoadedCallback fairyRingsLoadedLoadedCallback;
+        private FairyRingsLoadedCallback fairyRingsLoadedCallback;
 
-        private LoadItems(Context context, FairyRingsLoadedLoadedCallback fairyRingsLoadedLoadedCallback) {
+        private LoadItems(Context context, FairyRingsLoadedCallback fairyRingsLoadedLoadedCallback) {
             this.context = new WeakReference<>(context);
-            this.fairyRingsLoadedLoadedCallback = fairyRingsLoadedLoadedCallback;
+            this.fairyRingsLoadedCallback = fairyRingsLoadedLoadedCallback;
         }
 
         @Override
@@ -148,18 +140,12 @@ public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher
         @Override
         protected void onPostExecute(ArrayList<FairyRing> items) {
             if (items.size() > 0) {
-                fairyRingsLoadedLoadedCallback.onLoaded(items);
+                fairyRingsLoadedCallback.onFairyRingsLoaded(items);
             }
             else {
-                fairyRingsLoadedLoadedCallback.onLoadError();
+                fairyRingsLoadedCallback.onFairyRingsLoadError();
             }
         }
-    }
-
-    public interface FairyRingsLoadedLoadedCallback {
-        void onLoaded(ArrayList<FairyRing> fairyRings);
-
-        void onLoadError();
     }
 
     @Override

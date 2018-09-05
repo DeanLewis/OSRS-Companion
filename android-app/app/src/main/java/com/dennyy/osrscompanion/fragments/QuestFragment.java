@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dennyy.osrscompanion.R;
+import com.dennyy.osrscompanion.interfaces.QuestsLoadedCallback;
 import com.dennyy.osrscompanion.layouthandlers.QuestViewHandler;
 import com.dennyy.osrscompanion.models.General.Quest;
 
@@ -69,16 +70,15 @@ public class QuestFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getString(R.string.quest_guide));
 
-        questViewHandler = new QuestViewHandler(getActivity(), view, new QuestViewHandler.QuestsLoadedCallback() {
+        questViewHandler = new QuestViewHandler(getActivity(), view, new QuestsLoadedCallback() {
             @Override
-            public void onItemsLoaded(ArrayList<Quest> ignored) {
+            public void onQuestsLoaded(ArrayList<Quest> loadedQuests) {
                 loadFragment(savedInstanceState);
             }
 
             @Override
-            public void onLoadError() { }
+            public void onQuestsLoadError() { }
         });
-
     }
 
     private void loadFragment(Bundle savedInstanceState) {

@@ -64,9 +64,9 @@ public class TrackerViewHandler extends BaseViewHandler implements View.OnClickL
             }
         });
         view.findViewById(R.id.tracker_lookup_button).setOnClickListener(this);
-        trackerTable = (TableLayout) view.findViewById(R.id.tracker_table);
-        scrollView = (NestedScrollView) view.findViewById(R.id.tracker_scrollview);
-        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.tracker_refresh_layout);
+        trackerTable = view.findViewById(R.id.tracker_table);
+        scrollView = view.findViewById(R.id.tracker_scrollview);
+        refreshLayout = view.findViewById(R.id.tracker_refresh_layout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

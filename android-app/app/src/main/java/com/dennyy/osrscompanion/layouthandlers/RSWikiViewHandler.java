@@ -49,7 +49,7 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
     }
 
 
-    public void initWebView() {
+    private void initWebView() {
         webView.addPermittedHostname("oldschoolrunescape.wikia.com");
         webView.setThirdPartyCookiesEnabled(false);
         webView.setMixedContentAllowed(false);
