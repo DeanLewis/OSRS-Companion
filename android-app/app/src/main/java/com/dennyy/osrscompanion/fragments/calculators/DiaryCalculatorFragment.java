@@ -24,8 +24,6 @@ public class DiaryCalculatorFragment extends BaseFragment {
     private static final String LAST_EXPANDED_INDEX_KEY = "last_expanded_index_key";
 
     private DiaryCalculatorViewHandler diaryCalculatorViewHandler;
-    private View view;
-
 
     public DiaryCalculatorFragment() {
         // Required empty public constructor

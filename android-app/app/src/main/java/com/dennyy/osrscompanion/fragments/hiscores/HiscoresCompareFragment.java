@@ -25,10 +25,7 @@ public class HiscoresCompareFragment extends BaseFragment {
     private static final String COMPARE_TYPE_KEY = "COMPARETYPEKEY";
     private static final String COMPARE_WAS_REQUESTING_KEY = "COMPARE_WAS REQUESTING";
 
-
     private HiscoresCompareViewHandler hiscoresCompareViewHandler;
-    private View view;
-
 
     public HiscoresCompareFragment() {
         // Required empty public constructor

@@ -19,6 +19,7 @@ import com.github.mikephil.charting.jobs.MoveViewJob;
 
 public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackClickListener {
 
+    protected View view;
     protected TextView toolbarTitle;
     protected String defaultRsn;
     private Toast toast;
@@ -42,7 +43,7 @@ public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackC
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        toolbarTitle = (TextView) getActivity().findViewById(R.id.toolbar_title);
+        toolbarTitle = getActivity().findViewById(R.id.toolbar_title);
         toolbarTitle.setTextColor(getResources().getColor(R.color.text));
         defaultRsn = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(Constants.PREF_RSN, "");
 

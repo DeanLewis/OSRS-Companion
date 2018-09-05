@@ -10,7 +10,6 @@ import com.dennyy.osrscompanion.fragments.BaseFragment;
 import com.dennyy.osrscompanion.layouthandlers.ExpCalculatorViewHandler;
 
 public class ExpCalculatorFragment extends BaseFragment {
-    private View view;
 
     public ExpCalculatorFragment() {
         // Required empty public constructor

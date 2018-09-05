@@ -15,10 +15,11 @@ import com.dennyy.osrscompanion.fragments.BaseTileFragment;
 import com.dennyy.osrscompanion.models.General.TileData;
 
 public class HiscoresFragment extends BaseTileFragment implements AdapterView.OnItemClickListener {
-    private View view;
+
     public HiscoresFragment() {
         super(2, 4);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -32,6 +33,7 @@ public class HiscoresFragment extends BaseTileFragment implements AdapterView.On
         toolbarTitle.setText(getResources().getString(R.string.hiscores));
         initializeTiles();
     }
+
     @Override
     protected void initializeTiles() {
         if (tiles.isEmpty()) {
@@ -45,6 +47,7 @@ public class HiscoresFragment extends BaseTileFragment implements AdapterView.On
         gridView.setAdapter(tileAdapter);
         gridView.setOnItemClickListener(this);
     }
+
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         TileData tileData = tiles.get(i);

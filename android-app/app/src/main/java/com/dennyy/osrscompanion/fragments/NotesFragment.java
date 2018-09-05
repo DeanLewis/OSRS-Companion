@@ -14,10 +14,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 public class NotesFragment extends BaseFragment {
+
     private static final String NOTE_KEY = "NOTE_KEY";
 
     private NotesViewHandler notesViewHandler;
-    private View view;
 
     public NotesFragment() {
         // Required empty public constructor
@@ -27,6 +27,7 @@ public class NotesFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.notes_layout, container, false);
+
         return view;
     }
 

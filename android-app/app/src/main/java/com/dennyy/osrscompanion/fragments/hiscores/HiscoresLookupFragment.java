@@ -17,15 +17,12 @@ import com.dennyy.osrscompanion.layouthandlers.HiscoresLookupViewHandler;
 
 public class HiscoresLookupFragment extends BaseFragment {
 
-    // bundle keys
     private static final String HISCORES_DATA_KEY = "hiscoresdatakey";
     private static final String HISCORES_RSN_DATA_KEY = "hiscoresrsndatakey";
     private static final String HISCORES_TYPE_KEY = "hiscorestypekey";
     private static final String HISCORES_WAS_REQUESTING_KEY = "hiscoreswasrequestingkey";
 
-
     private HiscoresLookupViewHandler hiscoresLookupViewHandler;
-    private View view;
 
     public HiscoresLookupFragment() {
         // Required empty public constructor
@@ -43,8 +40,8 @@ public class HiscoresLookupFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.hiscores_lookup_layout, container, false);
+
         return view;
     }
 

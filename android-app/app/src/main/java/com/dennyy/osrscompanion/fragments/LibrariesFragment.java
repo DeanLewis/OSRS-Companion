@@ -14,9 +14,6 @@ import com.dennyy.osrscompanion.customviews.LibraryCardview;
 
 public class LibrariesFragment extends BaseFragment {
 
-    private View view;
-
-
     public LibrariesFragment() {
         // Required empty public constructor
     }

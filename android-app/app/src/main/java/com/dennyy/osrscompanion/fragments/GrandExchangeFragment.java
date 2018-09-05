@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 public class GrandExchangeFragment extends BaseFragment {
 
-    // bundle keys & fields
     public static final String JSON_ITEM = "JSON_ITEM";
     public static final String GE_ITEM_DATA = "GE_ITEM_DATA";
     public static final String GE_UPDATE_DATA = "GE_UPDATE_DATA";
@@ -32,9 +31,7 @@ public class GrandExchangeFragment extends BaseFragment {
     public static final String WAS_REQUESTING_OSBUDDY = "WAS_REQUESTING_OSBUDDY";
     public static final String OSBUDDY_DATA = "OSBUDDY_DATA";
 
-
     private GrandExchangeViewHandler grandExchangeViewHandler;
-    private View view;
 
     public GrandExchangeFragment() {
         // Required empty public constructor
@@ -52,7 +49,6 @@ public class GrandExchangeFragment extends BaseFragment {
         inflater.inflate(R.menu.menu_ge, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

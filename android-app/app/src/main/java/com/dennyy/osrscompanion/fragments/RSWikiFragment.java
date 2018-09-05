@@ -12,9 +12,9 @@ import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.layouthandlers.RSWikiViewHandler;
 
 public class RSWikiFragment extends BaseFragment {
+
     private static final String WEBVIEW_STATE_KEY = "rswiki_webview_state";
 
-    private View view;
     private RSWikiViewHandler rsWikiViewHandler;
 
     public RSWikiFragment() {
@@ -34,7 +34,6 @@ public class RSWikiFragment extends BaseFragment {
         inflater.inflate(R.menu.menu_refresh_only, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

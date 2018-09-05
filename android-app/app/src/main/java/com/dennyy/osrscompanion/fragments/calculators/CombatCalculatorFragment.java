@@ -20,10 +20,7 @@ public class CombatCalculatorFragment extends BaseFragment {
     private static final String HISCORES_TYPE_KEY = "hiscores_type_key";
     private static final String HISCORES_WAS_REQUESTING_KEY = "hiscores_wasrequesting_key";
 
-
     private CombatCalculatorViewHandler combatCalculatorViewHandler;
-    private View view;
-
 
     public CombatCalculatorFragment() {
         // Required empty public constructor

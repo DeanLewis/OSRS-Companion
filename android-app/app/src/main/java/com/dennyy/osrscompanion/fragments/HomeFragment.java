@@ -36,9 +36,7 @@ import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.General.TileData;
 
 public class HomeFragment extends BaseTileFragment implements AdapterView.OnItemClickListener{
-
     private long lastSwitchTimeMs;
-    private View view;
 
     public HomeFragment() {
         super(2, 4);

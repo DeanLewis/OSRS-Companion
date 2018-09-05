@@ -25,8 +25,6 @@ public class SkillCalculatorFragment extends BaseFragment {
     private static final String WAS_REQUESTING_KEY = "was_requesting_key";
 
     private SkillCalculatorViewHandler skillCalculatorViewHandler;
-    private View view;
-
 
     public SkillCalculatorFragment() {
         // Required empty public constructor

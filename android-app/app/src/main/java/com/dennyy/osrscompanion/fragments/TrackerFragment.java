@@ -18,7 +18,6 @@ import java.util.HashMap;
 
 public class TrackerFragment extends BaseFragment {
 
-    // bundle keys
     private final String TRACK_DATA_KEY = "TRACKDATAKEY";
     private final String TRACK_RSN_KEY = "TRACKRSNKEY";
     private final String TRACK_PERIOD_KEY = "TRACKPERIODKEY";

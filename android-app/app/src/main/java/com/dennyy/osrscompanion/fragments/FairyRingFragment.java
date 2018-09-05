@@ -15,8 +15,6 @@ public class FairyRingFragment extends BaseFragment {
     private static final String FAIRY_RING_INDEX_KEY = "fairy_ring_index_key";
 
     private FairyRingViewHandler fairyRingViewHandler;
-    private View view;
-
 
     public FairyRingFragment() {
         // Required empty public constructor

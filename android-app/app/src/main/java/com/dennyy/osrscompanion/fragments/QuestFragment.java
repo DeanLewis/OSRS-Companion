@@ -16,11 +16,11 @@ import com.dennyy.osrscompanion.models.General.Quest;
 import java.util.ArrayList;
 
 public class QuestFragment extends BaseFragment {
+
     private static final String WEBVIEW_STATE_KEY = "webview_state";
     private static final String SELECTED_QUEST_INDEX_KEY = "selected_quest_index";
     private static final String WAS_REQUESTING_KEY = "was_requesting";
 
-    private View view;
     private QuestViewHandler questViewHandler;
 
     public QuestFragment() {
@@ -40,7 +40,6 @@ public class QuestFragment extends BaseFragment {
         inflater.inflate(R.menu.menu_refresh_only, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

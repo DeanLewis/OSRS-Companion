@@ -15,7 +15,6 @@ import com.dennyy.osrscompanion.fragments.BaseTileFragment;
 import com.dennyy.osrscompanion.models.General.TileData;
 
 public class CalculatorsFragment extends BaseTileFragment implements AdapterView.OnItemClickListener {
-    private View view;
 
     public CalculatorsFragment() {
         super(2, 4);
@@ -29,6 +28,7 @@ public class CalculatorsFragment extends BaseTileFragment implements AdapterView
         return view;
     }
 
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.calculators));

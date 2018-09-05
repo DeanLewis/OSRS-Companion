@@ -20,8 +20,6 @@ public class MathCalculatorFragment extends BaseFragment {
     private static final String CALCULATED = "CALCULATED";
 
     private CalculatorViewHandler calculatorViewHandler;
-    private View view;
-
 
     public MathCalculatorFragment() {
         // Required empty public constructor
