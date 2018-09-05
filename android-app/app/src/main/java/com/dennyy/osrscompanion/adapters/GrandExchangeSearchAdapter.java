@@ -2,6 +2,7 @@ package com.dennyy.osrscompanion.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.GrandExchange.JsonItem;
 
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import java.util.List;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 
-public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implements Filterable {
+public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implements Filterable, View.OnTouchListener {
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<JsonItem> grandExchangeItems;
@@ -43,23 +45,27 @@ public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implement
             convertView = inflater.inflate(R.layout.ge_search_row, null);
 
             viewHolder = new ViewHolder();
-            viewHolder.icon = (ImageView) convertView.findViewById(R.id.ge_search_item_img);
-            viewHolder.name = (TextView) convertView.findViewById(R.id.ge_search_item_name);
+            viewHolder.icon = convertView.findViewById(R.id.ge_search_item_img);
+            viewHolder.name = convertView.findViewById(R.id.ge_search_item_name);
 
             convertView.setTag(viewHolder);
         }
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        convertView.setOnTouchListener(this);
         JsonItem search = grandExchangeItems.get(position);
         viewHolder.name.setText(search.name);
-
         Glide.with(context).load(Constants.GE_IMG_SMALL_URL + search.id).into(viewHolder.icon);
         return convertView;
     }
 
-    public ArrayList<JsonItem> getItems() {
-        return grandExchangeItems;
+    public ArrayList<String> getItemIds() {
+        ArrayList<String> ids = new ArrayList<>();
+        for (JsonItem jsonItem : grandExchangeItems) {
+            ids.add(jsonItem.id);
+        }
+        return ids;
     }
 
     @Override
@@ -90,16 +96,45 @@ public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implement
         super.notifyDataSetChanged();
     }
 
-    public void updateItems(List<JsonItem> newList) {
+    public void updateItems(ArrayList<String> newList) {
         grandExchangeItems.clear();
         grandExchangeItems.trimToSize();
-        grandExchangeItems.addAll(newList);
+        grandExchangeItems.addAll(getItemsFromIds(newList));
         this.notifyDataSetChanged();
     }
 
     @Override
     public Filter getFilter() {
         return mFilter;
+    }
+
+    public ArrayList<JsonItem> getItemsFromIds(ArrayList<String> ids) {
+        ArrayList<JsonItem> jsonItems = new ArrayList<>();
+        for (String id : ids) {
+            JsonItem item = getItemById(id);
+            if (item == null) {
+                continue;
+            }
+            jsonItems.add(item);
+        }
+        return jsonItems;
+    }
+
+    private JsonItem getItemById(String id) {
+        for (JsonItem jsonItem : originalGrandExchangeItems) {
+            if (jsonItem.id.equals(id)) {
+                return jsonItem;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            Utils.hideKeyboard(context, view);
+        }
+        return false;
     }
 
     private static class ViewHolder {

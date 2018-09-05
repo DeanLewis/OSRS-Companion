@@ -227,7 +227,7 @@ public class Utils {
     public static void hideKeyboard(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null && view != null)
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
     }
 
     public static void hideKeyboard(Activity activity) {

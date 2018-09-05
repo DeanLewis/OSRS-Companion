@@ -3,19 +3,14 @@ package com.dennyy.osrscompanion.layouthandlers;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,6 +24,7 @@ import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.GrandExchangeSearchAdapter;
 import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
+import com.dennyy.osrscompanion.customviews.DelayedAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.LineIndicatorButton;
 import com.dennyy.osrscompanion.enums.GeGraphDays;
 import com.dennyy.osrscompanion.helpers.AppDb;
@@ -74,10 +70,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     public String geupdateData;
     public String geGraphData;
     public String osBuddyItemData;
-    public GrandExchangeSearchAdapter adapter;
-    public ArrayList<JsonItem> searchAdapterItems = new ArrayList<>();
     public GeGraphDays currentSelectedDays = GeGraphDays.ALL;
-    public int selectedAdapterIndex;
     public boolean wasRequestingGe;
     public boolean wasRequestingGeupdate;
     public boolean wasRequestingGegraph;
@@ -88,9 +81,10 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     private static final String GEGRAPH_REQUEST_TAG = "grandexchangegraphrequest";
     private static final String OSBUDDY_EXCHANGE_REQUEST_TAG = "osbuddy_exchange_request_tag";
 
-    private AutoCompleteTextView autoCompleteTextView;
+    private DelayedAutoCompleteTextView autoCompleteTextView;
     private SwipeRefreshLayout refreshLayout;
     private ArrayList<JsonItem> allItems = new ArrayList<>();
+    private GrandExchangeSearchAdapter adapter;
 
     private HashMap<GeGraphDays, Integer> indicators;
     private long lastRefreshTimeMs;
@@ -119,14 +113,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                 showToast(getResources().getString(R.string.exception_occurred, "exception", "loading items from file"), Toast.LENGTH_LONG);
             }
         }).execute();
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Utils.hideKeyboard(context, GrandExchangeViewHandler.super.view);
-            }
-        }, 200);
+        hideKeyboard();
     }
 
 
@@ -136,28 +123,30 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         autoCompleteTextView = ((ClearableAutoCompleteTextView) view.findViewById(R.id.ge_search_input)).getAutoCompleteTextView();
         if (jsonItem != null)
             autoCompleteTextView.setText(jsonItem.name);
-        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.ge_refresh_layout);
+        refreshLayout = view.findViewById(R.id.ge_refresh_layout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 if (allowUpdateItem()) {
-                    updateItem();
+                    updateItem(jsonItem.id);
                 }
             }
         });
         for (Map.Entry<GeGraphDays, Integer> entry : indicators.entrySet()) {
             view.findViewById(entry.getValue()).setOnClickListener(this);
         }
-        if (adapter == null)
+        if (adapter == null) {
             adapter = new GrandExchangeSearchAdapter(getActivity(), (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE), allItems);
+        }
         autoCompleteTextView.setAdapter(adapter);
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
                 Utils.hideKeyboard(getActivity(), autoCompleteTextView);
-                selectedAdapterIndex = i;
-                if (allowUpdateItem())
-                    updateItem();
+                jsonItem = (JsonItem) adapterView.getItemAtPosition(position);
+                if (allowUpdateItem()) {
+                    updateItem(jsonItem.id);
+                }
             }
         });
 
@@ -166,37 +155,10 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                 return false;
             }
         });
-        autoCompleteTextView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                autoCompleteTextView.setThreshold(3);
-                return false;
-            }
-        });
-        autoCompleteTextView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.toString().trim().length() == 0) {
-                    adapter.resetItems();
-                    searchAdapterItems.clear();
-                    searchAdapterItems.trimToSize();
-                }
-            }
-        });
     }
 
     private void initChartSettings(View view) {
-        LineChart chart = (LineChart) view.findViewById(R.id.ge_item_graph);
+        LineChart chart = view.findViewById(R.id.ge_item_graph);
         int white = getResources().getColor(R.color.text);
         chart.getDescription().setEnabled(false);
         chart.getAxisRight().setEnabled(false);
@@ -212,8 +174,12 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         paint.setColor(getResources().getColor(R.color.text));
     }
 
-    public void updateItem() {
-        jsonItem = adapter.getItem(selectedAdapterIndex);
+    public void updateItem(String id) {
+        setJsonItem(id);
+        if (jsonItem == null) {
+            showToast(getString(R.string.unexpected_error, getString(R.string.try_reloading_this_page)), Toast.LENGTH_SHORT);
+            return;
+        }
         activateRefreshCooldown();
         refreshLayout.setRefreshing(true);
         wasRequestingGe = true;
@@ -263,7 +229,19 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         });
     }
 
-    public void handleGeData() {
+    private void setJsonItem(String id) {
+        if (jsonItem != null) {
+            return;
+        }
+        for (JsonItem item : allItems) {
+            if (item.id.equals(id)) {
+                jsonItem = item;
+                break;
+            }
+        }
+    }
+
+    private void handleGeData() {
         try {
             JSONObject obj = new JSONObject(geItemData);
             JSONObject jItem = obj.getJSONObject("item");
@@ -280,37 +258,37 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             ((TextView) view.findViewById(R.id.ge_item_examine)).setText(item.description);
             ((TextView) view.findViewById(R.id.ge_item_price)).setText(RsUtils.kmbt(item.price, 2));
 
-            TextView itemChangeTextView = (TextView) view.findViewById(R.id.ge_item_change);
-            TextView itemChangePercentTextView = (TextView) view.findViewById(R.id.ge_item_change_percent);
+            TextView itemChangeTextView = view.findViewById(R.id.ge_item_change);
+            TextView itemChangePercentTextView = view.findViewById(R.id.ge_item_change_percent);
             itemChangeTextView.setText(String.format("%s%s", item.change < 0 ? "" : "+", RsUtils.kmbt(item.change)));
             itemChangePercentTextView.setText(String.format("%s%s%%", item.changePercent < 0 ? "" : "+", String.valueOf((int) Math.round(item.changePercent))));
             itemChangeTextView.setTextColor(item.change < 0 ? red : green);
             itemChangePercentTextView.setTextColor(item.change < 0 ? red : green);
 
-            TextView item30daysTextView = (TextView) view.findViewById(R.id.ge_item_30days);
-            TextView item30daysPercentTextView = (TextView) view.findViewById(R.id.ge_item_30days_percent);
+            TextView item30daysTextView = view.findViewById(R.id.ge_item_30days);
+            TextView item30daysPercentTextView = view.findViewById(R.id.ge_item_30days_percent);
             item30daysTextView.setText(String.format("%s%s", item.day30change < 0 ? "" : "+", RsUtils.kmbt(item.day30change)));
             item30daysPercentTextView.setText(String.format("%s%s%%", item.day30change < 0 ? "" : "+", String.valueOf((int) Math.round(item.day30changePercent))));
             item30daysTextView.setTextColor(item.day30change < 0 ? red : green);
             item30daysPercentTextView.setTextColor(item.day30change < 0 ? red : green);
 
-            TextView item90daysTextView = (TextView) view.findViewById(R.id.ge_item_90days);
-            TextView item90daysPercentTextView = (TextView) view.findViewById(R.id.ge_item_90days_percent);
+            TextView item90daysTextView = view.findViewById(R.id.ge_item_90days);
+            TextView item90daysPercentTextView = view.findViewById(R.id.ge_item_90days_percent);
             item90daysTextView.setText(String.format("%s%s", item.day90change < 0 ? "" : "+", RsUtils.kmbt(item.day90change)));
             item90daysPercentTextView.setText(String.format("%s%s%%", item.day90change < 0 ? "" : "+", String.valueOf((int) Math.round(item.day90changePercent))));
             item90daysTextView.setTextColor(item.day90change < 0 ? red : green);
             item90daysPercentTextView.setTextColor(item.day90change < 0 ? red : green);
 
 
-            TextView item180daysTextView = (TextView) view.findViewById(R.id.ge_item_180days);
-            TextView item180daysPercentTextview = (TextView) view.findViewById(R.id.ge_item_180days_percent);
+            TextView item180daysTextView = view.findViewById(R.id.ge_item_180days);
+            TextView item180daysPercentTextview = view.findViewById(R.id.ge_item_180days_percent);
             item180daysTextView.setText(String.format("%s%s", item.day180change < 0 ? "" : "+", RsUtils.kmbt(item.day180change)));
             item180daysPercentTextview.setText(String.format("%s%s%%", item.day180change < 0 ? "" : "+", String.valueOf((int) Math.round(item.day180changePercent))));
             item180daysTextView.setTextColor(item.day180change < 0 ? red : green);
             item180daysPercentTextview.setTextColor(item.day180change < 0 ? red : green);
 
-            TextView highAlchTextView = (TextView) view.findViewById(R.id.ge_item_high_alch);
-            TextView lowAlchTextView = (TextView) view.findViewById(R.id.ge_item_low_alch);
+            TextView highAlchTextView = view.findViewById(R.id.ge_item_high_alch);
+            TextView lowAlchTextView = view.findViewById(R.id.ge_item_low_alch);
             double lowAlch = Math.floor(Integer.valueOf(jsonItem.store) * 0.4);
             double highAlch = Math.floor(Integer.valueOf(jsonItem.store) * 0.6);
             lowAlchTextView.setText(RsUtils.kmbt(lowAlch < 1 ? 1 : lowAlch, 2));
@@ -345,20 +323,9 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         return geItem;
     }
 
-    private void setMembersIndicator(ImageView view) {
-        try {
-            InputStream ims = getActivity().getAssets().open("members.png");
-            Drawable d = Drawable.createFromStream(ims, null);
-            view.setImageDrawable(d);
-        }
-        catch (IOException ex) {
-            showToast(getResources().getString(R.string.exception_occurred, ex.getClass().getCanonicalName(), "loading members indicator"), Toast.LENGTH_LONG);
-        }
-    }
-
     public boolean allowUpdateItem() {
         long refreshPeriod = System.currentTimeMillis() - lastRefreshTimeMs;
-        if (autoCompleteTextView.getText().toString().isEmpty()) {
+        if (jsonItem == null && autoCompleteTextView.getText().toString().isEmpty()) {
             showToast(getResources().getString(R.string.empty_item_error), Toast.LENGTH_SHORT);
             refreshLayout.setRefreshing(false);
             return false;
@@ -369,11 +336,6 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             refreshLayout.setRefreshing(false);
             return false;
         }
-        if (selectedAdapterIndex > adapter.getCount() -1){
-            refreshLayout.setRefreshing(false);
-            return false;
-        }
-        JsonItem jsonItem = adapter.getItem(selectedAdapterIndex);
         if (jsonItem != null && jsonItem.id.equals("-1")) {
             refreshLayout.setRefreshing(false);
             return false;
@@ -381,7 +343,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         return true;
     }
 
-    public void loadGeupdate() {
+    private void loadGeupdate() {
         wasRequestingGeupdate = true;
         Utils.getString(Constants.GE_UPDATE_URL, GEUPDATE_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
@@ -415,7 +377,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         });
     }
 
-    public void handleGeUpdateData() {
+    private void handleGeUpdateData() {
         try {
             JSONObject obj = new JSONObject(geupdateData);
             TextView geupdateTextView = view.findViewById(R.id.geupdate);
@@ -434,7 +396,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         }
     }
 
-    public void loadGraph() {
+    private void loadGraph() {
         final String id = jsonItem.id;
         wasRequestingGegraph = true;
         Utils.getString(Constants.GE_GRAPH_URL(id), GEGRAPH_REQUEST_TAG, new Utils.VolleyCallback() {
@@ -469,9 +431,9 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         });
     }
 
-    public void handleGeGraphData() {
+    private void handleGeGraphData() {
         try {
-            LineChart chart = (LineChart) view.findViewById(R.id.ge_item_graph);
+            LineChart chart = view.findViewById(R.id.ge_item_graph);
             JSONObject dailyGraphData = new JSONObject(geGraphData).getJSONObject("daily");
             List<Entry> data = new ArrayList<>();
             for (Iterator<String> iter = dailyGraphData.keys(); iter.hasNext(); ) {
@@ -514,8 +476,8 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         }
     }
 
-    public void zoomGraphToDays(GeGraphDays days) {
-        LineChart chart = (LineChart) view.findViewById(R.id.ge_item_graph);
+    private void zoomGraphToDays(GeGraphDays days) {
+        LineChart chart = view.findViewById(R.id.ge_item_graph);
         chart.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
         chart.fitScreen();
         chart.setVisibleXRangeMaximum((long) days.getDays() * 86400000);
@@ -529,7 +491,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         ((LineIndicatorButton) view.findViewById(indicators.get(days))).setActive(true);
     }
 
-    public void loadOSBuddyExchange() {
+    private void loadOSBuddyExchange() {
         final String id = jsonItem.id;
         wasRequestingOsBuddy = true;
         setOSBuddyText("...", false);
@@ -559,7 +521,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         });
     }
 
-    public void handleOSBuddyData() {
+    private void handleOSBuddyData() {
         try {
             JSONObject obj = new JSONObject(osBuddyItemData);
             int buyPrice = Integer.parseInt(obj.getString("buying"));
@@ -608,15 +570,6 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         }
     }
 
-    public void reloadData() {
-        handleGeData();
-        handleGeUpdateData();
-        handleGeGraphData();
-        handleOSBuddyData();
-        zoomGraphToDays(currentSelectedDays);
-        view.findViewById(R.id.ge_data).setVisibility(View.VISIBLE);
-    }
-
     private void activateRefreshCooldown() {
         lastRefreshTimeMs = System.currentTimeMillis();
     }
@@ -644,7 +597,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
     public void reloadOnOrientationChanged() {
         if (wasRequestingGe) {
-            updateItem();
+            updateItem(jsonItem.id);
         }
         else if (!Utils.isNullOrEmpty(geItemData)) {
             view.findViewById(R.id.ge_data).setVisibility(View.VISIBLE);

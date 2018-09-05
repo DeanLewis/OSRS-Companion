@@ -11,7 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@null"
-            android:completionThreshold="9999"
+            android:completionThreshold="3"
             android:inputType="text"
             android:maxLines="1"
             android:paddingEnd="25dp"

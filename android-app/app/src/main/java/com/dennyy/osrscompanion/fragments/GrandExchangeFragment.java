@@ -26,7 +26,6 @@ public class GrandExchangeFragment extends BaseFragment {
     public static final String GE_UPDATE_DATA = "GE_UPDATE_DATA";
     public static final String GE_GRAPH_DATA = "GE_GRAPH_DATA";
     public static final String GE_GRAPH_SELECTION_DATA = "GE_GRAPH_SELECTION_DATA";
-    public static final String GE_SEARCH_ITEM_DATA = "GE_SEARCH_ITEM_DATA";
     public static final String WAS_REQUESTING_GE = "WAS_REQUESTING_GE";
     public static final String WAS_REQUESTING_GEUPDATE = "WAS_REQUESTING_GEUPDATE";
     public static final String WAS_REQUESTING_GEGRAPHS = "WAS_REQUESTING_GEGRAPHS";
@@ -60,7 +59,7 @@ public class GrandExchangeFragment extends BaseFragment {
         switch (item.getItemId()) {
             case R.id.action_ge_refresh:
                 if (grandExchangeViewHandler.allowUpdateItem())
-                    grandExchangeViewHandler.updateItem();
+                    grandExchangeViewHandler.updateItem(grandExchangeViewHandler.jsonItem.id);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -87,18 +86,15 @@ public class GrandExchangeFragment extends BaseFragment {
         if (savedInstanceState != null) {
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             grandExchangeViewHandler.jsonItem = (JsonItem) savedInstanceState.getSerializable(JSON_ITEM);
-            grandExchangeViewHandler.selectedAdapterIndex = savedInstanceState.getInt(ADAPTER_INDEX);
             grandExchangeViewHandler.geItemData = savedInstanceState.getString(GE_ITEM_DATA);
             grandExchangeViewHandler.geupdateData = savedInstanceState.getString(GE_UPDATE_DATA);
             grandExchangeViewHandler.geGraphData = savedInstanceState.getString(GE_GRAPH_DATA);
             grandExchangeViewHandler.osBuddyItemData = savedInstanceState.getString(OSBUDDY_DATA);
-            grandExchangeViewHandler.searchAdapterItems = (ArrayList<JsonItem>) savedInstanceState.getSerializable(GE_SEARCH_ITEM_DATA);
             grandExchangeViewHandler.currentSelectedDays = GeGraphDays.fromDays(savedInstanceState.getInt(GE_GRAPH_SELECTION_DATA));
             grandExchangeViewHandler.wasRequestingGe = savedInstanceState.getBoolean(WAS_REQUESTING_GE);
             grandExchangeViewHandler.wasRequestingGegraph = savedInstanceState.getBoolean(WAS_REQUESTING_GEGRAPHS);
             grandExchangeViewHandler.wasRequestingGeupdate = savedInstanceState.getBoolean(WAS_REQUESTING_GEUPDATE);
             grandExchangeViewHandler.wasRequestingOsBuddy = savedInstanceState.getBoolean(WAS_REQUESTING_OSBUDDY);
-            grandExchangeViewHandler.adapter.updateItems(grandExchangeViewHandler.searchAdapterItems);
 
             grandExchangeViewHandler.reloadOnOrientationChanged();
         }
@@ -112,8 +108,6 @@ public class GrandExchangeFragment extends BaseFragment {
         outState.putString(GE_UPDATE_DATA, grandExchangeViewHandler.geupdateData);
         outState.putString(GE_GRAPH_DATA, grandExchangeViewHandler.geGraphData);
         outState.putInt(GE_GRAPH_SELECTION_DATA, grandExchangeViewHandler.currentSelectedDays.getDays());
-        outState.putInt(ADAPTER_INDEX, grandExchangeViewHandler.selectedAdapterIndex);
-        outState.putSerializable(GE_SEARCH_ITEM_DATA, grandExchangeViewHandler.adapter.getItems());
         outState.putString(OSBUDDY_DATA, grandExchangeViewHandler.osBuddyItemData);
         outState.putBoolean(WAS_REQUESTING_GE, grandExchangeViewHandler.wasRequestingGe);
         outState.putBoolean(WAS_REQUESTING_GEGRAPHS, grandExchangeViewHandler.wasRequestingGegraph);
