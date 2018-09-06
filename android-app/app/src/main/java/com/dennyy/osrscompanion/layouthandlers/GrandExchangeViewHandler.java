@@ -326,7 +326,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
     public boolean allowUpdateItem() {
         long refreshPeriod = System.currentTimeMillis() - lastRefreshTimeMs;
-        if (jsonItem == null && autoCompleteTextView.getText().toString().isEmpty()) {
+        if (jsonItem == null || autoCompleteTextView.getText().toString().isEmpty()) {
             showToast(getResources().getString(R.string.empty_item_error), Toast.LENGTH_SHORT);
             refreshLayout.setRefreshing(false);
             return false;
