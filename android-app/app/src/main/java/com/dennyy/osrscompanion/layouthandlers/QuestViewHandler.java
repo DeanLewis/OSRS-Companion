@@ -217,7 +217,9 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     }
 
     public void restoreWebView(Bundle webViewState) {
-        webView.restoreState(webViewState);
+        if (webView != null) {
+            webView.restoreState(webViewState);
+        }
     }
 
     @Override
