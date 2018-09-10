@@ -16,15 +16,14 @@ public class ActionsDb extends SQLiteAssetHelper {
 
     private static ActionsDb instance;
 
-    public static synchronized ActionsDb getInstance() {
+    public static synchronized ActionsDb getInstance(Context context) {
         if (instance == null) {
-            instance = new ActionsDb(AppController.getInstance().getApplicationContext());
+            instance = new ActionsDb(context);
         }
         return instance;
     }
 
     private ActionsDb(Context context) {
-
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         setForcedUpgrade();
     }

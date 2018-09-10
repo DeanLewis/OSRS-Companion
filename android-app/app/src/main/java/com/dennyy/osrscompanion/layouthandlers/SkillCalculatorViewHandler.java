@@ -293,7 +293,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
             return;
         }
         selectedSkillId = skills.get(selectedIndex);
-        ArrayList<Action> actions = ActionsDb.getInstance().getActions(selectedSkillId);
+        ArrayList<Action> actions = ActionsDb.getInstance(context).getActions(selectedSkillId);
         adapter.updateList(actions);
         if (!Utils.isNullOrEmpty(hiscoresData)) {
             handleHiscoresData(hiscoresData);
