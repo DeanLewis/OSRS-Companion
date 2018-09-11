@@ -23,12 +23,12 @@ public class Constants {
     public static String ITEMIDLIST_URL = "https://www.dennyy.com/osrs/ge/json";
     public static String OSBUDDY_EXCHANGE_URL = "https://api.rsbuddy.com/grandExchange?a=guidePrice&i=";
 
-    public static String RS_HISCORES_URL = "http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=";
-    public static String RS_HISCORES_IRONMAN_URL = "http://services.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=";
-    public static String RS_HISCORES_UIM_URL = "http://services.runescape.com/m=hiscore_oldschool_ultimate/index_lite.ws?player=";
-    public static String RS_HISCORES_HCIM_URL = "http://services.runescape.com/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player=";
-    public static String RS_HISCORES_DMM_URL = "http://services.runescape.com/m=hiscore_oldschool_deadman/index_lite.ws?player=";
-    public static String RS_HISCORES_SDMM_URL = "http://services.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=";
+    public static String RS_HISCORES_URL = "https://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=";
+    public static String RS_HISCORES_IRONMAN_URL = "https://services.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=";
+    public static String RS_HISCORES_UIM_URL = "https://services.runescape.com/m=hiscore_oldschool_ultimate/index_lite.ws?player=";
+    public static String RS_HISCORES_HCIM_URL = "https://services.runescape.com/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player=";
+    public static String RS_HISCORES_DMM_URL = "https://services.runescape.com/m=hiscore_oldschool_deadman/index_lite.ws?player=";
+    public static String RS_HISCORES_SDMM_URL = "https://services.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=";
 
     public static int REFRESH_COOLDOWN_MS = 5000;
     public static int REFRESH_COOLDOWN_LONG_MS = 10000;
