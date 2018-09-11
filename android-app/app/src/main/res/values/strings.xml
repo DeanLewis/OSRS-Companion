@@ -275,7 +275,5 @@
         <item>osrs_wiki</item>
     </string-array>
     <string-array name="default_floating_views_selection">
-        <item>ge</item>
-        <item>hiscores_lookup</item>
     </string-array>
 </resources>
