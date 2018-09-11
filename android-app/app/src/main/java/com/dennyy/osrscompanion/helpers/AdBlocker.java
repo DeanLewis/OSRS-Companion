@@ -7,13 +7,12 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.dennyy.osrscompanion.AppController;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -24,17 +23,11 @@ import java.util.Set;
 public class AdBlocker {
     private static final Set<String> AD_HOSTS = new HashSet<>();
 
-    public static void init() {
+    public static void init(Context context) {
         if (AD_HOSTS.size() > 0) {
             return;
         }
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                loadFromAssets(AppController.getInstance().getApplicationContext());
-                return null;
-            }
-        }.execute();
+        new LoadSites(context).execute();
     }
 
     private static void loadFromAssets(Context context) {
@@ -82,6 +75,7 @@ public class AdBlocker {
     public static WebViewClient getWebViewClient() {
         return new WebViewClient() {
             private Map<String, Boolean> loadedUrls = new HashMap<>();
+
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 boolean ad;
@@ -96,5 +90,22 @@ public class AdBlocker {
                 return ad ? AdBlocker.createEmptyResource() : super.shouldInterceptRequest(view, request);
             }
         };
+    }
+
+    private static class LoadSites extends AsyncTask<Void, Void, Void> {
+        private WeakReference<Context> context;
+
+        private LoadSites(Context context) {
+            this.context = new WeakReference<>(context);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Context context = this.context.get();
+            if (context != null) {
+                loadFromAssets(context);
+            }
+            return null;
+        }
     }
 }

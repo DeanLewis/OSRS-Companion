@@ -84,7 +84,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
         }
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(FloatingViewService.this);
         EventBus.getDefault().register(this);
-        AdBlocker.init();
+        AdBlocker.init(this);
         windowManagerContainer = new WindowManagerContainer(this);
         windowManagerContainer.setListener(this);
         chatHeadManager = new DefaultChatHeadManager(this, windowManagerContainer, getFloatingViewPreferences(preferences));

@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements IBackButtonHandle
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AdBlocker.init();
+        AdBlocker.init(this);
         setContentView(R.layout.main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
