@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -61,6 +62,7 @@ public class Utils {
                 callback.always();
             }
         });
+        strReq.setRetryPolicy(new DefaultRetryPolicy(5000, 2, 2));
         AppController.getInstance().addToRequestQueue(strReq, tag);
     }
 
