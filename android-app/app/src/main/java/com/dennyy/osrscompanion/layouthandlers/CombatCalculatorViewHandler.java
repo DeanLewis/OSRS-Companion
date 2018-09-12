@@ -102,7 +102,7 @@ public class CombatCalculatorViewHandler extends BaseViewHandler implements Hisc
 
                 }
 
-                Handler handler = new Handler(Looper.getMainLooper() /*UI thread*/);
+                Handler handler = new Handler(Looper.getMainLooper());
                 Runnable workRunnable;
 
                 @Override
@@ -116,7 +116,7 @@ public class CombatCalculatorViewHandler extends BaseViewHandler implements Hisc
                             }
                         }
                     };
-                    handler.postDelayed(workRunnable, 500 /*delay*/);
+                    handler.postDelayed(workRunnable, 500);
                 }
             });
         }
@@ -243,7 +243,7 @@ public class CombatCalculatorViewHandler extends BaseViewHandler implements Hisc
                     handleHiscoresData(cachedData.stats);
                 }
                 else
-                    showToast(resources.getString(R.string.failed_to_obtain_data, "stats", error.getMessage()), Toast.LENGTH_LONG);
+                    showToast(resources.getString(R.string.failed_to_obtain_data, "stats", error.getClass().getSimpleName()), Toast.LENGTH_LONG);
             }
 
             @Override

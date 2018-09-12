@@ -225,7 +225,7 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
                     handleHiscoresData(cachedData.stats);
                 }
                 else
-                    showToast(resources.getString(R.string.failed_to_obtain_data, "stats", error.getMessage()), Toast.LENGTH_LONG);
+                    showToast(resources.getString(R.string.failed_to_obtain_data, "stats", error.getClass().getSimpleName()), Toast.LENGTH_LONG);
             }
 
             @Override

@@ -217,7 +217,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
                     getPlayerTwoStats(rsn, cachedData == null ? "" : cachedData.stats, rsn2);
                 }
                 else {
-                    showToast(resources.getString(R.string.failed_to_obtain_data, "player 1 data", error.getMessage()), Toast.LENGTH_LONG);
+                    showToast(resources.getString(R.string.failed_to_obtain_data, "player 1 data", error.getClass().getSimpleName()), Toast.LENGTH_LONG);
                     refreshLayout.setRefreshing(false);
                 }
             }
@@ -262,7 +262,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
                     handleHiscoresData(rsn, playerOneStats, rsn2, cachedData == null ? "" : cachedData.stats);
                 }
                 else
-                    showToast(resources.getString(R.string.failed_to_obtain_data, "player 2 data", error.getMessage()), Toast.LENGTH_LONG);
+                    showToast(resources.getString(R.string.failed_to_obtain_data, "player 2 data", error.getClass().getSimpleName()), Toast.LENGTH_LONG);
                 refreshLayout.setRefreshing(false);
             }
 

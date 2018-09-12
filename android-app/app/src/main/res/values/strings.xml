@@ -41,7 +41,7 @@
     <string name="empty_item_error">Enter an item to search for</string>
     <string name="ge_graph_loading">Graph is currently loading…</string>
     <string name="ok">Ok</string>
-    <string name="tracker_no_gains_found">No exp gains found on <u>https://crystalmathlabs.com</u>. If this is the first time checking your progress, it will start tracking the exp from now on</string>
+    <string name="tracker_no_gains_found">No exp gains found on Crystalmathlabs. If this is the first time checking your progress, it will start tracking the exp from now on</string>
     <string name="tracker_api_under_load">Crystalmathlabs servers are under heavy load, api temporarily disabled. Please try again later</string>
     <string name="tracker_load_from_cache">Crystalmathlabs servers are under heavy load, api temporarily disabled. Using cached data</string>
     <string name="tracker_load_from_network_error">Crystalmathlabs is currently unreachable. Using cached data from %1$s</string>

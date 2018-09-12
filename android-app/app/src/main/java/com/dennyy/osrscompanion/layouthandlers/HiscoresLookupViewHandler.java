@@ -180,7 +180,7 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
                     handleHiscoresData(cachedData.stats);
                 }
                 else
-                    showToast(resources.getString(R.string.failed_to_obtain_data, "stats", error.getMessage()), Toast.LENGTH_LONG);
+                    showToast(resources.getString(R.string.failed_to_obtain_data, "hiscore data",  error.getClass().getSimpleName()), Toast.LENGTH_LONG);
             }
 
             @Override

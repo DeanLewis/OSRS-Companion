@@ -16,7 +16,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
 import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
@@ -269,12 +268,10 @@ public class TrackerViewHandler extends BaseViewHandler implements View.OnClickL
             @Override
             public void onError(VolleyError error) {
                 refreshLayout.setRefreshing(false);
-                NetworkResponse response = error.networkResponse;
                 TrackData cachedData = AppDb.getInstance(context).getTrackData(rsn, durationType);
                 lastLoadedFromCache = true;
                 if (cachedData == null) {
-                    String errorMessage = response == null ? resources.getString(R.string.network_error) : Utils.trimMessage(new String(response.data), "message");
-                    showToast(resources.getString(R.string.failed_to_obtain_data, "track data", errorMessage), Toast.LENGTH_LONG);
+                    showToast(resources.getString(R.string.failed_to_obtain_data, "track data", error.getClass().getSimpleName()), Toast.LENGTH_LONG);
                     return;
                 }
                 trackerTable.removeAllViews();
@@ -297,7 +294,7 @@ public class TrackerViewHandler extends BaseViewHandler implements View.OnClickL
             showToast(resources.getString(R.string.player_not_found), Toast.LENGTH_LONG);
             return;
         }
-        
+
         TableLayout trackerTable = view.findViewById(R.id.tracker_table);
         int totalLevel = 0;
         int totalLevelGain = 0;
@@ -326,12 +323,6 @@ public class TrackerViewHandler extends BaseViewHandler implements View.OnClickL
                 trackerTable.addView(createRow(i, useTotalLevel ? totalLevel - totalLevelGain : startLvl, useTotalLevel ? totalLevel : endLvl, rankGains, Integer.parseInt(skillResult[0])));
             }
         }
-        //        scrollView.postDelayed(new Runnable() {
-        //            @Override
-        //            public void run() {
-        //                scrollView.smoothScrollTo(0, (int) Utils.convertDpToPixel(75, context));
-        //            }
-        //        }, 100);
     }
 
     private TableRow createRow(int skillId, int startLvl, int endLvl, int rank, int expGains) {
