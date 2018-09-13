@@ -1,6 +1,7 @@
 package com.dennyy.osrscompanion.models.General;
 
 import com.dennyy.osrscompanion.enums.SkillType;
+import com.dennyy.osrscompanion.helpers.RsUtils;
 
 public class Skill {
     private SkillType skillType;
@@ -52,5 +53,15 @@ public class Skill {
 
     public boolean isMinigame() {
         return skillType.isMinigame();
+    }
+
+    public static Skill getDefault(SkillType skillType) {
+        if (skillType.isMinigame()) {
+            return new Skill(skillType, -1, -1);
+        }
+        else if (skillType == SkillType.HITPOINTS) {
+            return new Skill(skillType, -1, 10, RsUtils.exp(10));
+        }
+        return new Skill(skillType, -1, 1, 0);
     }
 }

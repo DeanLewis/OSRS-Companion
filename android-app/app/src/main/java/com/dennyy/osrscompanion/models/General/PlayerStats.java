@@ -2,7 +2,6 @@ package com.dennyy.osrscompanion.models.General;
 
 import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.Constants;
-import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
 
 import java.util.LinkedHashMap;
@@ -33,13 +32,15 @@ public class PlayerStats extends LinkedHashMap<SkillType, Skill> {
                     totalLevel += level;
                     totalExp += Math.max(0, exp);
                 }
-                put(skillType, new Skill(SkillType.fromId(i), rank, level, exp));
+                Skill skill = exp > -1 ? new Skill(SkillType.fromId(i), rank, level, exp) : Skill.getDefault(SkillType.fromId(i));
+                put(skillType, skill);
             }
             // minigames
             else if (line.length == 2) {
                 int rank = Integer.parseInt(line[0]);
                 int score = Integer.parseInt(line[1]);
-                put(skillType, new Skill(SkillType.fromId(i), rank, score));
+                Skill skill = score > -1 ? new Skill(SkillType.fromId(i), rank, score) : Skill.getDefault(SkillType.fromId(i));
+                put(skillType, skill);
             }
         }
     }
@@ -49,13 +50,7 @@ public class PlayerStats extends LinkedHashMap<SkillType, Skill> {
         if (skill != null) {
             return skill;
         }
-        else if (skillType.isMinigame()) {
-            return new Skill(skillType, -1, -1);
-        }
-        else if (skillType == SkillType.HITPOINTS) {
-            return new Skill(skillType, -1, 10, RsUtils.exp(10));
-        }
-        return new Skill(skillType, -1, 1, 0);
+        return Skill.getDefault(skillType);
     }
 
     public int getLevel(SkillType skillType) {
