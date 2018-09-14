@@ -246,7 +246,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         try {
             JSONObject obj = new JSONObject(geItemData);
             JSONObject jItem = obj.getJSONObject("item");
-            GrandExchangeItem item = getItemFromJson(jsonItem.id, jItem);
+            GrandExchangeItem item = getItemFromJson(jsonItem.id, jsonItem.limit, jItem);
             int red = getResources().getColor(R.color.red);
             int green = getResources().getColor(R.color.green);
 
@@ -258,6 +258,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             ((TextView) view.findViewById(R.id.ge_item_name)).setText(item.name);
             ((TextView) view.findViewById(R.id.ge_item_examine)).setText(item.description);
             ((TextView) view.findViewById(R.id.ge_item_price)).setText(RsUtils.kmbt(item.price, 2));
+            ((TextView) view.findViewById(R.id.ge_buy_limit)).setText(item.limit < 0 ? getString(R.string.unknown) : RsUtils.kmbt(item.limit, 0));
 
             TextView itemChangeTextView = view.findViewById(R.id.ge_item_change);
             TextView itemChangePercentTextView = view.findViewById(R.id.ge_item_change_percent);
@@ -301,13 +302,14 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         }
     }
 
-    private GrandExchangeItem getItemFromJson(String id, JSONObject jsonItem) {
+    private GrandExchangeItem getItemFromJson(String id, int limit, JSONObject jsonItem) {
         GrandExchangeItem geItem = new GrandExchangeItem();
         try {
             geItem.id = id;
             geItem.name = jsonItem.getString("name");
             geItem.description = jsonItem.getString("description");
             geItem.members = jsonItem.getBoolean("members");
+            geItem.limit = limit;
             geItem.price = RsUtils.revkmbt(jsonItem.getJSONObject("current").getString("price").replace(",", ""));
             geItem.change = RsUtils.revkmbt(jsonItem.getJSONObject("today").getString("price").replace(",", ""));
             geItem.changePercent = RsUtils.getGEPercentChange(geItem.price, geItem.change);
@@ -319,7 +321,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             geItem.day180change = RsUtils.getGEPriceChange(geItem.price, geItem.day180changePercent);
         }
         catch (JSONException e) {
-            showToast(getResources().getString(R.string.exception_occurred, e.getClass().getCanonicalName(), "parsing json to object"), Toast.LENGTH_LONG);
+            showToast(getResources().getString(R.string.exception_occurred, e.getClass().getSimpleName(), "parsing json to object"), Toast.LENGTH_LONG);
         }
         return geItem;
     }
@@ -641,6 +643,16 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         protected ArrayList<JsonItem> doInBackground(String... params) {
             String json = Utils.readFromFile(context.get(), Constants.ITEMIDLIST_FILE_NAME);
             try {
+                HashMap<String, Integer> itemLimits = new HashMap<>();
+                String itemLimitsJson = Utils.readFromAssets(context.get(), "ge_limits.json");
+                JSONObject jsonObject = new JSONObject(itemLimitsJson);
+                Iterator itemLimitsIterator = jsonObject.keys();
+                while (itemLimitsIterator.hasNext()) {
+                    String itemId = (String) itemLimitsIterator.next();
+                    int limit = jsonObject.getInt(itemId);
+                    itemLimits.put(itemId, limit);
+                }
+
                 if (Utils.isNullOrEmpty(json)) {
                     InputStream is = context.get().getAssets().open("names.json");
                     int size = is.available();
@@ -660,6 +672,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                     geResult.id = id;
                     geResult.name = result.getString("name");
                     geResult.store = result.getString("store");
+                    geResult.limit = itemLimits.containsKey(id) ? itemLimits.get(id) : -1;
                     allItems.add(geResult);
                 }
             }

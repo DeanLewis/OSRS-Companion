@@ -186,17 +186,39 @@
                                 android:textColor="@color/green"/>
                         </LinearLayout>
 
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:text="@string/buy_limit"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold"/>
+
+                            <TextView
+                                android:id="@+id/ge_buy_limit"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:textColor="@color/text"/>
+                        </LinearLayout>
                     </LinearLayout>
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/input_background"
-                    android:orientation="horizontal">
+                        android:background="@drawable/input_background"
+                        android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="0dp"

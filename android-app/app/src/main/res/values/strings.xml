@@ -241,6 +241,8 @@
     <string name="hiscore_compare">Hiscore compare</string>
     <string name="clearable_edittext">clearable_edittext</string>
     <string name="clearable_edittext_clear_button">clearable_edittext_clear_button</string>
+    <string name="buy_limit">Buy limit/4h</string>
+    <string name="unknown">unknown</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

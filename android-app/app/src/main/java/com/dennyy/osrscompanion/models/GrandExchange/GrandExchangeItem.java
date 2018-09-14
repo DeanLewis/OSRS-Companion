@@ -5,6 +5,7 @@ public class GrandExchangeItem {
     public String id;
     public String name;
     public String description;
+    public int limit;
     public boolean members;
     public double price;
     public double change;

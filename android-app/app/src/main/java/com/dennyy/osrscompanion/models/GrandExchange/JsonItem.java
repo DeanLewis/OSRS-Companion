@@ -7,6 +7,7 @@ public class JsonItem implements Serializable{
     public String id;
     public String name;
     public String store;
+    public int limit;
 
     @Override
     public String toString() {
