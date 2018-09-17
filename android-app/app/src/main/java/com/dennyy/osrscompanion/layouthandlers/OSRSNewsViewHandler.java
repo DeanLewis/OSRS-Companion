@@ -22,11 +22,13 @@ import com.android.volley.VolleyError;
 import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.OSRSNewsAdapter;
+import com.dennyy.osrscompanion.asynctasks.OSRSNewsTask;
 import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.OSRSNewsParser;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.OSRSNewsLoadedCallback;
 import com.dennyy.osrscompanion.models.OSRSNews.OSRSNews;
 import com.dennyy.osrscompanion.models.OSRSNews.OSRSNewsDTO;
 
@@ -70,13 +72,15 @@ public class OSRSNewsViewHandler extends BaseViewHandler implements SwipeRefresh
     }
 
     private void loadNews() {
-        OSRSNewsDTO cachedData = AppDb.getInstance(context).getOSRSNews();
-        if (cachedData == null) {
-            refreshOSRSNews();
-        }
-        else {
-            handleRssData(cachedData.data);
-        }
+        new OSRSNewsTask(context, new OSRSNewsLoadedCallback() {
+            @Override
+            public void onOSRSNewsLoaded(OSRSNewsDTO osrsNewsDTO) {
+                if (osrsNewsDTO != null) {
+                    handleRssData(osrsNewsDTO.data);
+                }
+                refreshOSRSNews();
+            }
+        }).execute();
     }
 
     private void initWebView() {
