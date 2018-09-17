@@ -137,13 +137,13 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             view.findViewById(entry.getValue()).setOnClickListener(this);
         }
         if (adapter == null) {
-            adapter = new GrandExchangeSearchAdapter(getActivity(), (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE), allItems);
+            adapter = new GrandExchangeSearchAdapter(context, (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE), allItems);
         }
         autoCompleteTextView.setAdapter(adapter);
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
-                Utils.hideKeyboard(getActivity(), autoCompleteTextView);
+                Utils.hideKeyboard(context, autoCompleteTextView);
                 jsonItem = (JsonItem) adapterView.getItemAtPosition(position);
                 if (allowUpdateItem()) {
                     updateItem(jsonItem.id);
@@ -192,7 +192,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                 geItemData = result;
                 cacheInfoLinearLayout.setVisibility(View.GONE);
                 view.findViewById(R.id.ge_data).setVisibility(View.VISIBLE);
-                AppDb.getInstance(getActivity()).insertOrUpdateGrandExchangeData(jsonItem.id, result);
+                AppDb.getInstance(context).insertOrUpdateGrandExchangeData(jsonItem.id, result);
                 loadGraph();
                 loadGeupdate();
                 loadOSBuddyExchange();
@@ -202,7 +202,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             @Override
             public void onError(VolleyError error) {
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    GrandExchangeData cachedData = AppDb.getInstance(getActivity()).getGrandExchangeData(Integer.parseInt(jsonItem.id));
+                    GrandExchangeData cachedData = AppDb.getInstance(context).getGrandExchangeData(Integer.parseInt(jsonItem.id));
                     if (cachedData == null) {
                         showToast(getResources().getString(R.string.failed_to_obtain_data, "ge item data", getResources().getString(R.string.network_error)), Toast.LENGTH_LONG);
                         return;
@@ -250,7 +250,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             int red = getResources().getColor(R.color.red);
             int green = getResources().getColor(R.color.green);
 
-            Glide.with(getActivity()).load(Constants.GE_IMG_LARGE_URL + item.id).into((ImageView) view.findViewById(R.id.ge_item_icon));
+            Glide.with(context).load(Constants.GE_IMG_LARGE_URL + item.id).into((ImageView) view.findViewById(R.id.ge_item_icon));
             if (item.members) {
                 ((ImageView) view.findViewById(R.id.ge_item_members_indicator)).setImageDrawable(getResources().getDrawable(R.drawable.members));
             }
@@ -351,7 +351,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         Utils.getString(Constants.GE_UPDATE_URL, GEUPDATE_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                AppDb.getInstance(getActivity()).updateGrandExchangeUpdateData(result);
+                AppDb.getInstance(context).updateGrandExchangeUpdateData(result);
                 geupdateData = result;
                 handleGeUpdateData();
             }
@@ -359,7 +359,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             @Override
             public void onError(VolleyError error) {
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    GrandExchangeUpdateData cachedData = AppDb.getInstance(getActivity()).getGrandExchangeUpdateData();
+                    GrandExchangeUpdateData cachedData = AppDb.getInstance(context).getGrandExchangeUpdateData();
 
                     if (cachedData == null) {
                         showToast(getResources().getString(R.string.failed_to_obtain_data, "ge update data", getResources().getString(R.string.network_error)), Toast.LENGTH_LONG);
@@ -405,7 +405,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         Utils.getString(Constants.GE_GRAPH_URL(id), GEGRAPH_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                AppDb.getInstance(getActivity()).insertOrupdateGrandExchangeGraphData(id, result);
+                AppDb.getInstance(context).insertOrupdateGrandExchangeGraphData(id, result);
                 geGraphData = result;
                 handleGeGraphData();
             }
@@ -413,7 +413,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             @Override
             public void onError(VolleyError error) {
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    GrandExchangeGraphData cachedData = AppDb.getInstance(getActivity()).getGrandExchangeGraphData(Integer.parseInt(id));
+                    GrandExchangeGraphData cachedData = AppDb.getInstance(context).getGrandExchangeGraphData(Integer.parseInt(id));
                     if (cachedData == null) {
                         showToast(getResources().getString(R.string.failed_to_obtain_data, "ge data", getResources().getString(R.string.network_error)), Toast.LENGTH_LONG);
                         return;
@@ -501,14 +501,14 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         Utils.getString(Constants.OSBUDDY_EXCHANGE_URL + id, OSBUDDY_EXCHANGE_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                AppDb.getInstance(getActivity()).insertOrUpdateOSBuddyExchangeData(id, result);
+                AppDb.getInstance(context).insertOrUpdateOSBuddyExchangeData(id, result);
                 osBuddyItemData = result;
                 handleOSBuddyData();
             }
 
             @Override
             public void onError(VolleyError error) {
-                OSBuddyExchangeData cachedData = AppDb.getInstance(getActivity()).getOSBuddyExchangeData(Integer.parseInt(id));
+                OSBuddyExchangeData cachedData = AppDb.getInstance(context).getOSBuddyExchangeData(Integer.parseInt(id));
                 if (cachedData == null) {
                     setOSBuddyText(getResources().getString(R.string.osb_error), true);
                     return;
@@ -579,10 +579,6 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
     private Resources getResources() {
         return this.resources;
-    }
-
-    private Context getActivity() {
-        return this.context;
     }
 
     @Override
