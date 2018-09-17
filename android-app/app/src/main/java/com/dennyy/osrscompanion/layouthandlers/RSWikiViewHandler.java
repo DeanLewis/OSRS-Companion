@@ -143,7 +143,7 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
 
     @Override
     public void onExternalPageRequest(String url) {
-        showToast(getString(R.string.external_navigation_prohibited), Toast.LENGTH_SHORT);
+        showToast(getString(R.string.external_navigation_prohibited, "the wiki"), Toast.LENGTH_SHORT);
     }
 
     public void restoreWebView(Bundle webViewState) {
