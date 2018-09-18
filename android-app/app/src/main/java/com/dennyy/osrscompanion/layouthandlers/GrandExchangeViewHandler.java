@@ -23,6 +23,8 @@ import com.bumptech.glide.Glide;
 import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.GrandExchangeSearchAdapter;
+import com.dennyy.osrscompanion.asynctasks.GetOSBuddyExchangeSummaryTask;
+import com.dennyy.osrscompanion.asynctasks.WriteOSBuddyExchangeSummaryTask;
 import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.DelayedAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.LineIndicatorButton;
@@ -32,13 +34,14 @@ import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.JsonItemsLoadedCallback;
+import com.dennyy.osrscompanion.interfaces.OSBuddySummaryLoadedCallback;
 import com.dennyy.osrscompanion.models.GrandExchange.CustomLineDataSet;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeData;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeGraphData;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeItem;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeUpdateData;
 import com.dennyy.osrscompanion.models.GrandExchange.JsonItem;
-import com.dennyy.osrscompanion.models.OSBuddy.OSBuddyExchangeData;
+import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryItem;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -50,8 +53,6 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -90,6 +91,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     private HashMap<GeGraphDays, Integer> indicators;
     private long lastRefreshTimeMs;
     private JsonItemsLoadedCallback jsonItemsLoadedCallback;
+    private HashMap<String, OSBuddySummaryItem> summaryItems = new HashMap<>();
 
     public GrandExchangeViewHandler(final Context context, final View view, final JsonItemsLoadedCallback jsonItemsLoadedCallback) {
         super(context, view);
@@ -101,6 +103,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         indicators.put(GeGraphDays.WEEK, R.id.ge_graph_show_week);
         this.jsonItemsLoadedCallback = jsonItemsLoadedCallback;
         new LoadItems(context, this).execute();
+        new GetOSBuddyExchangeSummaryTask(context, loadSummaryDataCallback()).execute();
         hideKeyboard();
     }
 
@@ -186,7 +189,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         wasRequestingGe = true;
         final LinearLayout cacheInfoLinearLayout = view.findViewById(R.id.ge_cache_info_wrapper);
         final TextView cacheInfoTextView = view.findViewById(R.id.ge_cache_info);
-        Utils.getString(Constants.GE_ITEM_URL + jsonItem.id, GE_REQUEST_TAG, new Utils.VolleyCallback() {
+        Utils.getString(Constants.GE_ITEM_URL + jsonItem.id, GE_REQUEST_TAG, false, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
                 geItemData = result;
@@ -204,7 +207,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                     GrandExchangeData cachedData = AppDb.getInstance(context).getGrandExchangeData(Integer.parseInt(jsonItem.id));
                     if (cachedData == null) {
-                        showToast(getResources().getString(R.string.failed_to_obtain_data, "ge item data", getResources().getString(R.string.network_error)), Toast.LENGTH_LONG);
+                        showToast(getResources().getString(R.string.failed_to_obtain_data, "GE item data", getResources().getString(R.string.network_error)), Toast.LENGTH_LONG);
                         return;
                     }
                     geItemData = cachedData.data;
@@ -495,47 +498,33 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     }
 
     private void loadOSBuddyExchange() {
-        final String id = jsonItem.id;
         wasRequestingOsBuddy = true;
         setOSBuddyText("...", false);
-        Utils.getString(Constants.OSBUDDY_EXCHANGE_URL + id, OSBUDDY_EXCHANGE_REQUEST_TAG, new Utils.VolleyCallback() {
-            @Override
-            public void onSuccess(String result) {
-                AppDb.getInstance(context).insertOrUpdateOSBuddyExchangeData(id, result);
-                osBuddyItemData = result;
-                handleOSBuddyData();
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-                OSBuddyExchangeData cachedData = AppDb.getInstance(context).getOSBuddyExchangeData(Integer.parseInt(id));
-                if (cachedData == null) {
-                    setOSBuddyText(getResources().getString(R.string.osb_error), true);
-                    return;
-                }
-                osBuddyItemData = cachedData.data;
-                handleOSBuddyData();
-            }
-
-            @Override
-            public void always() {
-                wasRequestingOsBuddy = false;
-            }
-        });
+        new GetOSBuddyExchangeSummaryTask(context, loadSummaryDataCallback()).execute();
     }
 
     private void handleOSBuddyData() {
-        try {
-            JSONObject obj = new JSONObject(osBuddyItemData);
-            int buyPrice = Integer.parseInt(obj.getString("buying"));
-            int sellPrice = Integer.parseInt(obj.getString("selling"));
-            String buyText = buyPrice < 1 ? getResources().getString(R.string.inactive) : RsUtils.kmbt(buyPrice, 2);
-            String sellText = sellPrice < 1 ? getResources().getString(R.string.inactive) : RsUtils.kmbt(sellPrice, 2);
-            setOSBuddyText(buyText, sellText, false);
+        if (summaryItems.isEmpty()) {
+            try {
+                parseOSBuddySummary();
+            }
+            catch (JSONException e) {
+                showToast(getResources().getString(R.string.exception_occurred, e.getClass().getCanonicalName(), "parsing osbuddy data"), Toast.LENGTH_LONG);
+            }
         }
-        catch (JSONException e) {
-            showToast(getResources().getString(R.string.exception_occurred, e.getClass().getCanonicalName(), "parsing osbuddy data"), Toast.LENGTH_LONG);
+        if (jsonItem == null) {
+            return;
         }
+        OSBuddySummaryItem summaryItem = summaryItems.get(jsonItem.id);
+        if (summaryItem == null) {
+            return;
+        }
+
+        int buyPrice = summaryItem.buyPrice;
+        int sellPrice = summaryItem.sellPrice;
+        String buyText = buyPrice < 1 ? getResources().getString(R.string.inactive) : RsUtils.kmbt(buyPrice, 2);
+        String sellText = sellPrice < 1 ? getResources().getString(R.string.inactive) : RsUtils.kmbt(sellPrice, 2);
+        setOSBuddyText(buyText, sellText, false);
     }
 
     private void setOSBuddyText(String buyText, String sellText, boolean isError) {
@@ -549,6 +538,66 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
     private void setOSBuddyText(String text, boolean isError) {
         setOSBuddyText(text, text, isError);
+    }
+
+    private OSBuddySummaryLoadedCallback loadSummaryDataCallback() {
+        return new OSBuddySummaryLoadedCallback() {
+            @Override
+            public void onContentLoaded(HashMap<String, OSBuddySummaryItem> content, boolean cacheExpired) {
+                if (content.isEmpty() || cacheExpired) {
+                    Utils.getString(Constants.OSBUDDY_EXCHANGE_SUMMARY_URL, OSBUDDY_EXCHANGE_REQUEST_TAG, new Utils.VolleyCallback() {
+                        @Override
+                        public void onSuccess(String result) {
+                            new WriteOSBuddyExchangeSummaryTask(context, result).execute();
+                            osBuddyItemData = result;
+                            handleOSBuddyData();
+                        }
+
+                        @Override
+                        public void onError(VolleyError error) {
+                            setOSBuddyText(getResources().getString(R.string.osb_error), true);
+                        }
+
+                        @Override
+                        public void always() {
+                            wasRequestingOsBuddy = false;
+                        }
+                    });
+                }
+                else {
+                    summaryItems = content;
+                    handleOSBuddyData();
+                }
+            }
+
+            @Override
+            public void onContentLoadError() {
+                showToast(getResources().getString(R.string.exception_occurred, "exception", "loading osbuddy prices"), Toast.LENGTH_LONG);
+            }
+        };
+    }
+
+    private void parseOSBuddySummary() throws JSONException {
+        if (Utils.isNullOrEmpty(osBuddyItemData)) {
+            return;
+        }
+        summaryItems = parseOSBuddySummary(osBuddyItemData);
+    }
+
+    public static HashMap<String, OSBuddySummaryItem> parseOSBuddySummary(String osBuddyItemData) throws JSONException {
+        HashMap<String, OSBuddySummaryItem> summaryItems = new HashMap<>();
+        JSONObject jsonObject = new JSONObject(osBuddyItemData);
+        Iterator itemLimitsIterator = jsonObject.keys();
+        while (itemLimitsIterator.hasNext()) {
+            String itemId = (String) itemLimitsIterator.next();
+            JSONObject summaryJson = jsonObject.getJSONObject(itemId);
+            OSBuddySummaryItem summaryItem = new OSBuddySummaryItem();
+            summaryItem.id = itemId;
+            summaryItem.buyPrice = summaryJson.getInt("buy_average");
+            summaryItem.sellPrice = summaryJson.getInt("sell_average");
+            summaryItems.put(itemId, summaryItem);
+        }
+        return summaryItems;
     }
 
     @Override
@@ -650,12 +699,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                 }
 
                 if (Utils.isNullOrEmpty(json)) {
-                    InputStream is = context.get().getAssets().open("names.json");
-                    int size = is.available();
-                    byte[] buffer = new byte[size];
-                    is.read(buffer);
-                    is.close();
-                    json = new String(buffer, "UTF-8");
+                    json = Utils.readFromAssets(context.get(), "names.json");
                 }
                 JSONObject obj = new JSONObject(json);
                 String itemsString = obj.getString("items");
@@ -672,7 +716,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                     allItems.add(geResult);
                 }
             }
-            catch (JSONException | IOException ignored) {
+            catch (JSONException ignored) {
 
             }
             return allItems;

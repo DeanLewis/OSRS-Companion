@@ -9,11 +9,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -53,6 +50,10 @@ public class Utils {
     }
 
     public static void getString(String url, String tag, final VolleyCallback callback) {
+        getString(url, tag, true, callback);
+    }
+
+    public static void getString(String url, String tag, boolean increaseTimeout, final VolleyCallback callback) {
         StringRequest strReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -66,7 +67,9 @@ public class Utils {
                 callback.always();
             }
         });
-        strReq.setRetryPolicy(new DefaultRetryPolicy(5000, 2, 2));
+        if (increaseTimeout) {
+            strReq.setRetryPolicy(new DefaultRetryPolicy(5000, 2, 2));
+        }
         AppController.getInstance().addToRequestQueue(strReq, tag);
     }
 

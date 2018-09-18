@@ -20,8 +20,10 @@ public class Constants {
     public static String CLUE_MAP_URL(String coords) {return "https://dennyy.com/images/cluescroll/coords/Coordinate_clue_" + coords + ".png";}
     public static String TT_MAPS_URL(String id) {return "https://www.dennyy.com/images/cluescroll/maps/" + id + ".png";}
     public static String FAIRY_RING_MAP_URL(String code) {return "https://www.dennyy.com/images/fairyrings/" + code + ".png";}
+
     public static String ITEMIDLIST_URL = "https://www.dennyy.com/osrs/ge/json";
-    public static String OSBUDDY_EXCHANGE_URL = "https://api.rsbuddy.com/grandExchange?a=guidePrice&i=";
+    public static String OSBUDDY_EXCHANGE_SUMMARY_URL = "https://storage.googleapis.com/osbuddy-exchange/summary.json";
+    public static final int OSBUDDY_SUMMARY_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
     public static final String RS_HISCORES_URL = "https://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=";
     public static final String RS_HISCORES_IRONMAN_URL = "https://services.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=";

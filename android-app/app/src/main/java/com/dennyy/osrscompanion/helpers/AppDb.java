@@ -12,7 +12,7 @@ import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeData;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeGraphData;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeUpdateData;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
-import com.dennyy.osrscompanion.models.OSBuddy.OSBuddyExchangeData;
+import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryDTO;
 import com.dennyy.osrscompanion.models.OSRSNews.OSRSNewsDTO;
 import com.dennyy.osrscompanion.models.Tracker.TrackData;
 
@@ -58,10 +58,10 @@ public class AppDb extends SQLiteOpenHelper {
                 DB.GrandExchangeGraph.itemId + " INTEGER PRIMARY KEY, " +
                 DB.GrandExchangeGraph.data + " TEXT NOT NULL, " +
                 DB.GrandExchangeGraph.dateModified + " INTEGER NOT NULL);";
-        String createOSBuddyExchangeTable = "CREATE TABLE " + DB.OSBuddyExchange.tableName + " (" +
-                DB.OSBuddyExchange.itemId + " INTEGER PRIMARY KEY, " +
-                DB.OSBuddyExchange.data + " TEXT, " +
-                DB.OSBuddyExchange.dateModified + " INTEGER NOT NULL);";
+        String createOSBuddyExchangeSummaryTable = "CREATE TABLE " + DB.OSBuddyExchangeSummary.tableName + " (" +
+                DB.OSBuddyExchangeSummary.id + " INTEGER PRIMARY KEY, " +
+                DB.OSBuddyExchangeSummary.data + " TEXT, " +
+                DB.OSBuddyExchangeSummary.dateModified + " INTEGER NOT NULL);";
         String createOSRSNewsTable = "CREATE TABLE " + DB.OSRSNews.tableName + " (" +
                 DB.OSRSNews.id + " INTEGER PRIMARY KEY, " +
                 DB.OSRSNews.data + " TEXT, " +
@@ -72,7 +72,7 @@ public class AppDb extends SQLiteOpenHelper {
         db.execSQL(createGrandExchangeTable);
         db.execSQL(createGrandExchangeUpdateTable);
         db.execSQL(createGrandExchangeGraphTable);
-        db.execSQL(createOSBuddyExchangeTable);
+        db.execSQL(createOSBuddyExchangeSummaryTable);
         db.execSQL(createOSRSNewsTable);
     }
 
@@ -94,6 +94,9 @@ public class AppDb extends SQLiteOpenHelper {
                     DB.OSRSNews.data + " TEXT, " +
                     DB.OSRSNews.dateModified + " INTEGER NOT NULL);";
             db.execSQL(createOSRSNewsTable);
+        }
+        if (oldVersion < 9) {
+            db.execSQL("DROP TABLE IF EXISTS " + DB.OSBuddyExchange.tableName);
         }
     }
 
@@ -212,36 +215,35 @@ public class AppDb extends SQLiteOpenHelper {
         }
     }
 
-    public OSBuddyExchangeData getOSBuddyExchangeData(int itemId) {
-        String query = "SELECT * FROM " + DB.OSBuddyExchange.tableName + " WHERE " + DB.OSBuddyExchange.itemId + " = ?";
-        Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{ String.valueOf(itemId) });
-        OSBuddyExchangeData osBuddyExchangeData = null;
+    public OSBuddySummaryDTO getOSBuddyExchangeSummary() {
+        String query = "SELECT * FROM " + DB.OSBuddyExchangeSummary.tableName + " WHERE " + DB.OSBuddyExchangeSummary.id + " = 1";
+        Cursor cursor = getWritableDatabase().rawQuery(query, null);
+        OSBuddySummaryDTO osBuddyExchangeData = null;
         if (cursor.moveToFirst()) {
-            osBuddyExchangeData = new OSBuddyExchangeData();
-            osBuddyExchangeData.itemId = itemId;
-            osBuddyExchangeData.data = cursor.getString(cursor.getColumnIndex(DB.OSBuddyExchange.data));
-            osBuddyExchangeData.dateModified = cursor.getLong(cursor.getColumnIndex(DB.OSBuddyExchange.dateModified));
+            osBuddyExchangeData = new OSBuddySummaryDTO();
+            osBuddyExchangeData.id = 1;
+            osBuddyExchangeData.data = cursor.getString(cursor.getColumnIndex(DB.OSBuddyExchangeSummary.data));
+            osBuddyExchangeData.dateModified = cursor.getLong(cursor.getColumnIndex(DB.OSBuddyExchangeSummary.dateModified));
         }
         cursor.close();
         return osBuddyExchangeData;
     }
 
-    public void insertOrUpdateOSBuddyExchangeData(String itemId, String newData) {
-        String query = "SELECT * FROM " + DB.OSBuddyExchange.tableName + " WHERE " + DB.OSBuddyExchange.itemId + " = ?";
-        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ itemId });
+    public void insertOrUpdateOSBuddyExchangeSummaryData(String newData) {
+        String query = "SELECT * FROM " + DB.OSBuddyExchangeSummary.tableName + " WHERE " + DB.OSBuddyExchangeSummary.id + " = 1";
+        Cursor cursor = getReadableDatabase().rawQuery(query, null);
         if (cursor.moveToFirst()) {
             ContentValues cv = new ContentValues();
-            cv.put(DB.OSBuddyExchange.data, newData);
-            cv.put(DB.OSBuddyExchange.dateModified, System.currentTimeMillis());
-            getWritableDatabase().update(DB.OSBuddyExchange.tableName, cv, DB.OSBuddyExchange.itemId + " = ?", new String[]{ itemId });
+            cv.put(DB.OSBuddyExchangeSummary.data, newData);
+            cv.put(DB.OSBuddyExchangeSummary.dateModified, System.currentTimeMillis());
+            getWritableDatabase().update(DB.OSBuddyExchangeSummary.tableName, cv, DB.OSBuddyExchangeSummary.id + " = 1", null);
             cursor.close();
         }
         else {
             ContentValues cv = new ContentValues();
-            cv.put(DB.OSBuddyExchange.itemId, itemId);
-            cv.put(DB.OSBuddyExchange.data, newData);
-            cv.put(DB.OSBuddyExchange.dateModified, System.currentTimeMillis());
-            getWritableDatabase().insert(DB.OSBuddyExchange.tableName, null, cv);
+            cv.put(DB.OSBuddyExchangeSummary.data, newData);
+            cv.put(DB.OSBuddyExchangeSummary.dateModified, System.currentTimeMillis());
+            getWritableDatabase().insert(DB.OSBuddyExchangeSummary.tableName, null, cv);
             cursor.close();
         }
     }
@@ -394,8 +396,12 @@ public class AppDb extends SQLiteOpenHelper {
 
         private static class OSBuddyExchange {
             private static final String tableName = "OSBuddyExchange";
+        }
 
-            private static final String itemId = "itemId";
+        private static class OSBuddyExchangeSummary {
+            private static final String tableName = "OSBuddyExchangeSummary";
+
+            private static final String id = "id";
             private static final String data = "data";
             private static final String dateModified = "dateModified";
         }
