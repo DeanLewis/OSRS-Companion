@@ -54,6 +54,7 @@
                             android:id="@+id/ge_cache_info"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textAlignment="center"
                             android:textColor="@color/text"
                             android:textStyle="bold"/>
                     </LinearLayout>
