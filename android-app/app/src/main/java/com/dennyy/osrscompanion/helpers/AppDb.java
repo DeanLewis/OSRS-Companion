@@ -98,6 +98,14 @@ public class AppDb extends SQLiteOpenHelper {
         if (oldVersion < 9) {
             db.execSQL("DROP TABLE IF EXISTS " + DB.OSBuddyExchange.tableName);
         }
+        if (oldVersion < 10) {
+            db.execSQL("DROP TABLE IF EXISTS " + DB.OSBuddyExchangeSummary.tableName);
+            String createOSBuddyExchangeSummaryTable = "CREATE TABLE " + DB.OSBuddyExchangeSummary.tableName + " (" +
+                    DB.OSBuddyExchangeSummary.id + " INTEGER PRIMARY KEY, " +
+                    DB.OSBuddyExchangeSummary.data + " TEXT, " +
+                    DB.OSBuddyExchangeSummary.dateModified + " INTEGER NOT NULL);";
+            db.execSQL(createOSBuddyExchangeSummaryTable);
+        }
     }
 
     public UserStats getUserStats(String rsn, HiscoreType mode) {
@@ -348,7 +356,7 @@ public class AppDb extends SQLiteOpenHelper {
 
     private static class DB {
         private static final String name = "osrscompanion.db";
-        private static final int version = 8;
+        private static final int version = 9;
 
         private static class UserStats {
             private static final String tableName = "UserStats";
