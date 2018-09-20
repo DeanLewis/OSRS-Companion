@@ -26,19 +26,13 @@ import com.android.volley.VolleyError;
 import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.BuildConfig;
 import com.dennyy.osrscompanion.R;
+import com.dennyy.osrscompanion.asynctasks.UpdateItemIdListTask;
 import com.dennyy.osrscompanion.customviews.CheckboxDialogPreference;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.ItemIdListResultCallback;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
 
 
 public class UserPreferenceFragment extends PreferenceFragment implements CheckboxDialogPreference.DialogClosedListener, Preference.OnPreferenceClickListener {
@@ -75,7 +69,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        TextView toolbar = (TextView) getActivity().findViewById(R.id.toolbar_title);
+        TextView toolbar = getActivity().findViewById(R.id.toolbar_title);
         toolbar.setTextColor(getResources().getColor(R.color.text));
         toolbar.setText(getResources().getString(R.string.settings));
         preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -124,26 +118,22 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
         Utils.getString(Constants.ITEMIDLIST_URL, ITEMIDLIST_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                try {
-                    String content = Utils.readFromFile(getActivity(), Constants.ITEMIDLIST_FILE_NAME);
-                    if (Utils.isNullOrEmpty(content)) {
-                        content = Utils.writeToFile(getActivity(), Constants.ITEMIDLIST_FILE_NAME, result);
-                    }
-                    Date fileDate = getDateFromItemIdList(content);
-                    Date resultDate = getDateFromItemIdList(result);
-
-                    if (fileDate.before(resultDate)) {
-                        Utils.writeToFile(getActivity(), Constants.ITEMIDLIST_FILE_NAME, result);
+                new UpdateItemIdListTask(getActivity(), result, new ItemIdListResultCallback() {
+                    @Override
+                    public void onItemsUpdated() {
                         showToast(getResources().getString(R.string.updated_list_of_items), Toast.LENGTH_LONG);
-                        return;
                     }
-                    showToast(getResources().getString(R.string.items_up_to_date), Toast.LENGTH_LONG);
 
-                }
-                catch (JSONException | ParseException e) {
-                    Utils.writeToFile(getActivity(), Constants.ITEMIDLIST_FILE_NAME, "");
-                    showToast(getResources().getString(R.string.error_please_try_again), Toast.LENGTH_LONG);
-                }
+                    @Override
+                    public void onItemsNotUpdated() {
+                        showToast(getResources().getString(R.string.items_up_to_date), Toast.LENGTH_LONG);
+                    }
+
+                    @Override
+                    public void onError() {
+                        showToast(getResources().getString(R.string.error_please_try_again), Toast.LENGTH_LONG);
+                    }
+                }).execute();
             }
 
             @Override
@@ -161,13 +151,6 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
                 editor.apply();
             }
         });
-    }
-
-    private Date getDateFromItemIdList(String content) throws JSONException, ParseException {
-        JSONObject obj = new JSONObject(content);
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Date fileDate = format.parse(obj.getString("datetime"));
-        return fileDate;
     }
 
     @Override
