@@ -10,9 +10,9 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public class Constants {
-    public static String GE_IMG_SMALL_URL = "https://services.runescape.com/m=itemdb_oldschool/obj_sprite.gif?id=";
-    public static String GE_ITEM_URL = "https://services.runescape.com/m=itemdb_oldschool/api/catalogue/detail.json?item=";
-    public static String GE_IMG_LARGE_URL = "https://services.runescape.com/m=itemdb_oldschool/obj_big.gif?id=";
+    public static final String GE_IMG_SMALL_URL = "https://services.runescape.com/m=itemdb_oldschool/obj_sprite.gif?id=";
+    public static final String GE_ITEM_URL = "https://services.runescape.com/m=itemdb_oldschool/api/catalogue/detail.json?item=";
+    public static final String GE_IMG_LARGE_URL = "https://services.runescape.com/m=itemdb_oldschool/obj_big.gif?id=";
 
     public static String GE_GRAPH_URL(String id) {return "https://services.runescape.com/m=itemdb_oldschool/api/graph/" + id + ".json"; }
     public static String GE_UPDATE_URL = "https://dennyy.com/osrs/geupdate/json/latest";
@@ -23,18 +23,19 @@ public class Constants {
     public static String ITEMIDLIST_URL = "https://www.dennyy.com/osrs/ge/json";
     public static String OSBUDDY_EXCHANGE_URL = "https://api.rsbuddy.com/grandExchange?a=guidePrice&i=";
 
-    public static String RS_HISCORES_URL = "https://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=";
-    public static String RS_HISCORES_IRONMAN_URL = "https://services.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=";
-    public static String RS_HISCORES_UIM_URL = "https://services.runescape.com/m=hiscore_oldschool_ultimate/index_lite.ws?player=";
-    public static String RS_HISCORES_HCIM_URL = "https://services.runescape.com/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player=";
-    public static String RS_HISCORES_DMM_URL = "https://services.runescape.com/m=hiscore_oldschool_deadman/index_lite.ws?player=";
-    public static String RS_HISCORES_SDMM_URL = "https://services.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=";
+    public static final String RS_HISCORES_URL = "https://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=";
+    public static final String RS_HISCORES_IRONMAN_URL = "https://services.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=";
+    public static final String RS_HISCORES_UIM_URL = "https://services.runescape.com/m=hiscore_oldschool_ultimate/index_lite.ws?player=";
+    public static final String RS_HISCORES_HCIM_URL = "https://services.runescape.com/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player=";
+    public static final String RS_HISCORES_DMM_URL = "https://services.runescape.com/m=hiscore_oldschool_deadman/index_lite.ws?player=";
+    public static final String RS_HISCORES_SDMM_URL = "https://services.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=";
+
     public static final String OSRS_NEWS_URL = "http://services.runescape.com/m=news/latest_news.rss?oldschool=true";
 
-    public static int REFRESH_COOLDOWN_MS = 5000;
-    public static int REFRESH_COOLDOWN_LONG_MS = 10000;
-    public static int REFRESH_COOLDOWN_TRACK = 3000;
-    public static int REFRESH_COOLDOWN_CACHE = 1000;
+    public static final int REFRESH_COOLDOWN_MS = 5000;
+    public static final int REFRESH_COOLDOWN_LONG_MS = 10000;
+    public static final int REFRESH_COOLDOWN_TRACK = 3000;
+    public static final int REFRESH_COOLDOWN_CACHE = 1000;
     public static final int MAX_REFRESH_COUNT = 5;
 
     public static String TRACKER_URL(String rsn, long period) {
