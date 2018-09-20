@@ -53,9 +53,7 @@ public class RSWikiFragment extends BaseFragment {
             rsWikiViewHandler.webView.goBack();
             return true;
         }
-        else {
-            return super.onBackClick();
-        }
+        return super.onBackClick();
     }
 
     @Override

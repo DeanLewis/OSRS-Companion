@@ -29,6 +29,7 @@ public class Constants {
     public static String RS_HISCORES_HCIM_URL = "https://services.runescape.com/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player=";
     public static String RS_HISCORES_DMM_URL = "https://services.runescape.com/m=hiscore_oldschool_deadman/index_lite.ws?player=";
     public static String RS_HISCORES_SDMM_URL = "https://services.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=";
+    public static final String OSRS_NEWS_URL = "http://services.runescape.com/m=news/latest_news.rss?oldschool=true";
 
     public static int REFRESH_COOLDOWN_MS = 5000;
     public static int REFRESH_COOLDOWN_LONG_MS = 10000;

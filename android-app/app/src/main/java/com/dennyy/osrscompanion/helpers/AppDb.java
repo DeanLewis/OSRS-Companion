@@ -13,6 +13,7 @@ import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeGraphData;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeUpdateData;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 import com.dennyy.osrscompanion.models.OSBuddy.OSBuddyExchangeData;
+import com.dennyy.osrscompanion.models.OSRSNews.OSRSNewsDTO;
 import com.dennyy.osrscompanion.models.Tracker.TrackData;
 
 public class AppDb extends SQLiteOpenHelper {
@@ -32,6 +33,7 @@ public class AppDb extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // run when the database file did not exist and was just created
         String createUserStatsTable = "CREATE TABLE " + DB.UserStats.tableName + " (" +
                 DB.UserStats.id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 DB.UserStats.rsn + " TEXT NOT NULL COLLATE NOCASE, " +
@@ -60,24 +62,38 @@ public class AppDb extends SQLiteOpenHelper {
                 DB.OSBuddyExchange.itemId + " INTEGER PRIMARY KEY, " +
                 DB.OSBuddyExchange.data + " TEXT, " +
                 DB.OSBuddyExchange.dateModified + " INTEGER NOT NULL);";
+        String createOSRSNewsTable = "CREATE TABLE " + DB.OSRSNews.tableName + " (" +
+                DB.OSRSNews.id + " INTEGER PRIMARY KEY, " +
+                DB.OSRSNews.data + " TEXT, " +
+                DB.OSRSNews.dateModified + " INTEGER NOT NULL);";
+
         db.execSQL(createUserStatsTable);
         db.execSQL(createTrackTable);
         db.execSQL(createGrandExchangeTable);
         db.execSQL(createGrandExchangeUpdateTable);
         db.execSQL(createGrandExchangeGraphTable);
         db.execSQL(createOSBuddyExchangeTable);
+        db.execSQL(createOSRSNewsTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion != newVersion) {
+        if (oldVersion < 7) {
             db.execSQL("DROP TABLE IF EXISTS " + DB.UserStats.tableName);
             db.execSQL("DROP TABLE IF EXISTS " + DB.Track.tableName);
             db.execSQL("DROP TABLE IF EXISTS " + DB.GrandExchange.tableName);
             db.execSQL("DROP TABLE IF EXISTS " + DB.GrandExchangeUpdate.tableName);
             db.execSQL("DROP TABLE IF EXISTS " + DB.GrandExchangeGraph.tableName);
             db.execSQL("DROP TABLE IF EXISTS " + DB.OSBuddyExchange.tableName);
+            db.execSQL("DROP TABLE IF EXISTS " + DB.OSRSNews.tableName);
             onCreate(db);
+        }
+        if (oldVersion < 8) {
+            String createOSRSNewsTable = "CREATE TABLE " + DB.OSRSNews.tableName + " (" +
+                    DB.OSRSNews.id + " INTEGER PRIMARY KEY, " +
+                    DB.OSRSNews.data + " TEXT, " +
+                    DB.OSRSNews.dateModified + " INTEGER NOT NULL);";
+            db.execSQL(createOSRSNewsTable);
         }
     }
 
@@ -295,9 +311,42 @@ public class AppDb extends SQLiteOpenHelper {
         }
     }
 
+    public OSRSNewsDTO getOSRSNews() {
+        String query = "SELECT * FROM " + DB.OSRSNews.tableName + " WHERE " + DB.OSRSNews.id + " = 1";
+        Cursor cursor = getWritableDatabase().rawQuery(query, null);
+        OSRSNewsDTO result = null;
+        if (cursor.moveToFirst()) {
+            result = new OSRSNewsDTO();
+            result.id = 1;
+            result.data = cursor.getString(cursor.getColumnIndex(DB.OSRSNews.data));
+            result.dateModified = cursor.getLong(cursor.getColumnIndex(DB.OSRSNews.dateModified));
+        }
+        cursor.close();
+        return result;
+    }
+
+    public void insertOrUpdateOSRSNewsData(String newData) {
+        String query = "SELECT * FROM " + DB.OSRSNews.tableName + " WHERE " + DB.OSRSNews.id + " = 1";
+        Cursor cursor = getReadableDatabase().rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            ContentValues cv = new ContentValues();
+            cv.put(DB.OSRSNews.data, newData);
+            cv.put(DB.OSRSNews.dateModified, System.currentTimeMillis());
+            getWritableDatabase().update(DB.OSRSNews.tableName, cv, DB.OSRSNews.id + " = 1", null);
+            cursor.close();
+        }
+        else {
+            ContentValues cv = new ContentValues();
+            cv.put(DB.OSRSNews.data, newData);
+            cv.put(DB.OSRSNews.dateModified, System.currentTimeMillis());
+            getWritableDatabase().insert(DB.OSRSNews.tableName, null, cv);
+            cursor.close();
+        }
+    }
+
     private static class DB {
         private static final String name = "osrscompanion.db";
-        private static final int version = 7;
+        private static final int version = 8;
 
         private static class UserStats {
             private static final String tableName = "UserStats";
@@ -347,6 +396,14 @@ public class AppDb extends SQLiteOpenHelper {
             private static final String tableName = "OSBuddyExchange";
 
             private static final String itemId = "itemId";
+            private static final String data = "data";
+            private static final String dateModified = "dateModified";
+        }
+
+        private static class OSRSNews {
+            private static final String tableName = "OSRSNews";
+
+            private static final String id = "id";
             private static final String data = "data";
             private static final String dateModified = "dateModified";
         }

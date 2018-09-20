@@ -9,7 +9,11 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -404,5 +408,17 @@ public class Utils {
             list.add(jsonArray.getString(i));
         }
         return list;
+    }
+
+    public static void clearWebView(WebView webView) {
+        if (webView != null) {
+            webView.clearHistory();
+            webView.clearCache(true);
+            webView.loadUrl("about:blank");
+            webView.removeAllViews();
+            webView.destroyDrawingCache();
+            webView.destroy();
+            webView = null;
+        }
     }
 }

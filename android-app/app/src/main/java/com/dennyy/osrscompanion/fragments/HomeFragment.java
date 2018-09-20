@@ -77,6 +77,7 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
             tiles.add(new TileData(getString(R.string.quest_guide), getDrawable(R.drawable.quest_icon)));
             tiles.add(new TileData(getString(R.string.fairy_rings), getDrawable(R.drawable.fairy_rings)));
             tiles.add(new TileData(getString(R.string.osrs_wiki), getDrawable(R.drawable.rswiki_logo)));
+            tiles.add(new TileData(getString(R.string.rsnews), getDrawable(R.drawable.newspaper)));
             tiles.add(new TileData(getString(R.string.settings), getDrawable(R.drawable.settings)));
         }
 
@@ -175,32 +176,35 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
         if (tileData.text.equals(getString(R.string.grandexchange))) {
             fragment = new GrandExchangeFragment();
         }
-        if (tileData.text.equals(getString(R.string.tracker))) {
+        else if (tileData.text.equals(getString(R.string.tracker))) {
             fragment = new TrackerFragment();
         }
-        if (tileData.text.equals(getString(R.string.hiscores))) {
+        else if (tileData.text.equals(getString(R.string.hiscores))) {
             fragment = new HiscoresFragment();
         }
-        if (tileData.text.equals(getString(R.string.calculators))) {
+        else if (tileData.text.equals(getString(R.string.calculators))) {
             fragment = new CalculatorsFragment();
         }
-        if (tileData.text.equals(getString(R.string.treasure_trails))) {
+        else if (tileData.text.equals(getString(R.string.treasure_trails))) {
             fragment = new TreasureTrailFragment();
         }
-        if (tileData.text.equals(getString(R.string.notes))) {
+        else if (tileData.text.equals(getString(R.string.notes))) {
             fragment = new NotesFragment();
         }
-        if (tileData.text.equals(getString(R.string.settings))) {
+        else if (tileData.text.equals(getString(R.string.settings))) {
             fragment = new UserPreferenceFragment();
         }
-        if (tileData.text.equals(getString(R.string.quest_guide))) {
+        else if (tileData.text.equals(getString(R.string.quest_guide))) {
             fragment = new QuestFragment();
         }
-        if (tileData.text.equals(getString(R.string.fairy_rings))) {
+        else if (tileData.text.equals(getString(R.string.fairy_rings))) {
             fragment = new FairyRingFragment();
         }
-        if (tileData.text.equals(getString(R.string.osrs_wiki))) {
+        else if (tileData.text.equals(getString(R.string.osrs_wiki))) {
             fragment = new RSWikiFragment();
+        }
+        else if (tileData.text.equals(getString(R.string.rsnews))) {
+            fragment = new OSRSNewsFragment();
         }
         transaction.replace(R.id.fragment_container, fragment, tag);
         transaction.addToBackStack(null);

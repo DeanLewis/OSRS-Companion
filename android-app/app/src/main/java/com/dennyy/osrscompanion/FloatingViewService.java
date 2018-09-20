@@ -24,6 +24,7 @@ import com.dennyy.osrscompanion.layouthandlers.GrandExchangeViewHandler;
 import com.dennyy.osrscompanion.layouthandlers.HiscoresCompareViewHandler;
 import com.dennyy.osrscompanion.layouthandlers.HiscoresLookupViewHandler;
 import com.dennyy.osrscompanion.layouthandlers.NotesViewHandler;
+import com.dennyy.osrscompanion.layouthandlers.OSRSNewsViewHandler;
 import com.dennyy.osrscompanion.layouthandlers.QuestViewHandler;
 import com.dennyy.osrscompanion.layouthandlers.RSWikiViewHandler;
 import com.dennyy.osrscompanion.layouthandlers.SkillCalculatorViewHandler;
@@ -59,6 +60,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
     private final static String fairyRingHeadName = FairyRingViewHandler.class.getSimpleName();
     private final static String diaryCalcHeadName = DiaryCalculatorViewHandler.class.getSimpleName();
     private final static String rswikiHeadName = RSWikiViewHandler.class.getSimpleName();
+    private final static String rsnewsHeadName = OSRSNewsViewHandler.class.getSimpleName();
 
     private DefaultChatHeadManager chatHeadManager;
     private WindowManagerContainer windowManagerContainer;
@@ -67,7 +69,6 @@ public class FloatingViewService extends Service implements WindowManagerContain
     private Map<String, String> namesMap = new HashMap<>();
 
     private CalculatorViewHandler calculatorViewHandler;
-    private GrandExchangeViewHandler grandExchangeViewHandler;
     private NotesViewHandler notesViewHandler;
 
     public FloatingViewService() {
@@ -101,7 +102,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     }
                     else if (key.equals(geHeadName)) {
                         cachedView = inflater.inflate(R.layout.grand_exchange_layout, parent, false);
-                        grandExchangeViewHandler = new GrandExchangeViewHandler(FloatingViewService.this, cachedView, null);
+                        new GrandExchangeViewHandler(FloatingViewService.this, cachedView, null);
                     }
                     else if (key.equals(hiscoreLookupHeadName)) {
                         cachedView = inflater.inflate(R.layout.hiscores_lookup_layout, parent, false);
@@ -150,6 +151,10 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     else if (key.equals(rswikiHeadName)) {
                         cachedView = inflater.inflate(R.layout.rswiki_layout, parent, false);
                         new RSWikiViewHandler(FloatingViewService.this, cachedView, true);
+                    }
+                    else if (key.equals(rsnewsHeadName)) {
+                        cachedView = inflater.inflate(R.layout.rsnews_layout, parent, false);
+                        new OSRSNewsViewHandler(FloatingViewService.this, cachedView, true);
                     }
                     viewCache.put(key, cachedView);
                 }
@@ -314,6 +319,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
         iconsMap.put(fairyRingHeadName, R.drawable.fairy_ring_floating_view);
         iconsMap.put(diaryCalcHeadName, R.drawable.diary_calc_floating_view);
         iconsMap.put(rswikiHeadName, R.drawable.rswiki_floating_view);
+        iconsMap.put(rsnewsHeadName, R.drawable.rsnews_floating_view);
     }
 
     private void initNamesMap() {
@@ -331,6 +337,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
         namesMap.put("fairy_ring", fairyRingHeadName);
         namesMap.put("diary_calc", diaryCalcHeadName);
         namesMap.put("osrs_wiki", rswikiHeadName);
+        namesMap.put("osrs_news", rsnewsHeadName);
     }
 
     @Override

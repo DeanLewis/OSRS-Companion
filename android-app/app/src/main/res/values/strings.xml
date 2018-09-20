@@ -222,7 +222,7 @@
     <string name="quest_guide">Quest Guides</string>
     <string name="failed_to_load_quests">Failed to load quests: %1$s</string>
     <string name="select_a_quest">Select a quest…</string>
-    <string name="external_navigation_prohibited">Navigation to urls other than the wiki is prohibited</string>
+    <string name="external_navigation_prohibited">Navigation to urls other than %1$s is prohibited</string>
     <string name="select_a_skill">Select a skill…</string>
     <string name="fairy_rings">Fairy Rings</string>
     <string name="fairy_rings_search_hint">Code, nearby locations etc…</string>
@@ -243,6 +243,9 @@
     <string name="clearable_edittext_clear_button">clearable_edittext_clear_button</string>
     <string name="buy_limit">Buy limit/4h</string>
     <string name="unknown">unknown</string>
+    <string name="rsnews">OSRS News</string>
+    <string name="pipe">\u0020|\u0020</string>
+    <string name="back_to_overview">Back to overview</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>
@@ -259,6 +262,7 @@
         <item>Fairy Rings</item>
         <item>Diary Calculator</item>
         <item>OSRS Wiki</item>
+        <item>OSRS News</item>
     </string-array>
     <string-array name="view_name_value">
         <item>ge</item>
@@ -275,6 +279,7 @@
         <item>fairy_ring</item>
         <item>diary_calc</item>
         <item>osrs_wiki</item>
+        <item>osrs_news</item>
     </string-array>
     <string-array name="default_floating_views_selection">
     </string-array>
