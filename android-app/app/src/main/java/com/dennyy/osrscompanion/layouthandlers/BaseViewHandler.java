@@ -19,6 +19,9 @@ public abstract class BaseViewHandler {
     protected Resources resources;
     protected boolean wasRequesting;
 
+    private final Handler keyBoardHandler = new Handler();
+    private Runnable keyBoardRunnable;
+
     BaseViewHandler(Context context, View view) {
         this.context = context;
         this.view = view;
@@ -42,13 +45,18 @@ public abstract class BaseViewHandler {
     }
 
     protected void hideKeyboard() {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        cancelHideKeyboard();
+        keyBoardRunnable = new Runnable() {
             @Override
             public void run() {
                 Utils.hideKeyboard(context, view);
             }
-        }, 500);
+        };
+        keyBoardHandler.postDelayed(keyBoardRunnable, 500);
+    }
+
+    protected void cancelHideKeyboard() {
+        keyBoardHandler.removeCallbacks(keyBoardRunnable);
     }
 
     /**
