@@ -4,6 +4,7 @@ package com.dennyy.osrscompanion.fragments;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -111,7 +112,12 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
                     String drawPermissionTitle = getResources().getString(R.string.draw_on_screen_permission_required);
                     showInfoDialog(drawPermissionTitle, getResources().getString(R.string.draw_dialog_info), getResources().getString(R.string.turn_on), false, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            startActivityForResult(drawIntent, Constants.CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+                            try {
+                                startActivityForResult(drawIntent, Constants.CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+                            }
+                            catch (ActivityNotFoundException ignored) {
+                                startActivity(new Intent(Settings.ACTION_SETTINGS));
+                            }
                         }
                     });
                     mainSwitch.setChecked(false);
