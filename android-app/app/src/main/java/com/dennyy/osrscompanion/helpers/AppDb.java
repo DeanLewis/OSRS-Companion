@@ -28,6 +28,7 @@ public class AppDb extends SQLiteOpenHelper {
 
     private AppDb(Context context) {
         super(context, DB.name, null, DB.version);
+        setWriteAheadLoggingEnabled(true);
     }
 
 
@@ -110,7 +111,7 @@ public class AppDb extends SQLiteOpenHelper {
 
     public UserStats getUserStats(String rsn, HiscoreType mode) {
         String query = "SELECT * FROM " + DB.UserStats.tableName + " WHERE " + DB.UserStats.rsn + " = ? AND " + DB.UserStats.hiscoreType + " = ?";
-        Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{ rsn, String.valueOf(mode.getValue()) });
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ rsn, String.valueOf(mode.getValue()) });
         UserStats userStats = null;
         if (cursor.moveToFirst()) {
             int hiscoreType = cursor.getInt(cursor.getColumnIndex(DB.UserStats.hiscoreType));
@@ -147,7 +148,7 @@ public class AppDb extends SQLiteOpenHelper {
 
     public TrackData getTrackData(String rsn, TrackDurationType mode) {
         String query = "SELECT * FROM " + DB.Track.tableName + " WHERE " + DB.Track.rsn + " = ? AND " + DB.Track.durationType + " = ?";
-        Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{ rsn, String.valueOf(mode.getValue()) });
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ rsn, String.valueOf(mode.getValue()) });
         TrackData trackData = null;
         if (cursor.moveToFirst()) {
             trackData = new TrackData();
@@ -190,7 +191,7 @@ public class AppDb extends SQLiteOpenHelper {
 
     public GrandExchangeData getGrandExchangeData(int itemId) {
         String query = "SELECT * FROM " + DB.GrandExchange.tableName + " WHERE " + DB.GrandExchange.itemId + " = ?";
-        Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{ String.valueOf(itemId) });
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ String.valueOf(itemId) });
         GrandExchangeData grandExchangeData = null;
         if (cursor.moveToFirst()) {
             grandExchangeData = new GrandExchangeData();
@@ -225,7 +226,7 @@ public class AppDb extends SQLiteOpenHelper {
 
     public OSBuddySummaryDTO getOSBuddyExchangeSummary() {
         String query = "SELECT * FROM " + DB.OSBuddyExchangeSummary.tableName + " WHERE " + DB.OSBuddyExchangeSummary.id + " = 1";
-        Cursor cursor = getWritableDatabase().rawQuery(query, null);
+        Cursor cursor = getReadableDatabase().rawQuery(query, null);
         OSBuddySummaryDTO osBuddyExchangeData = null;
         if (cursor.moveToFirst()) {
             osBuddyExchangeData = new OSBuddySummaryDTO();
@@ -258,7 +259,7 @@ public class AppDb extends SQLiteOpenHelper {
 
     public GrandExchangeUpdateData getGrandExchangeUpdateData() {
         String query = "SELECT * FROM " + DB.GrandExchangeUpdate.tableName + " WHERE " + DB.GrandExchangeUpdate.id + " = 1";
-        Cursor cursor = getWritableDatabase().rawQuery(query, null);
+        Cursor cursor = getReadableDatabase().rawQuery(query, null);
         GrandExchangeUpdateData result = null;
         if (cursor.moveToFirst()) {
             result = new GrandExchangeUpdateData();
@@ -290,7 +291,7 @@ public class AppDb extends SQLiteOpenHelper {
 
     public GrandExchangeGraphData getGrandExchangeGraphData(int itemId) {
         String query = "SELECT * FROM " + DB.GrandExchangeGraph.tableName + " WHERE " + DB.GrandExchangeGraph.itemId + " = ?";
-        Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{ String.valueOf(itemId) });
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ String.valueOf(itemId) });
         GrandExchangeGraphData result = null;
         if (cursor.moveToFirst()) {
             result = new GrandExchangeGraphData();
@@ -323,7 +324,7 @@ public class AppDb extends SQLiteOpenHelper {
 
     public OSRSNewsDTO getOSRSNews() {
         String query = "SELECT * FROM " + DB.OSRSNews.tableName + " WHERE " + DB.OSRSNews.id + " = 1";
-        Cursor cursor = getWritableDatabase().rawQuery(query, null);
+        Cursor cursor = getReadableDatabase().rawQuery(query, null);
         OSRSNewsDTO result = null;
         if (cursor.moveToFirst()) {
             result = new OSRSNewsDTO();

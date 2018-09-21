@@ -26,11 +26,12 @@ public class ActionsDb extends SQLiteAssetHelper {
     private ActionsDb(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         setForcedUpgrade();
+        setWriteAheadLoggingEnabled(true);
     }
 
     public ArrayList<Action> getActions(int skillId) {
         String query = "SELECT * FROM items WHERE skill_id = ? ORDER BY level ASC";
-        Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{ String.valueOf(skillId) });
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ String.valueOf(skillId) });
         ArrayList<Action> actions = new ArrayList<>();
 
         while (cursor.moveToNext()) {
