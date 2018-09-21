@@ -104,7 +104,6 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         this.jsonItemsLoadedCallback = jsonItemsLoadedCallback;
         new LoadItems(context, this).execute();
         new GetOSBuddyExchangeSummaryTask(context, loadSummaryDataCallback()).execute();
-        hideKeyboard();
     }
 
     @Override
