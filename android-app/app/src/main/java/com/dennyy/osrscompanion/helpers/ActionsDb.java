@@ -3,6 +3,7 @@ package com.dennyy.osrscompanion.helpers;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.models.General.Action;
@@ -18,7 +19,7 @@ public class ActionsDb extends SQLiteAssetHelper {
 
     public static synchronized ActionsDb getInstance(Context context) {
         if (instance == null) {
-            instance = new ActionsDb(context);
+            instance = new ActionsDb(context.getApplicationContext());
         }
         return instance;
     }
@@ -26,6 +27,10 @@ public class ActionsDb extends SQLiteAssetHelper {
     private ActionsDb(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         setForcedUpgrade();
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
         setWriteAheadLoggingEnabled(true);
     }
 

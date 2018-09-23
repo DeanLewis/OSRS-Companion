@@ -28,10 +28,8 @@ public class AppDb extends SQLiteOpenHelper {
 
     private AppDb(Context context) {
         super(context, DB.name, null, DB.version);
-        setWriteAheadLoggingEnabled(true);
     }
-
-
+    
     @Override
     public void onCreate(SQLiteDatabase db) {
         // run when the database file did not exist and was just created
@@ -78,6 +76,11 @@ public class AppDb extends SQLiteOpenHelper {
     }
 
     @Override
+    public void onOpen(SQLiteDatabase db) {
+        setWriteAheadLoggingEnabled(true);
+    }
+
+    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 7) {
             db.execSQL("DROP TABLE IF EXISTS " + DB.UserStats.tableName);
@@ -85,6 +88,7 @@ public class AppDb extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + DB.GrandExchange.tableName);
             db.execSQL("DROP TABLE IF EXISTS " + DB.GrandExchangeUpdate.tableName);
             db.execSQL("DROP TABLE IF EXISTS " + DB.GrandExchangeGraph.tableName);
+            db.execSQL("DROP TABLE IF EXISTS " + DB.OSBuddyExchangeSummary.tableName);
             db.execSQL("DROP TABLE IF EXISTS " + DB.OSBuddyExchange.tableName);
             db.execSQL("DROP TABLE IF EXISTS " + DB.OSRSNews.tableName);
             onCreate(db);

@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.dennyy.osrscompanion.asynctasks.UpdateDbTask;
 
 public class AppController extends Application {
 
@@ -21,6 +22,7 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        new UpdateDbTask(this).execute();
     }
 
     public static synchronized AppController getInstance() {
