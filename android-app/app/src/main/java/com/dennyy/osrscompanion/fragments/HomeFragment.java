@@ -176,7 +176,6 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         TileData tileData = tiles.get(i);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         Fragment fragment = null;
         String tag = "";
         if (tileData.text.equals(getString(R.string.grandexchange))) {
@@ -212,6 +211,7 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
         else if (tileData.text.equals(getString(R.string.rsnews))) {
             fragment = new OSRSNewsFragment();
         }
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment, tag);
         transaction.addToBackStack(null);
         transaction.commit();
