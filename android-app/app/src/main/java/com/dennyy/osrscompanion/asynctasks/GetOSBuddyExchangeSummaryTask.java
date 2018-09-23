@@ -48,7 +48,7 @@ public class GetOSBuddyExchangeSummaryTask extends AsyncTask<Void, Void, HashMap
         }
         else {
             boolean cacheExpired = Math.abs(System.currentTimeMillis() - dateModified) > Constants.OSBUDDY_SUMMARY_CACHE_DURATION;
-            callback.onContentLoaded(content, cacheExpired);
+            callback.onContentLoaded(content, dateModified, cacheExpired);
         }
     }
 }

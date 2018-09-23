@@ -246,6 +246,7 @@
     <string name="rsnews">OSRS News</string>
     <string name="pipe">\u0020|\u0020</string>
     <string name="back_to_overview">Back to overview</string>
+    <string name="osb_parse_error">(parse error)</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

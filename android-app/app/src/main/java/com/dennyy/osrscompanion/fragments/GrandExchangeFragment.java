@@ -86,7 +86,6 @@ public class GrandExchangeFragment extends BaseFragment {
             grandExchangeViewHandler.geItemData = savedInstanceState.getString(GE_ITEM_DATA);
             grandExchangeViewHandler.geupdateData = savedInstanceState.getString(GE_UPDATE_DATA);
             grandExchangeViewHandler.geGraphData = savedInstanceState.getString(GE_GRAPH_DATA);
-            grandExchangeViewHandler.osBuddyItemData = savedInstanceState.getString(OSBUDDY_DATA);
             grandExchangeViewHandler.currentSelectedDays = GeGraphDays.fromDays(savedInstanceState.getInt(GE_GRAPH_SELECTION_DATA));
             grandExchangeViewHandler.wasRequestingGe = savedInstanceState.getBoolean(WAS_REQUESTING_GE);
             grandExchangeViewHandler.wasRequestingGegraph = savedInstanceState.getBoolean(WAS_REQUESTING_GEGRAPHS);
@@ -105,7 +104,6 @@ public class GrandExchangeFragment extends BaseFragment {
         outState.putString(GE_UPDATE_DATA, grandExchangeViewHandler.geupdateData);
         outState.putString(GE_GRAPH_DATA, grandExchangeViewHandler.geGraphData);
         outState.putInt(GE_GRAPH_SELECTION_DATA, grandExchangeViewHandler.currentSelectedDays.getDays());
-        outState.putString(OSBUDDY_DATA, grandExchangeViewHandler.osBuddyItemData);
         outState.putBoolean(WAS_REQUESTING_GE, grandExchangeViewHandler.wasRequestingGe);
         outState.putBoolean(WAS_REQUESTING_GEGRAPHS, grandExchangeViewHandler.wasRequestingGegraph);
         outState.putBoolean(WAS_REQUESTING_GEUPDATE, grandExchangeViewHandler.wasRequestingGeupdate);

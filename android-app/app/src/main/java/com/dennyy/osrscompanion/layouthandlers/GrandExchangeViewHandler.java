@@ -71,7 +71,6 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     public String geItemData;
     public String geupdateData;
     public String geGraphData;
-    public String osBuddyItemData;
     public GeGraphDays currentSelectedDays = GeGraphDays.ALL;
     public boolean wasRequestingGe;
     public boolean wasRequestingGeupdate;
@@ -92,6 +91,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     private long lastRefreshTimeMs;
     private JsonItemsLoadedCallback jsonItemsLoadedCallback;
     private HashMap<String, OSBuddySummaryItem> summaryItems = new HashMap<>();
+    private long summaryItemsDateModified;
 
     public GrandExchangeViewHandler(final Context context, final View view, final JsonItemsLoadedCallback jsonItemsLoadedCallback) {
         super(context, view);
@@ -497,25 +497,26 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     }
 
     private void loadOSBuddyExchange() {
-        wasRequestingOsBuddy = true;
         setOSBuddyText("...", false);
-        new GetOSBuddyExchangeSummaryTask(context, loadSummaryDataCallback()).execute();
+        boolean cacheExpired = Math.abs(System.currentTimeMillis() - summaryItemsDateModified) > Constants.OSBUDDY_SUMMARY_CACHE_DURATION;
+        if (summaryItems.isEmpty() || cacheExpired) {
+            wasRequestingOsBuddy = true;
+            new GetOSBuddyExchangeSummaryTask(context, loadSummaryDataCallback()).execute();
+        }
+        else {
+            handleOSBuddyData();
+        }
     }
 
     private void handleOSBuddyData() {
-        if (summaryItems.isEmpty()) {
-            try {
-                parseOSBuddySummary();
-            }
-            catch (JSONException e) {
-                showToast(getResources().getString(R.string.exception_occurred, e.getClass().getCanonicalName(), "parsing osbuddy data"), Toast.LENGTH_LONG);
-            }
-        }
+        String error = getResources().getString(R.string.osb_error);
         if (jsonItem == null) {
+            setOSBuddyText(error, true);
             return;
         }
         OSBuddySummaryItem summaryItem = summaryItems.get(jsonItem.id);
         if (summaryItem == null) {
+            setOSBuddyText(error, true);
             return;
         }
 
@@ -542,19 +543,32 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     private OSBuddySummaryLoadedCallback loadSummaryDataCallback() {
         return new OSBuddySummaryLoadedCallback() {
             @Override
-            public void onContentLoaded(HashMap<String, OSBuddySummaryItem> content, boolean cacheExpired) {
+            public void onContentLoaded(final HashMap<String, OSBuddySummaryItem> content, long dateModified, boolean cacheExpired) {
+                summaryItemsDateModified = dateModified;
                 if (content.isEmpty() || cacheExpired) {
                     Utils.getString(Constants.OSBUDDY_EXCHANGE_SUMMARY_URL, OSBUDDY_EXCHANGE_REQUEST_TAG, new Utils.VolleyCallback() {
                         @Override
                         public void onSuccess(String result) {
                             new WriteOSBuddyExchangeSummaryTask(context, result).execute();
-                            osBuddyItemData = result;
-                            handleOSBuddyData();
+                            try {
+                                summaryItems = parseOSBuddySummary(result);
+                                handleOSBuddyData();
+                            }
+                            catch (JSONException e) {
+                                setOSBuddyText(getResources().getString(R.string.osb_parse_error), true);
+                                showToast(getResources().getString(R.string.exception_occurred, e.getClass().getCanonicalName(), "parsing osbuddy data"), Toast.LENGTH_LONG);
+                            }
                         }
 
                         @Override
                         public void onError(VolleyError error) {
-                            setOSBuddyText(getResources().getString(R.string.osb_error), true);
+                            if (!content.isEmpty()) {
+                                summaryItems = content;
+                                handleOSBuddyData();
+                            }
+                            else {
+                                setOSBuddyText(getResources().getString(R.string.osb_error), true);
+                            }
                         }
 
                         @Override
@@ -566,6 +580,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                 else {
                     summaryItems = content;
                     handleOSBuddyData();
+                    wasRequestingOsBuddy = false;
                 }
             }
 
@@ -574,13 +589,6 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                 showToast(getResources().getString(R.string.exception_occurred, "exception", "loading osbuddy prices"), Toast.LENGTH_LONG);
             }
         };
-    }
-
-    private void parseOSBuddySummary() throws JSONException {
-        if (Utils.isNullOrEmpty(osBuddyItemData)) {
-            return;
-        }
-        summaryItems = parseOSBuddySummary(osBuddyItemData);
     }
 
     public static HashMap<String, OSBuddySummaryItem> parseOSBuddySummary(String osBuddyItemData) throws JSONException {
@@ -668,7 +676,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         if (wasRequestingOsBuddy) {
             loadOSBuddyExchange();
         }
-        else if (!Utils.isNullOrEmpty(osBuddyItemData)) {
+        else if (!summaryItems.isEmpty()) {
             handleOSBuddyData();
         }
     }
