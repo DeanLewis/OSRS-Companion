@@ -1,6 +1,7 @@
 package com.dennyy.osrscompanion.asynctasks;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.AsyncTask;
 
 import com.dennyy.osrscompanion.helpers.ActionsDb;
@@ -20,8 +21,12 @@ public class UpdateDbTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         Context context = weakContext.get();
         if (context != null) {
-            AppDb.getInstance(context).getWritableDatabase();
-            ActionsDb.getInstance(context).getWritableDatabase();
+            try {
+                AppDb.getInstance(context).getWritableDatabase();
+                ActionsDb.getInstance(context).getWritableDatabase();
+            }
+            catch (SQLiteDatabaseLockedException | NullPointerException ignored) {
+            }
         }
         return null;
     }
