@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.layouthandlers.FairyRingViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.FairyRingViewHandler;
 
 public class FairyRingFragment extends BaseFragment {
 

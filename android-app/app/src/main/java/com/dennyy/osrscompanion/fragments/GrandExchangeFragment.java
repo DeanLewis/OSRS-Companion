@@ -12,8 +12,8 @@ import android.view.WindowManager;
 
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.GeGraphDays;
-import com.dennyy.osrscompanion.interfaces.JsonItemsLoadedCallback;
-import com.dennyy.osrscompanion.layouthandlers.GrandExchangeViewHandler;
+import com.dennyy.osrscompanion.interfaces.JsonItemsLoadedListener;
+import com.dennyy.osrscompanion.viewhandlers.GrandExchangeViewHandler;
 import com.dennyy.osrscompanion.models.GrandExchange.JsonItem;
 
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class GrandExchangeFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.grandexchange));
 
-        grandExchangeViewHandler = new GrandExchangeViewHandler(getActivity(), view, new JsonItemsLoadedCallback() {
+        grandExchangeViewHandler = new GrandExchangeViewHandler(getActivity(), view, new JsonItemsLoadedListener() {
             @Override
             public void onJsonItemsLoaded(ArrayList<JsonItem> items) {
                 loadFragment(savedInstanceState);

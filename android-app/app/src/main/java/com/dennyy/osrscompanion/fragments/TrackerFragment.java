@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.TrackDurationType;
-import com.dennyy.osrscompanion.layouthandlers.TrackerViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.TrackerViewHandler;
 import com.dennyy.osrscompanion.models.Tracker.TrackData;
 
 import java.util.HashMap;

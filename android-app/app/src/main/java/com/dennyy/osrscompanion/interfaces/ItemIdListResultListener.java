@@ -1,6 +1,6 @@
 package com.dennyy.osrscompanion.interfaces;
 
-public interface ItemIdListResultCallback {
+public interface ItemIdListResultListener {
     void onItemsUpdated();
 
     void onItemsNotUpdated();

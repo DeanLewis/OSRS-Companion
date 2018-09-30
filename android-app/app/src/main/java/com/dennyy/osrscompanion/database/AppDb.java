@@ -1,4 +1,4 @@
-package com.dennyy.osrscompanion.helpers;
+package com.dennyy.osrscompanion.database;
 
 import android.content.ContentValues;
 import android.content.Context;

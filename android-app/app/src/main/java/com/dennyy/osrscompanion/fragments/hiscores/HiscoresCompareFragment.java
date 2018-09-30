@@ -14,7 +14,7 @@ import com.dennyy.osrscompanion.enums.CompareMode;
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.fragments.BaseFragment;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.layouthandlers.HiscoresCompareViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.HiscoresCompareViewHandler;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 
 public class HiscoresCompareFragment extends BaseFragment {

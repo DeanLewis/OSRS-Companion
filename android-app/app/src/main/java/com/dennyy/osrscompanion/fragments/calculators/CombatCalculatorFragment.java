@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.fragments.BaseFragment;
-import com.dennyy.osrscompanion.layouthandlers.CombatCalculatorViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.CombatCalculatorViewHandler;
 
 public class CombatCalculatorFragment extends BaseFragment {
 

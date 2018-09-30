@@ -1,11 +1,10 @@
-package com.dennyy.osrscompanion.helpers;
+package com.dennyy.osrscompanion.database;
 
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.models.General.Action;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 

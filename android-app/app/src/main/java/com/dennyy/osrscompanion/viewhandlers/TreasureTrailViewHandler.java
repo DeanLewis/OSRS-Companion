@@ -1,4 +1,4 @@
-package com.dennyy.osrscompanion.layouthandlers;
+package com.dennyy.osrscompanion.viewhandlers;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -25,7 +25,7 @@ import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
 import com.dennyy.osrscompanion.enums.TreasureTrailType;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.interfaces.TreasureTrailsLoadedCallback;
+import com.dennyy.osrscompanion.interfaces.TreasureTrailsLoadedListener;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrail;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrailMap;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrails;
@@ -39,7 +39,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class TreasureTrailViewHandler extends BaseViewHandler implements View.OnClickListener, TreasureTrailMapAdapter.AdapterImageClickListener, TreasureTrailsLoadedCallback {
+public class TreasureTrailViewHandler extends BaseViewHandler implements View.OnClickListener, TreasureTrailMapAdapter.AdapterImageClickListener, TreasureTrailsLoadedListener {
     public TreasureTrail treasureTrail;
 
     private static final String TT_REQUEST_TAG = "TT_REQUEST_TAG";
@@ -53,11 +53,11 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
     private ListView mapsListView;
     private View dimView;
     private ImageView expandedImageView;
-    private TreasureTrailsLoadedCallback treasureTrailsLoadedCallback;
+    private TreasureTrailsLoadedListener treasureTrailsLoadedListener;
 
-    public TreasureTrailViewHandler(Context context, View view, TreasureTrailsLoadedCallback treasureTrailsLoadedCallback) {
+    public TreasureTrailViewHandler(Context context, View view, TreasureTrailsLoadedListener treasureTrailsLoadedListener) {
         super(context, view);
-        this.treasureTrailsLoadedCallback = treasureTrailsLoadedCallback;
+        this.treasureTrailsLoadedListener = treasureTrailsLoadedListener;
         new LoadItems(context, this).execute();
     }
 
@@ -65,8 +65,8 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
     public void onTreasureTrailsLoaded(TreasureTrails treasureTrails) {
         allItems = treasureTrails;
         updateView(view);
-        if (treasureTrailsLoadedCallback != null) {
-            treasureTrailsLoadedCallback.onTreasureTrailsLoaded(null);
+        if (treasureTrailsLoadedListener != null) {
+            treasureTrailsLoadedListener.onTreasureTrailsLoaded(null);
         }
     }
 
@@ -217,11 +217,11 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
 
     private static class LoadItems extends AsyncTask<String, Void, TreasureTrails> {
         private WeakReference<Context> context;
-        private TreasureTrailsLoadedCallback treasureTrailsLoadedCallback;
+        private TreasureTrailsLoadedListener treasureTrailsLoadedListener;
 
-        private LoadItems(Context context, TreasureTrailsLoadedCallback treasureTrailsLoadedCallback) {
+        private LoadItems(Context context, TreasureTrailsLoadedListener treasureTrailsLoadedListener) {
             this.context = new WeakReference<>(context);
-            this.treasureTrailsLoadedCallback = treasureTrailsLoadedCallback;
+            this.treasureTrailsLoadedListener = treasureTrailsLoadedListener;
         }
 
         @Override
@@ -265,10 +265,10 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
         @Override
         protected void onPostExecute(TreasureTrails items) {
             if (items.treasureTrails.size() > 0 && items.treasureTrailMaps.size() > 0) {
-                treasureTrailsLoadedCallback.onTreasureTrailsLoaded(items);
+                treasureTrailsLoadedListener.onTreasureTrailsLoaded(items);
             }
             else {
-                treasureTrailsLoadedCallback.onTreasureTrailsLoadError();
+                treasureTrailsLoadedListener.onTreasureTrailsLoadError();
             }
         }
     }

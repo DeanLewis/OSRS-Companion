@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.fragments.BaseFragment;
-import com.dennyy.osrscompanion.layouthandlers.HiscoresLookupViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.HiscoresLookupViewHandler;
 
 
 public class HiscoresLookupFragment extends BaseFragment {

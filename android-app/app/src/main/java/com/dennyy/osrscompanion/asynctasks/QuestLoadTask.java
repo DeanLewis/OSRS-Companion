@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.interfaces.QuestsLoadedCallback;
+import com.dennyy.osrscompanion.interfaces.QuestsLoadedListener;
 import com.dennyy.osrscompanion.models.General.Quest;
 
 import org.json.JSONArray;
@@ -18,12 +18,12 @@ import java.util.Comparator;
 
 public class QuestLoadTask extends AsyncTask<String, Void, ArrayList<Quest>> {
     private WeakReference<Context> context;
-    private QuestsLoadedCallback questsLoadedCallback;
+    private QuestsLoadedListener questsLoadedListener;
     private ArrayList<Quest> quests = new ArrayList<>();
 
-    public QuestLoadTask(Context context, QuestsLoadedCallback questsLoadedCallback) {
+    public QuestLoadTask(Context context, QuestsLoadedListener questsLoadedListener) {
         this.context = new WeakReference<>(context);
-        this.questsLoadedCallback = questsLoadedCallback;
+        this.questsLoadedListener = questsLoadedListener;
     }
 
     @Override
@@ -51,10 +51,10 @@ public class QuestLoadTask extends AsyncTask<String, Void, ArrayList<Quest>> {
     @Override
     protected void onPostExecute(ArrayList<Quest> quests) {
         if (quests.size() > 0) {
-            questsLoadedCallback.onQuestsLoaded(quests);
+            questsLoadedListener.onQuestsLoaded(quests);
         }
         else {
-            questsLoadedCallback.onQuestsLoadError();
+            questsLoadedListener.onQuestsLoadError();
         }
     }
 }

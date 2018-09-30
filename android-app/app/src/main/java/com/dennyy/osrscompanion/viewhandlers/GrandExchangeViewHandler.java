@@ -1,4 +1,4 @@
-package com.dennyy.osrscompanion.layouthandlers;
+package com.dennyy.osrscompanion.viewhandlers;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -29,12 +29,12 @@ import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.DelayedAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.LineIndicatorButton;
 import com.dennyy.osrscompanion.enums.GeGraphDays;
-import com.dennyy.osrscompanion.helpers.AppDb;
+import com.dennyy.osrscompanion.database.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.interfaces.JsonItemsLoadedCallback;
-import com.dennyy.osrscompanion.interfaces.OSBuddySummaryLoadedCallback;
+import com.dennyy.osrscompanion.interfaces.JsonItemsLoadedListener;
+import com.dennyy.osrscompanion.interfaces.OSBuddySummaryLoadedListener;
 import com.dennyy.osrscompanion.models.GrandExchange.CustomLineDataSet;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeData;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeGraphData;
@@ -66,7 +66,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class GrandExchangeViewHandler extends BaseViewHandler implements View.OnClickListener, JsonItemsLoadedCallback {
+public class GrandExchangeViewHandler extends BaseViewHandler implements View.OnClickListener, JsonItemsLoadedListener {
     public JsonItem jsonItem;
     public String geItemData;
     public String geupdateData;
@@ -89,11 +89,11 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
     private HashMap<GeGraphDays, Integer> indicators;
     private long lastRefreshTimeMs;
-    private JsonItemsLoadedCallback jsonItemsLoadedCallback;
+    private JsonItemsLoadedListener jsonItemsLoadedListener;
     private HashMap<String, OSBuddySummaryItem> summaryItems = new HashMap<>();
     private long summaryItemsDateModified;
 
-    public GrandExchangeViewHandler(final Context context, final View view, final JsonItemsLoadedCallback jsonItemsLoadedCallback) {
+    public GrandExchangeViewHandler(final Context context, final View view, final JsonItemsLoadedListener jsonItemsLoadedListener) {
         super(context, view);
 
         indicators = new HashMap<>();
@@ -101,7 +101,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         indicators.put(GeGraphDays.QUARTER, R.id.ge_graph_show_quarter);
         indicators.put(GeGraphDays.MONTH, R.id.ge_graph_show_month);
         indicators.put(GeGraphDays.WEEK, R.id.ge_graph_show_week);
-        this.jsonItemsLoadedCallback = jsonItemsLoadedCallback;
+        this.jsonItemsLoadedListener = jsonItemsLoadedListener;
         new LoadItems(context, this).execute();
         new GetOSBuddyExchangeSummaryTask(context, loadSummaryDataCallback()).execute();
     }
@@ -110,8 +110,8 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     public void onJsonItemsLoaded(ArrayList<JsonItem> items) {
         allItems = new ArrayList<>(items);
         updateView(view);
-        if (jsonItemsLoadedCallback != null) {
-            jsonItemsLoadedCallback.onJsonItemsLoaded(null);
+        if (jsonItemsLoadedListener != null) {
+            jsonItemsLoadedListener.onJsonItemsLoaded(null);
         }
     }
 
@@ -540,8 +540,8 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         setOSBuddyText(text, text, isError);
     }
 
-    private OSBuddySummaryLoadedCallback loadSummaryDataCallback() {
-        return new OSBuddySummaryLoadedCallback() {
+    private OSBuddySummaryLoadedListener loadSummaryDataCallback() {
+        return new OSBuddySummaryLoadedListener() {
             @Override
             public void onContentLoaded(final HashMap<String, OSBuddySummaryItem> content, long dateModified, boolean cacheExpired) {
                 summaryItemsDateModified = dateModified;
@@ -683,12 +683,12 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
     private static class LoadItems extends AsyncTask<String, Void, ArrayList<JsonItem>> {
         private WeakReference<Context> context;
-        private JsonItemsLoadedCallback jsonItemsLoadedCallback;
+        private JsonItemsLoadedListener jsonItemsLoadedListener;
         private ArrayList<JsonItem> allItems = new ArrayList<>();
 
-        private LoadItems(Context context, JsonItemsLoadedCallback jsonItemsLoadedCallback) {
+        private LoadItems(Context context, JsonItemsLoadedListener jsonItemsLoadedListener) {
             this.context = new WeakReference<>(context);
-            this.jsonItemsLoadedCallback = jsonItemsLoadedCallback;
+            this.jsonItemsLoadedListener = jsonItemsLoadedListener;
         }
 
         @Override
@@ -732,10 +732,10 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         @Override
         protected void onPostExecute(ArrayList<JsonItem> items) {
             if (items.size() > 0) {
-                jsonItemsLoadedCallback.onJsonItemsLoaded(items);
+                jsonItemsLoadedListener.onJsonItemsLoaded(items);
             }
             else {
-                jsonItemsLoadedCallback.onJsonItemsLoadError();
+                jsonItemsLoadedListener.onJsonItemsLoadError();
             }
         }
     }

@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.layouthandlers.OSRSNewsViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.OSRSNewsViewHandler;
 
 public class OSRSNewsFragment extends BaseFragment {
 

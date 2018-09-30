@@ -29,7 +29,7 @@ import com.dennyy.osrscompanion.asynctasks.UpdateItemIdListTask;
 import com.dennyy.osrscompanion.customviews.CheckboxDialogPreference;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.interfaces.ItemIdListResultCallback;
+import com.dennyy.osrscompanion.interfaces.ItemIdListResultListener;
 
 import java.util.Arrays;
 
@@ -116,7 +116,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
         Utils.getString(Constants.ITEMIDLIST_URL, ITEMIDLIST_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                new UpdateItemIdListTask(getActivity(), result, new ItemIdListResultCallback() {
+                new UpdateItemIdListTask(getActivity(), result, new ItemIdListResultListener() {
                     @Override
                     public void onItemsUpdated() {
                         showToast(getResources().getString(R.string.updated_list_of_items), Toast.LENGTH_LONG);

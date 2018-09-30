@@ -1,4 +1,4 @@
-package com.dennyy.osrscompanion.layouthandlers;
+package com.dennyy.osrscompanion.viewhandlers;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -17,7 +17,7 @@ import com.dennyy.osrscompanion.adapters.FairyRingSearchAdapter;
 import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.DelayedAutoCompleteTextView;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.interfaces.FairyRingsLoadedCallback;
+import com.dennyy.osrscompanion.interfaces.FairyRingsLoadedListener;
 import com.dennyy.osrscompanion.models.FairyRings.FairyRing;
 
 import org.json.JSONArray;
@@ -38,7 +38,7 @@ public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher
 
     public FairyRingViewHandler(Context context, final View view) {
         super(context, view);
-        new LoadItems(context, new FairyRingsLoadedCallback() {
+        new LoadItems(context, new FairyRingsLoadedListener() {
             @Override
             public void onFairyRingsLoaded(ArrayList<FairyRing> items) {
                 fairyRings = new ArrayList<>(items);
@@ -109,11 +109,11 @@ public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher
 
     private static class LoadItems extends AsyncTask<String, Void, ArrayList<FairyRing>> {
         private WeakReference<Context> context;
-        private FairyRingsLoadedCallback fairyRingsLoadedCallback;
+        private FairyRingsLoadedListener fairyRingsLoadedListener;
 
-        private LoadItems(Context context, FairyRingsLoadedCallback fairyRingsLoadedLoadedCallback) {
+        private LoadItems(Context context, FairyRingsLoadedListener fairyRingsLoadedLoadedCallback) {
             this.context = new WeakReference<>(context);
-            this.fairyRingsLoadedCallback = fairyRingsLoadedLoadedCallback;
+            this.fairyRingsLoadedListener = fairyRingsLoadedLoadedCallback;
         }
 
         @Override
@@ -140,10 +140,10 @@ public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher
         @Override
         protected void onPostExecute(ArrayList<FairyRing> items) {
             if (items.size() > 0) {
-                fairyRingsLoadedCallback.onFairyRingsLoaded(items);
+                fairyRingsLoadedListener.onFairyRingsLoaded(items);
             }
             else {
-                fairyRingsLoadedCallback.onFairyRingsLoadError();
+                fairyRingsLoadedListener.onFairyRingsLoadError();
             }
         }
     }

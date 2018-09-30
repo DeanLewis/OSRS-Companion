@@ -1,4 +1,4 @@
-package com.dennyy.osrscompanion.layouthandlers;
+package com.dennyy.osrscompanion.viewhandlers;
 
 import android.content.Context;
 import android.os.Handler;
@@ -22,7 +22,7 @@ import com.dennyy.osrscompanion.customviews.ClearableEditText;
 import com.dennyy.osrscompanion.customviews.HiscoreTypeSelectorLayout;
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.enums.SkillType;
-import com.dennyy.osrscompanion.helpers.AppDb;
+import com.dennyy.osrscompanion.database.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.HiscoreTypeSelectedListener;

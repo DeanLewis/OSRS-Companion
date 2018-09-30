@@ -1,4 +1,4 @@
-package com.dennyy.osrscompanion.layouthandlers;
+package com.dennyy.osrscompanion.viewhandlers;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -21,10 +21,10 @@ import com.dennyy.osrscompanion.customviews.ClearableEditText;
 import com.dennyy.osrscompanion.customviews.HiscoreTypeSelectorLayout;
 import com.dennyy.osrscompanion.enums.DiaryType;
 import com.dennyy.osrscompanion.enums.HiscoreType;
-import com.dennyy.osrscompanion.helpers.AppDb;
+import com.dennyy.osrscompanion.database.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.interfaces.DiariesLoadedCallback;
+import com.dennyy.osrscompanion.interfaces.DiariesLoadedListener;
 import com.dennyy.osrscompanion.interfaces.HiscoreTypeSelectedListener;
 import com.dennyy.osrscompanion.models.AchievementDiary.Diaries;
 import com.dennyy.osrscompanion.models.AchievementDiary.DiariesMap;
@@ -42,7 +42,7 @@ import java.util.List;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-public class DiaryCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectedListener, View.OnClickListener, ExpandableListView.OnGroupExpandListener, DiariesLoadedCallback {
+public class DiaryCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectedListener, View.OnClickListener, ExpandableListView.OnGroupExpandListener, DiariesLoadedListener {
     public String hiscoresData;
     public HiscoreType selectedHiscoreType;
     public int lastExpandedPosition = -1;
@@ -56,9 +56,9 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
     private MaterialProgressBar refreshLayout;
     private DiaryListAdapter adapter;
     private ExpandableListView diaryListView;
-    private DiariesLoadedCallback diariesLoadedCallback;
+    private DiariesLoadedListener diariesLoadedListener;
 
-    public DiaryCalculatorViewHandler(final Context context, final View view, DiariesLoadedCallback callback) {
+    public DiaryCalculatorViewHandler(final Context context, final View view, DiariesLoadedListener callback) {
         super(context, view);
 
         rsnEditText = ((ClearableEditText) view.findViewById(R.id.rsn_input)).getEditText();
@@ -68,7 +68,7 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
         hiscoreTypeSelectorLayout = view.findViewById(R.id.hiscore_type_selector);
         hiscoreTypeSelectorLayout.setOnTypeSelectedListener(this);
         selectedHiscoreType = hiscoreTypeSelectorLayout.getHiscoreType();
-        diariesLoadedCallback = callback;
+        diariesLoadedListener = callback;
 
         initializeListeners();
         new LoadDiaries(context, this).execute();
@@ -83,8 +83,8 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
         diaryListView.setOnGroupExpandListener(DiaryCalculatorViewHandler.this);
         String inputRsn = getRsn(rsnEditText);
         initializeUser(inputRsn);
-        if (diariesLoadedCallback != null) {
-            diariesLoadedCallback.onDiariesLoaded(diariesMap);
+        if (diariesLoadedListener != null) {
+            diariesLoadedListener.onDiariesLoaded(diariesMap);
         }
     }
 
@@ -273,11 +273,11 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
 
     private static class LoadDiaries extends AsyncTask<String, Void, DiariesMap> {
         private WeakReference<Context> context;
-        private DiariesLoadedCallback diariesLoadedCallback;
+        private DiariesLoadedListener diariesLoadedListener;
 
-        private LoadDiaries(Context context, DiariesLoadedCallback diariesLoadedCallback) {
+        private LoadDiaries(Context context, DiariesLoadedListener diariesLoadedListener) {
             this.context = new WeakReference<>(context);
-            this.diariesLoadedCallback = diariesLoadedCallback;
+            this.diariesLoadedListener = diariesLoadedListener;
         }
 
         @Override
@@ -337,10 +337,10 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
         @Override
         protected void onPostExecute(DiariesMap diariesMap) {
             if (diariesMap.size() > 0) {
-                diariesLoadedCallback.onDiariesLoaded(diariesMap);
+                diariesLoadedListener.onDiariesLoaded(diariesMap);
             }
             else {
-                diariesLoadedCallback.onDiariesLoadError();
+                diariesLoadedListener.onDiariesLoadError();
             }
         }
     }

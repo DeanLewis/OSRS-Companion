@@ -5,6 +5,6 @@ import com.dennyy.osrscompanion.models.OSRSNews.OSRSNewsDTO;
 
 import java.util.ArrayList;
 
-public interface OSRSNewsLoadedCallback {
+public interface OSRSNewsLoadedListener {
     void onOSRSNewsLoaded(OSRSNewsDTO osrsNewsDTO);
 }

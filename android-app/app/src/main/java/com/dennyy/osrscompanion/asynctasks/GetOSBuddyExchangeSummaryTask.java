@@ -3,10 +3,10 @@ package com.dennyy.osrscompanion.asynctasks;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.dennyy.osrscompanion.helpers.AppDb;
+import com.dennyy.osrscompanion.database.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
-import com.dennyy.osrscompanion.interfaces.OSBuddySummaryLoadedCallback;
-import com.dennyy.osrscompanion.layouthandlers.GrandExchangeViewHandler;
+import com.dennyy.osrscompanion.interfaces.OSBuddySummaryLoadedListener;
+import com.dennyy.osrscompanion.viewhandlers.GrandExchangeViewHandler;
 import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryDTO;
 import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryItem;
 
@@ -17,10 +17,10 @@ import java.util.HashMap;
 
 public class GetOSBuddyExchangeSummaryTask extends AsyncTask<Void, Void, HashMap<String, OSBuddySummaryItem>> {
     private WeakReference<Context> context;
-    private OSBuddySummaryLoadedCallback callback;
+    private OSBuddySummaryLoadedListener callback;
     private long dateModified;
 
-    public GetOSBuddyExchangeSummaryTask(final Context context, final OSBuddySummaryLoadedCallback callback) {
+    public GetOSBuddyExchangeSummaryTask(final Context context, final OSBuddySummaryLoadedListener callback) {
         this.context = new WeakReference<>(context);
         this.callback = callback;
     }

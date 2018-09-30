@@ -3,7 +3,7 @@ package com.dennyy.osrscompanion.asynctasks;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.dennyy.osrscompanion.helpers.AppDb;
+import com.dennyy.osrscompanion.database.AppDb;
 import com.dennyy.osrscompanion.helpers.Utils;
 
 import java.lang.ref.WeakReference;

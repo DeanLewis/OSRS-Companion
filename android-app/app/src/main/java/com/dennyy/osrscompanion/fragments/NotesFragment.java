@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.layouthandlers.NotesViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.NotesViewHandler;
 import com.dennyy.osrscompanion.models.Notes.NoteChangeEvent;
 
 import org.greenrobot.eventbus.EventBus;

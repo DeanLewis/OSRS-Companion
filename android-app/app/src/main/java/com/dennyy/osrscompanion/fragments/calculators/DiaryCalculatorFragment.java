@@ -12,8 +12,8 @@ import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.fragments.BaseFragment;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.interfaces.DiariesLoadedCallback;
-import com.dennyy.osrscompanion.layouthandlers.DiaryCalculatorViewHandler;
+import com.dennyy.osrscompanion.interfaces.DiariesLoadedListener;
+import com.dennyy.osrscompanion.viewhandlers.DiaryCalculatorViewHandler;
 import com.dennyy.osrscompanion.models.AchievementDiary.DiariesMap;
 
 public class DiaryCalculatorFragment extends BaseFragment {
@@ -40,7 +40,7 @@ public class DiaryCalculatorFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.diary_calculator));
 
-        diaryCalculatorViewHandler = new DiaryCalculatorViewHandler(getActivity(), view, new DiariesLoadedCallback() {
+        diaryCalculatorViewHandler = new DiaryCalculatorViewHandler(getActivity(), view, new DiariesLoadedListener() {
             @Override
             public void onDiariesLoaded(DiariesMap ignored) {
                 loadFragment(savedInstanceState);

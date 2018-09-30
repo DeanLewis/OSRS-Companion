@@ -4,8 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.AsyncTask;
 
-import com.dennyy.osrscompanion.helpers.ActionsDb;
-import com.dennyy.osrscompanion.helpers.AppDb;
+import com.dennyy.osrscompanion.database.ActionsDb;
+import com.dennyy.osrscompanion.database.AppDb;
 
 import java.lang.ref.WeakReference;
 

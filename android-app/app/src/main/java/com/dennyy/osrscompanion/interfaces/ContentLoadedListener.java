@@ -1,5 +1,5 @@
 package com.dennyy.osrscompanion.interfaces;
 
-public interface ContentLoadedCallback {
+public interface ContentLoadedListener {
     void onContentLoaded(String content);
 }

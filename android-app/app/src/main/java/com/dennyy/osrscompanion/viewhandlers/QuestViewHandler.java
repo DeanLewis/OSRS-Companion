@@ -1,4 +1,4 @@
-package com.dennyy.osrscompanion.layouthandlers;
+package com.dennyy.osrscompanion.viewhandlers;
 
 import android.app.Activity;
 import android.content.Context;
@@ -30,8 +30,8 @@ import com.dennyy.osrscompanion.enums.QuestSource;
 import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.interfaces.QuestsLoadedCallback;
-import com.dennyy.osrscompanion.interfaces.WebViewScrollCallback;
+import com.dennyy.osrscompanion.interfaces.QuestsLoadedListener;
+import com.dennyy.osrscompanion.interfaces.WebViewScrollListener;
 import com.dennyy.osrscompanion.models.General.Quest;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import java.util.Arrays;
 
 import im.delight.android.webview.AdvancedWebView;
 
-public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, AdapterView.OnItemSelectedListener, View.OnClickListener, QuestsLoadedCallback, WebViewScrollCallback {
+public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, AdapterView.OnItemSelectedListener, View.OnClickListener, QuestsLoadedListener, WebViewScrollListener {
 
     public ObservableWebView webView;
     public int selectedQuestIndex = -1;
@@ -52,15 +52,15 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     private boolean clearHistory;
     private final Handler handler = new Handler();
     private Runnable runnable;
-    private QuestsLoadedCallback questsLoadedCallback;
+    private QuestsLoadedListener questsLoadedListener;
     private RelativeLayout questSelectorContainer;
 
-    public QuestViewHandler(final Context context, View view, boolean isFloatingView, QuestsLoadedCallback questsLoadedCallback) {
+    public QuestViewHandler(final Context context, View view, boolean isFloatingView, QuestsLoadedListener questsLoadedListener) {
         super(context, view);
 
         selectedQuestSource = QuestSource.fromName(PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.PREF_QUEST_SOURCE, QuestSource.RSWIKI.getName()));
         webView = view.findViewById(R.id.webview);
-        webView.setWebViewScrollCallback(this);
+        webView.setWebViewScrollListener(this);
         questSelectorContainer = view.findViewById(R.id.quest_selector_container);
         progressBar = view.findViewById(R.id.progressBar);
         questSelectorSpinner = view.findViewById(R.id.quest_selector_spinner);
@@ -70,7 +70,7 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
             backButton.setVisibility(View.VISIBLE);
             backButton.setOnClickListener(this);
         }
-        this.questsLoadedCallback = questsLoadedCallback;
+        this.questsLoadedListener = questsLoadedListener;
         new QuestLoadTask(context, this).execute();
         initWebView();
         initQuestSourceSpinner();
@@ -112,8 +112,8 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         quests = new ArrayList<>(loadedQuests);
         QuestSelectorSpinnerAdapter questSelectorSpinnerAdapter = new QuestSelectorSpinnerAdapter(context, quests);
         questSelectorSpinner.setAdapter(new NothingSelectedSpinnerAdapter(questSelectorSpinnerAdapter, getString(R.string.select_a_quest), context));
-        if (questsLoadedCallback != null) {
-            questsLoadedCallback.onQuestsLoaded(null);
+        if (questsLoadedListener != null) {
+            questsLoadedListener.onQuestsLoaded(null);
         }
     }
 

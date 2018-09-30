@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.fragments.BaseFragment;
-import com.dennyy.osrscompanion.layouthandlers.ExpCalculatorViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.ExpCalculatorViewHandler;
 
 public class ExpCalculatorFragment extends BaseFragment {
 

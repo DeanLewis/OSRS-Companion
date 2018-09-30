@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import com.dennyy.osrscompanion.enums.ItemIdListUpdateResult;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.interfaces.ItemIdListResultCallback;
+import com.dennyy.osrscompanion.interfaces.ItemIdListResultListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,10 +20,10 @@ import java.util.Locale;
 
 public class UpdateItemIdListTask extends AsyncTask<Void, Void, ItemIdListUpdateResult> {
     private WeakReference<Context> context;
-    private ItemIdListResultCallback callback;
+    private ItemIdListResultListener callback;
     private String downloadedItemIdListJson;
 
-    public UpdateItemIdListTask(final Context context, final String downloadedItemIdListJson, final ItemIdListResultCallback callback) {
+    public UpdateItemIdListTask(final Context context, final String downloadedItemIdListJson, final ItemIdListResultListener callback) {
         this.context = new WeakReference<>(context);
         this.downloadedItemIdListJson = downloadedItemIdListJson;
         this.callback = callback;

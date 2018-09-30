@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.layouthandlers.RSWikiViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.RSWikiViewHandler;
 
 public class RSWikiFragment extends BaseFragment {
 

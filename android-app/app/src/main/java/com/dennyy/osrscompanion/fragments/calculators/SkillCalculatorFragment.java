@@ -12,7 +12,7 @@ import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.fragments.BaseFragment;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.layouthandlers.SkillCalculatorViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.SkillCalculatorViewHandler;
 
 public class SkillCalculatorFragment extends BaseFragment {
     private static final String HISCORE_TYPE_KEY = "hiscore_type_key";

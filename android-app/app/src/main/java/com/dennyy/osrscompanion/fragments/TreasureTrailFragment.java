@@ -9,8 +9,8 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.interfaces.TreasureTrailsLoadedCallback;
-import com.dennyy.osrscompanion.layouthandlers.TreasureTrailViewHandler;
+import com.dennyy.osrscompanion.interfaces.TreasureTrailsLoadedListener;
+import com.dennyy.osrscompanion.viewhandlers.TreasureTrailViewHandler;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrail;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrails;
 
@@ -38,7 +38,7 @@ public class TreasureTrailFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.treasure_trails));
 
-        treasureTrailViewHandler = new TreasureTrailViewHandler(getActivity(), view, new TreasureTrailsLoadedCallback() {
+        treasureTrailViewHandler = new TreasureTrailViewHandler(getActivity(), view, new TreasureTrailsLoadedListener() {
             @Override
             public void onTreasureTrailsLoaded(TreasureTrails treasureTrails) {
                 loadFragment(savedInstanceState);
