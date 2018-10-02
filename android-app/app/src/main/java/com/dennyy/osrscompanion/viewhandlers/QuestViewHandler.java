@@ -229,16 +229,15 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     }
 
     private void selectQuest() {
-        webView.setVisibility(View.VISIBLE);
         Quest quest = quests.get(selectedQuestIndex);
         clearHistory();
         switch (selectedQuestSource) {
             case RSWIKI:
-                webView.loadUrl(quest.url);
+                loadQuestUrl(quest.url);
                 break;
             case RUNEHQ:
                 if (quest.hasRuneHqUrl()) {
-                    webView.loadUrl(quest.runeHqUrl);
+                    loadQuestUrl(quest.runeHqUrl);
                 }
                 else {
                     showToast(getString(R.string.no_runehq_guide, quest.name), Toast.LENGTH_LONG);
@@ -246,6 +245,11 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
                 break;
         }
         wasRequesting = true;
+    }
+
+    private void loadQuestUrl(String url) {
+        webView.loadUrl(url);
+        webView.setVisibility(View.VISIBLE);
     }
 
     @Override
