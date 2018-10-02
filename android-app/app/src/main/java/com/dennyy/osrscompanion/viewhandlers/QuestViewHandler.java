@@ -85,7 +85,7 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     }
 
     private void initWebView() {
-        webView.addPermittedHostname("oldschoolrunescape.wikia.com");
+        webView.addPermittedHostname("oldschool.runescape.wiki");
         webView.addPermittedHostname("runehq.com");
         webView.setThirdPartyCookiesEnabled(false);
         webView.getSettings().setLoadWithOverviewMode(true);
@@ -151,7 +151,6 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     }
 
     private void handlePageTimerFinished() {
-        hideElementsByClass("site-head-container", "fandom-app-smart-banner", "site-head-wrapper", "wds-global-footer", "edit-section");
         wasRequesting = false;
         progressBar.setProgress(progressBar.getMax());
         webView.setVisibility(View.VISIBLE);
@@ -166,12 +165,6 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
                 progressBar.setVisibility(View.GONE);
             }
         }, 250);
-    }
-
-    private void hideElementsByClass(String... classNames) {
-        for (String className : classNames) {
-            webView.loadUrl("javascript:(function() { document.getElementsByClassName('" + className + "')[0].remove(); })()");
-        }
     }
 
     @Override
