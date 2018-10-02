@@ -14,7 +14,7 @@ import io.fabric.sdk.android.Fabric;
 
 public class AppController extends Application {
 
-    public static final String TAG = BuildConfig.APPLICATION_ID;
+    public static final String TAG = "OSRS COMPANION";
 
     private RequestQueue mRequestQueue;
     private static AppController mInstance;

@@ -34,7 +34,7 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
     public RSWikiViewHandler(final Context context, View view, boolean isFloatingView) {
         super(context, view);
 
-        currentUrl = "https://oldschoolrunescape.wikia.com/wiki/Old_School_RuneScape_Wiki";
+        currentUrl = "https://oldschool.runescape.wiki";
         webView = view.findViewById(R.id.webview);
         progressBar = view.findViewById(R.id.progressBar);
         navBarTitle = view.findViewById(R.id.webview_navbar_title);
@@ -50,7 +50,7 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
 
 
     private void initWebView() {
-        webView.addPermittedHostname("oldschoolrunescape.wikia.com");
+        webView.addPermittedHostname("oldschool.runescape.wiki");
         webView.setThirdPartyCookiesEnabled(false);
         webView.setMixedContentAllowed(false);
         webView.loadUrl(currentUrl);
@@ -105,9 +105,6 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
     }
 
     private void handlePageTimerFinished() {
-        hideElementsByClass("fandom-app-smart-banner", "wds-global-footer", "edit-section");
-        webView.loadUrl("javascript:(function() { document.getElementsByClassName('wds-global-navigation')[0].style.position='initial'; })()");
-
         wasRequesting = false;
         progressBar.setProgress(progressBar.getMax());
         webView.setVisibility(View.VISIBLE);
@@ -122,12 +119,6 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
                 progressBar.setVisibility(View.GONE);
             }
         }, 250);
-    }
-
-    private void hideElementsByClass(String... classNames) {
-        for (String className : classNames) {
-            webView.loadUrl("javascript:(function() { document.getElementsByClassName('" + className + "')[0].remove(); })()");
-        }
     }
 
     @Override
