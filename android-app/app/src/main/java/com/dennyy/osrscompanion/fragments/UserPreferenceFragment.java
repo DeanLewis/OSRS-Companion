@@ -81,7 +81,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
         for (String pref : prefs) {
             findPreference(pref).setOnPreferenceClickListener(this);
         }
-        String[] seekBarPref = new String[]{ Constants.PREF_OPACITY, Constants.PREF_SIZE };
+        String[] seekBarPref = new String[]{ Constants.PREF_OPACITY, Constants.PREF_SIZE, Constants.PREF_PADDING };
         for (String pref : seekBarPref) {
             ((SeekBarPreference)findPreference(pref)).setListener(this);
         }
@@ -213,8 +213,6 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
-            case Constants.PREF_SIZE:
-            case Constants.PREF_PADDING:
             case Constants.PREF_PADDING_SIDE:
                 showToast(getResources().getString(R.string.restart_to_take_effect), Toast.LENGTH_LONG);
                 break;
