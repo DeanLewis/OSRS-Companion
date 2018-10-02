@@ -35,9 +35,9 @@ public class FloatingViewSeekBarPreference extends SeekBarPreference {
     }
 
     @Override
-    public void onProgressChanged(SeekBar seek, int value, boolean fromTouch) {
-        super.onProgressChanged(seek, value, fromTouch);
-        int pixels = (int) Utils.convertDpToPixel(10 + (value * 5), context);
+    public void onStopTrackingTouch(SeekBar seek) {
+        super.onStopTrackingTouch(seek);
+        int pixels = (int) Utils.convertDpToPixel(10 + (seek.getProgress() * 5), context);
         updatePreview(pixels);
     }
 
