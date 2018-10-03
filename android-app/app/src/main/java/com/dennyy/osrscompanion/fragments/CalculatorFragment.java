@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.layouthandlers.CalculatorViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.CalculatorViewHandler;
 
 public class CalculatorFragment extends BaseFragment {
 

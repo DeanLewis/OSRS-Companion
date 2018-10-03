@@ -232,7 +232,6 @@ public class FloatingViewService extends Service implements WindowManagerContain
         super.onConfigurationChanged(newConfig);
 
         updateCalculatorLayout(calcHeadName, calculatorViewHandler);
-        updateGrandExchangeLayout(geHeadName, grandExchangeViewHandler);
     }
 
     private ViewGroup removeFloatingView(String viewName, BaseViewHandler viewHandler) {
@@ -258,18 +257,6 @@ public class FloatingViewService extends Service implements WindowManagerContain
         calculatorViewHandler.reloadData();
 
         viewCache.put(calcHeadName, newView);
-    }
-
-
-    private void updateGrandExchangeLayout(String viewName, BaseViewHandler viewHandler) {
-        ViewGroup parent = removeFloatingView(viewName, viewHandler);
-        if (parent == null)
-            return;
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View newView = inflater.inflate(R.layout.grand_exchange_layout, parent, false);
-        grandExchangeViewHandler.updateView(newView);
-        grandExchangeViewHandler.reloadOnOrientationChanged();
-        viewCache.put(geHeadName, newView);
     }
 
     @Subscribe

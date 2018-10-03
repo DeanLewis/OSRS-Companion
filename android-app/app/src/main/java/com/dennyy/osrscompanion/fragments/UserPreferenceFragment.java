@@ -36,7 +36,7 @@ import com.dennyy.osrscompanion.interfaces.SeekBarPreferenceListener;
 import java.util.Arrays;
 
 
-public class UserPreferenceFragment extends PreferenceFragment implements CheckboxDialogPreference.DialogClosedListener, Preference.OnPreferenceClickListener {
+public class UserPreferenceFragment extends PreferenceFragment implements CheckboxDialogPreference.DialogClosedListener, Preference.OnPreferenceClickListener, SeekBarPreferenceListener {
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
     private Toast toast;
@@ -83,7 +83,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
         }
         String[] seekBarPref = new String[]{ Constants.PREF_OPACITY, Constants.PREF_SIZE, Constants.PREF_PADDING };
         for (String pref : seekBarPref) {
-            ((SeekBarPreference)findPreference(pref)).setListener(this);
+            ((SeekBarPreference) findPreference(pref)).setListener(this);
         }
     }
 
