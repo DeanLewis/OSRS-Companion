@@ -213,10 +213,10 @@
     <string name="from_lvl">From lvl</string>
     <string name="from_exp">From exp</string>
     <string name="enter_valid_target_exp">Enter your current exp or a target exp</string>
-    <string name="align_floating_views_left">Set alignment left side</string>
-    <string name="align_floating_views_left_info">Set the alignment to the left side to apply the custom padding on the left side. Otherwise, the padding will be applied on the right side</string>
-    <string name="alignment_padding_info">Set a custom padding away from the edges of your screen. This may fix the problem of the bottom bar covering up the floating view headers on some devices. Requires a restart of the floating view service</string>
-    <string name="alignment_padding">Set alignment padding</string>
+    <string name="apply_padding_left_side">Apply padding left side</string>
+    <string name="align_floating_views_left_info">Apply the padding on the left side. Otherwise, the padding will be applied on the right side</string>
+    <string name="padding_info">Apply a custom padding to the edge of the floating views selector. This may fix the problem of the bottom bar covering up the floating views selector on some devices</string>
+    <string name="floating_views_padding">Set padding</string>
     <string name="dp">dp</string>
     <string name="rotate_to_take_effect">Rotate the device for the changes to take effect</string>
     <string name="quest_guide">Quest Guides</string>
@@ -250,6 +250,8 @@
     <string name="default_quest_source">Default quest source</string>
     <string name="default_quest_source_info">Select a default quest source to display the guide from</string>
     <string name="no_runehq_guide">RuneHQ has no quest guide for %1$s (yet?)</string>
+    <string name="floating_view_size">Size of the floating view</string>
+    <string name="floating_view_size_info">Set the size of the floating view, default is 50dp</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

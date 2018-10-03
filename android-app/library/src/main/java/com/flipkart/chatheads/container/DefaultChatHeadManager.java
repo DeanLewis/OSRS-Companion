@@ -76,7 +76,7 @@ public class DefaultChatHeadManager implements ChatHeadManager {
         this.windowManagerContainer = windowManagerContainer;
         this.displayMetrics = windowManagerContainer.getDisplayMetrics();
         this.floatingViewPreferences = floatingViewPreferences;
-        init(context, new ChatHeadDefaultConfig(context));
+        init(context, new ChatHeadDefaultConfig(context, floatingViewPreferences));
     }
 
     public ChatHeadContainer getWindowManagerContainer() {

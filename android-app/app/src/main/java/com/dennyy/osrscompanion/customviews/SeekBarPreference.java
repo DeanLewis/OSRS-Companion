@@ -3,6 +3,7 @@ package com.dennyy.osrscompanion.customviews;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.preference.DialogPreference;
@@ -16,20 +17,22 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.dennyy.osrscompanion.R;
+import com.dennyy.osrscompanion.interfaces.SeekBarPreferenceListener;
 
 
 public class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener, OnClickListener {
 
     private SeekBar mSeekBar;
     private TextView mValueText;
-    private Context mContext;
+    protected Context context;
 
+    private SeekBarPreferenceListener listener;
     private String dialogMessage, suffix;
     private int defaultValue, max, min, inc, mValue = 0;
 
     public SeekBarPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
+        this.context = context;
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SeekBarPreference, 0, 0);
         try {
             dialogMessage = ta.getString(R.styleable.SeekBarPreference_dialogMessage);
@@ -49,33 +52,32 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
     @Override
     protected View onCreateDialogView() {
-
         LinearLayout.LayoutParams params;
-        LinearLayout layout = new LinearLayout(mContext);
+        LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(6, 6, 6, 6);
 
-        TextView mSplashText = new TextView(mContext);
+        TextView mSplashText = new TextView(context);
         mSplashText.setPadding(30, 10, 30, 10);
         if (dialogMessage != null)
             mSplashText.setText(dialogMessage);
         layout.addView(mSplashText);
 
-        mValueText = new TextView(mContext);
+        mValueText = new TextView(context);
         mValueText.setGravity(Gravity.CENTER_HORIZONTAL);
         mValueText.setTextSize(32);
-        mValueText.setTextColor(mContext.getResources().getColor(R.color.text));
+        mValueText.setTextColor(context.getResources().getColor(R.color.text));
         params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.FILL_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         layout.addView(mValueText, params);
 
-        mSeekBar = new SeekBar(mContext);
+        mSeekBar = new SeekBar(context);
         mSeekBar.setOnSeekBarChangeListener(this);
-        layout.addView(mSeekBar, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        layout.addView(mSeekBar, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         if (shouldPersist())
-            mValue = getPersistedInt(defaultValue);
+            mValue = getPersistedInt(((defaultValue - min) * 100 / inc) / (max - min));
 
         mSeekBar.setMax(max / inc - (min / inc));
         mSeekBar.setProgress(mValue);
@@ -133,15 +135,27 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     }
 
     @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (listener != null) {
+            listener.onSeekBarCancel(this, getKey());
+        }
+    }
+
+    @Override
     public void onClick(View v) {
-
         if (shouldPersist()) {
-
             mValue = mSeekBar.getProgress();
             persistInt(mSeekBar.getProgress());
             callChangeListener(Integer.valueOf(mSeekBar.getProgress()));
+            if (listener != null) {
+                listener.onSeekBarValueSet(this, getKey(), mValue);
+            }
         }
-
         getDialog().dismiss();
+    }
+
+    public void setListener(SeekBarPreferenceListener listener) {
+        this.listener = listener;
     }
 }

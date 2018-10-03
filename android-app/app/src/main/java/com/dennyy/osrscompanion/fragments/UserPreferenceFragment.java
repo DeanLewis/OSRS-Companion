@@ -27,9 +27,11 @@ import com.dennyy.osrscompanion.BuildConfig;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.asynctasks.UpdateItemIdListTask;
 import com.dennyy.osrscompanion.customviews.CheckboxDialogPreference;
+import com.dennyy.osrscompanion.customviews.SeekBarPreference;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.ItemIdListResultListener;
+import com.dennyy.osrscompanion.interfaces.SeekBarPreferenceListener;
 
 import java.util.Arrays;
 
@@ -75,9 +77,13 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
         editor = preferences.edit();
 
         ((CheckboxDialogPreference) findPreference(Constants.PREF_FLOATING_VIEWS)).addListener(this);
-        String[] prefs = new String[]{ Constants.PREF_LANDSCAPE_ONLY, Constants.PREF_FULLSCREEN_ONLY, Constants.PREF_ALIGN_LEFT, Constants.PREF_FLOATING_VIEWS, Constants.PREF_FEEDBACK, Constants.PREF_VIEW_IN_STORE, Constants.PREF_VIEW_OTHER_APPS, Constants.PREF_SHOW_LIBRARIES, Constants.PREF_DOWNLOAD_ITEMIDLIST, Constants.PREF_QUEST_SOURCE };
+        String[] prefs = new String[]{ Constants.PREF_LANDSCAPE_ONLY, Constants.PREF_FULLSCREEN_ONLY, Constants.PREF_PADDING_SIDE, Constants.PREF_FLOATING_VIEWS, Constants.PREF_FEEDBACK, Constants.PREF_VIEW_IN_STORE, Constants.PREF_VIEW_OTHER_APPS, Constants.PREF_SHOW_LIBRARIES, Constants.PREF_DOWNLOAD_ITEMIDLIST, Constants.PREF_QUEST_SOURCE };
         for (String pref : prefs) {
             findPreference(pref).setOnPreferenceClickListener(this);
+        }
+        String[] seekBarPref = new String[]{ Constants.PREF_OPACITY, Constants.PREF_SIZE };
+        for (String pref : seekBarPref) {
+            ((SeekBarPreference)findPreference(pref)).setListener(this);
         }
     }
 
@@ -155,9 +161,6 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
     public boolean onPreferenceClick(Preference preference) {
         String key = preference.getKey();
         switch (key) {
-            case Constants.PREF_ALIGN_LEFT:
-                showToast(getResources().getString(R.string.restart_to_take_effect), Toast.LENGTH_LONG);
-                break;
             case Constants.PREF_FLOATING_VIEWS:
                 currentPrefs = ((CheckboxDialogPreference) findPreference(Constants.PREF_FLOATING_VIEWS)).getCheckedValues();
                 break;
@@ -210,8 +213,23 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
+            case Constants.PREF_SIZE:
+            case Constants.PREF_PADDING:
+            case Constants.PREF_PADDING_SIDE:
+                showToast(getResources().getString(R.string.restart_to_take_effect), Toast.LENGTH_LONG);
+                break;
         }
         return false;
+    }
+
+    @Override
+    public void onSeekBarValueSet(SeekBarPreference preference, String key, int value) {
+        showToast(getResources().getString(R.string.restart_to_take_effect), Toast.LENGTH_LONG);
+    }
+
+    @Override
+    public void onSeekBarCancel(SeekBarPreference preference, String key) {
+
     }
 
     protected void showToast(String message, int duration) {

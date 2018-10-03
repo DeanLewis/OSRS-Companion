@@ -64,17 +64,28 @@
             app:defValue="20"
             app:min="20"
             app:suffix="@string/percent"/>
+
+        <com.dennyy.osrscompanion.customviews.FloatingViewSeekBarPreference
+            android:key="pref_size"
+            android:layout="@layout/preference_setting_layout"
+            android:summary="@string/floating_view_size_info"
+            android:title="@string/floating_view_size"
+            app:defValue="50"
+            app:min="10"
+            app:inc="5"
+            app:suffix="@string/dp"/>
+
         <CheckBoxPreference
-            android:key="pref_align_floating_views_left"
+            android:key="pref_padding_side"
             android:layout="@layout/preference_setting_layout"
             android:summary="@string/align_floating_views_left_info"
-            android:title="@string/align_floating_views_left"/>
+            android:title="@string/apply_padding_left_side"/>
 
         <com.dennyy.osrscompanion.customviews.SeekBarPreference
-            android:key="pref_alignment_margin"
+            android:key="pref_padding"
             android:layout="@layout/preference_setting_layout"
-            android:summary="@string/alignment_padding_info"
-            android:title="@string/alignment_padding"
+            android:summary="@string/padding_info"
+            android:title="@string/floating_views_padding"
             app:defValue="0"
             app:inc="5"
             app:suffix="@string/dp"/>

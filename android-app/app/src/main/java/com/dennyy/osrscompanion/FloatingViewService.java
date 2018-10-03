@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.models.Notes.NoteChangeEvent;
 import com.dennyy.osrscompanion.viewhandlers.BaseViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.CalculatorViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.CombatCalculatorViewHandler;
@@ -30,7 +31,6 @@ import com.dennyy.osrscompanion.viewhandlers.RSWikiViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.SkillCalculatorViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.TrackerViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.TreasureTrailViewHandler;
-import com.dennyy.osrscompanion.models.Notes.NoteChangeEvent;
 import com.flipkart.chatheads.ChatHead;
 import com.flipkart.chatheads.arrangement.ChatHeadArrangement;
 import com.flipkart.chatheads.arrangement.MinimizedArrangement;
@@ -296,11 +296,11 @@ public class FloatingViewService extends Service implements WindowManagerContain
     private FloatingViewPreferences getFloatingViewPreferences(SharedPreferences preferences) {
         float inactiveAlpha = 0.2f + (preferences.getInt(Constants.PREF_OPACITY, 3) * 0.1f);
         boolean startRightSide = preferences.getBoolean(Constants.PREF_RIGHT_SIDE, false);
-        boolean alignFloatingViewsLeft = preferences.getBoolean(Constants.PREF_ALIGN_LEFT, true);
-        int alignmentMargin = preferences.getInt(Constants.PREF_ALIGN_MARGIN, 0) * 5;
+        boolean alignFloatingViewsLeft = preferences.getBoolean(Constants.PREF_PADDING_SIDE, true);
+        int alignmentMargin = preferences.getInt(Constants.PREF_PADDING, 0) * 5;
         alignmentMargin = (int) Utils.convertDpToPixel(alignmentMargin, FloatingViewService.this);
-
-        FloatingViewPreferences floatingViewPreferences = new FloatingViewPreferences(startRightSide, alignFloatingViewsLeft, alignmentMargin, inactiveAlpha, namesMap.size());
+        int sizeDp = 10 + (preferences.getInt(Constants.PREF_SIZE, 8) * 5);
+        FloatingViewPreferences floatingViewPreferences = new FloatingViewPreferences(startRightSide, alignFloatingViewsLeft, alignmentMargin, inactiveAlpha, namesMap.size(), sizeDp);
         return floatingViewPreferences;
     }
 

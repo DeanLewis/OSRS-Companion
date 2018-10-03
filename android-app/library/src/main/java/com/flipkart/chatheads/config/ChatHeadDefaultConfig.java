@@ -6,8 +6,8 @@ import android.graphics.Point;
 import com.flipkart.chatheads.utils.ChatHeadUtils;
 
 public class ChatHeadDefaultConfig extends ChatHeadConfig {
-    public ChatHeadDefaultConfig(Context context) {
-        int diameter = 50;
+    public ChatHeadDefaultConfig(Context context, FloatingViewPreferences floatingViewPreferences) {
+        int diameter = floatingViewPreferences.getSizeDp();
         setHeadHeight(ChatHeadUtils.dpToPx(context, diameter));
         setHeadWidth(ChatHeadUtils.dpToPx(context, diameter));
         setHeadHorizontalSpacing(ChatHeadUtils.dpToPx(context, 10));
