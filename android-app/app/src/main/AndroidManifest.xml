@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.dennyy.osrscompanion"
+<manifest xmlns:tools="http://schemas.android.com/tools"
+          package="com.dennyy.osrscompanion"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -10,7 +11,8 @@
         android:icon="@drawable/osrscompanion4"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:configChanges="orientation|screenSize"
             android:name="com.dennyy.osrscompanion.MainActivity">
@@ -24,6 +26,9 @@
             android:name="com.dennyy.osrscompanion.FloatingViewService"
             android:enabled="true"
             android:exported="false"/>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="" />
     </application>
 
 </manifest>

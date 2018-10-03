@@ -8,6 +8,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.dennyy.osrscompanion.asynctasks.UpdateDbTask;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 public class AppController extends Application {
 
@@ -21,6 +23,7 @@ public class AppController extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         mInstance = this;
         new UpdateDbTask(this).execute();
     }
