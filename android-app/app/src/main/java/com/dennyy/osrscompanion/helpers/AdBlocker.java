@@ -41,7 +41,8 @@ public class AdBlocker {
             reader.close();
             stream.close();
         }
-        catch (IOException ignored) {
+        catch (IOException ex) {
+            Logger.log(ex);
         }
     }
 
@@ -49,7 +50,8 @@ public class AdBlocker {
         try {
             return isAdHost(getDomainName(url));
         }
-        catch (URISyntaxException e) {
+        catch (URISyntaxException ex) {
+            Logger.log(ex);
             return false;
         }
     }

@@ -23,9 +23,10 @@ import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.OSRSNewsAdapter;
 import com.dennyy.osrscompanion.asynctasks.OSRSNewsTask;
-import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.database.AppDb;
+import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.OSRSNewsParser;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.OSRSNewsLoadedListener;
@@ -145,8 +146,9 @@ public class OSRSNewsViewHandler extends BaseViewHandler implements SwipeRefresh
             ArrayList<OSRSNews> news = parser.parse(result);
             listViewAdapter.updateItems(news);
         }
-        catch (Exception e) {
-            showToast(getString(R.string.unexpected_error, e.getClass().getSimpleName()), Toast.LENGTH_SHORT);
+        catch (Exception ex) {
+            Logger.log(result, ex);
+            showToast(getString(R.string.unexpected_error, ex.getClass().getSimpleName()), Toast.LENGTH_SHORT);
         }
     }
 

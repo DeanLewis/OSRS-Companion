@@ -1,7 +1,5 @@
 package com.dennyy.osrscompanion.helpers;
 
-import android.util.Log;
-
 import com.dennyy.osrscompanion.BuildConfig;
 
 import java.io.UnsupportedEncodingException;
@@ -60,8 +58,8 @@ public class Constants {
         try {
             url += URLEncoder.encode("[{\"type\": \"update\", \"player\": \"" + rsn + "\"}, {\"type\": \"track\", \"time\": \"" + period + "\"}]", "utf-8");
         }
-        catch (UnsupportedEncodingException e) {
-            Log.e(Constants.class.getSimpleName(), "Error creating tracker url");
+        catch (UnsupportedEncodingException ex) {
+            Logger.log(ex, rsn, String.valueOf(period));
         }
         return url;
     }

@@ -24,6 +24,7 @@ import com.dennyy.osrscompanion.adapters.TreasureTrailSearchAdapter;
 import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
 import com.dennyy.osrscompanion.enums.TreasureTrailType;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.TreasureTrailsLoadedListener;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrail;
@@ -256,8 +257,8 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
                     treasureTrails.treasureTrailMaps.add(treasureTrailMap);
                 }
             }
-            catch (JSONException ignored) {
-
+            catch (JSONException ex) {
+                Logger.log(ex);
             }
             return treasureTrails;
         }

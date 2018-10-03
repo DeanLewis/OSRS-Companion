@@ -367,7 +367,8 @@ public class Utils {
                 ret = stringBuilder.toString();
             }
         }
-        catch (IOException ignored) {
+        catch (IOException ex) {
+            Logger.log(ex);
         }
 
         return ret;
@@ -379,7 +380,8 @@ public class Utils {
             outputStreamWriter.write(data);
             outputStreamWriter.close();
         }
-        catch (IOException ignored) {
+        catch (IOException ex) {
+            Logger.log(fileName, ex);
         }
         return data;
     }
@@ -397,7 +399,8 @@ public class Utils {
             is.close();
             return new String(buffer, "UTF-8");
         }
-        catch (IOException e) {
+        catch (IOException ex) {
+            Logger.log(ex);
             return "";
         }
     }

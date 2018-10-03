@@ -28,9 +28,10 @@ import com.dennyy.osrscompanion.asynctasks.WriteOSBuddyExchangeSummaryTask;
 import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.DelayedAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.LineIndicatorButton;
-import com.dennyy.osrscompanion.enums.GeGraphDays;
 import com.dennyy.osrscompanion.database.AppDb;
+import com.dennyy.osrscompanion.enums.GeGraphDays;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.JsonItemsLoadedListener;
@@ -297,10 +298,10 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             double highAlch = Math.floor(Integer.valueOf(jsonItem.store) * 0.6);
             lowAlchTextView.setText(RsUtils.kmbt(lowAlch < 1 ? 1 : lowAlch, 2));
             highAlchTextView.setText(RsUtils.kmbt(highAlch < 1 ? 1 : highAlch, 2));
-
         }
-        catch (JSONException e) {
-            showToast(getResources().getString(R.string.exception_occurred, e.getClass().getCanonicalName(), "parsing ge item data"), Toast.LENGTH_LONG);
+        catch (JSONException ex) {
+            Logger.log(ex);
+            showToast(getResources().getString(R.string.exception_occurred, ex.getClass().getCanonicalName(), "parsing ge item data"), Toast.LENGTH_LONG);
         }
     }
 
@@ -322,8 +323,9 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             geItem.day180changePercent = RsUtils.revkmbt(jsonItem.getJSONObject("day180").getString("change").replace("%", ""));
             geItem.day180change = RsUtils.getGEPriceChange(geItem.price, geItem.day180changePercent);
         }
-        catch (JSONException e) {
-            showToast(getResources().getString(R.string.exception_occurred, e.getClass().getSimpleName(), "parsing json to object"), Toast.LENGTH_LONG);
+        catch (JSONException ex) {
+            Logger.log(id, ex);
+            showToast(getResources().getString(R.string.exception_occurred, ex.getClass().getSimpleName(), "parsing json to object"), Toast.LENGTH_LONG);
         }
         return geItem;
     }
@@ -396,8 +398,9 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             geupdateTimeAgoTextView.setText(timeAgo);
 
         }
-        catch (JSONException | ParseException e) {
-            showToast(getResources().getString(R.string.exception_occurred, e.getClass().getCanonicalName(), "parsing geupdate data"), Toast.LENGTH_LONG);
+        catch (JSONException | ParseException ex) {
+            Logger.log(geupdateData, ex);
+            showToast(getResources().getString(R.string.exception_occurred, ex.getClass().getCanonicalName(), "parsing geupdate data"), Toast.LENGTH_LONG);
         }
     }
 
@@ -475,8 +478,9 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             chart.setData(lineData);
             chart.invalidate();
         }
-        catch (JSONException e) {
-            showToast(getResources().getString(R.string.exception_occurred, e.getClass().getCanonicalName(), "parsing ge graph data"), Toast.LENGTH_LONG);
+        catch (JSONException ex) {
+            Logger.log(geGraphData, ex);
+            showToast(getResources().getString(R.string.exception_occurred, ex.getClass().getCanonicalName(), "parsing ge graph data"), Toast.LENGTH_LONG);
 
         }
     }
@@ -554,9 +558,10 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                                 summaryItems = parseOSBuddySummary(result);
                                 handleOSBuddyData();
                             }
-                            catch (JSONException e) {
+                            catch (JSONException ex) {
+                                Logger.log(ex);
                                 setOSBuddyText(getResources().getString(R.string.osb_parse_error), true);
-                                showToast(getResources().getString(R.string.exception_occurred, e.getClass().getCanonicalName(), "parsing osbuddy data"), Toast.LENGTH_LONG);
+                                showToast(getResources().getString(R.string.exception_occurred, ex.getClass().getCanonicalName(), "parsing osbuddy data"), Toast.LENGTH_LONG);
                             }
                         }
 
@@ -723,8 +728,8 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                     allItems.add(geResult);
                 }
             }
-            catch (JSONException ignored) {
-
+            catch (JSONException ex) {
+                Logger.log(ex);
             }
             return allItems;
         }

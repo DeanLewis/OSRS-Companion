@@ -7,14 +7,14 @@ import android.text.TextUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.dennyy.osrscompanion.asynctasks.UpdateDbTask;
 import com.crashlytics.android.Crashlytics;
+import com.dennyy.osrscompanion.asynctasks.UpdateDbTask;
+
 import io.fabric.sdk.android.Fabric;
 
 public class AppController extends Application {
 
-    public static final String TAG = AppController.class
-            .getSimpleName();
+    public static final String TAG = BuildConfig.APPLICATION_ID;
 
     private RequestQueue mRequestQueue;
     private static AppController mInstance;

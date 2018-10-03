@@ -23,6 +23,7 @@ import com.dennyy.osrscompanion.enums.DiaryType;
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.database.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.DiariesLoadedListener;
 import com.dennyy.osrscompanion.interfaces.HiscoreTypeSelectedListener;
@@ -328,8 +329,8 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
                     }
                 }
             }
-            catch (JSONException ignored) {
-
+            catch (JSONException ex) {
+                Logger.log(ex);
             }
             return diariesMap;
         }

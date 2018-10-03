@@ -3,6 +3,7 @@ package com.dennyy.osrscompanion.asynctasks;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.QuestsLoadedListener;
 import com.dennyy.osrscompanion.models.General.Quest;
@@ -42,8 +43,8 @@ public class QuestLoadTask extends AsyncTask<String, Void, ArrayList<Quest>> {
                 }
             });
         }
-        catch (JSONException ignored) {
-
+        catch (JSONException ex) {
+            Logger.log(ex);
         }
         return quests;
     }

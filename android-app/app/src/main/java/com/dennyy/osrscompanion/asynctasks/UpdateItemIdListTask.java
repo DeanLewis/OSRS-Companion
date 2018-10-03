@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import com.dennyy.osrscompanion.enums.ItemIdListUpdateResult;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.ItemIdListResultListener;
 
@@ -62,7 +63,8 @@ public class UpdateItemIdListTask extends AsyncTask<Void, Void, ItemIdListUpdate
                 return ItemIdListUpdateResult.SUCCESS;
             }
         }
-        catch (JSONException | ParseException e) {
+        catch (JSONException | ParseException ex) {
+            Logger.log(ex);
             Utils.writeToFile(context.get(), Constants.ITEMIDLIST_FILE_NAME, "");
             return ItemIdListUpdateResult.ERROR;
         }

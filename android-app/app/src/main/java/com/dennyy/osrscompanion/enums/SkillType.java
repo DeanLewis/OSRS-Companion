@@ -2,6 +2,7 @@ package com.dennyy.osrscompanion.enums;
 
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 
 public enum SkillType {
     OVERALL(0, R.drawable.stats_icon),
@@ -62,6 +63,7 @@ public enum SkillType {
                 return skillType;
             }
         }
+        Logger.log(String.valueOf(id), new IndexOutOfBoundsException("unknown skill id"));
         throw new IndexOutOfBoundsException(String.format("Unknown skill id: %d", id));
     }
 }

@@ -16,6 +16,7 @@ import com.dennyy.osrscompanion.adapters.FairyRingListAdapter;
 import com.dennyy.osrscompanion.adapters.FairyRingSearchAdapter;
 import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.DelayedAutoCompleteTextView;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.FairyRingsLoadedListener;
 import com.dennyy.osrscompanion.models.FairyRings.FairyRing;
@@ -131,8 +132,8 @@ public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher
                     fairyRings.add(fairyRing);
                 }
             }
-            catch (JSONException ignored) {
-
+            catch (JSONException ex) {
+                Logger.log(ex);
             }
             return fairyRings;
         }

@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 
 import com.dennyy.osrscompanion.database.ActionsDb;
 import com.dennyy.osrscompanion.database.AppDb;
+import com.dennyy.osrscompanion.helpers.Logger;
 
 import java.lang.ref.WeakReference;
 
@@ -25,7 +26,8 @@ public class UpdateDbTask extends AsyncTask<Void, Void, Void> {
                 AppDb.getInstance(context).getWritableDatabase();
                 ActionsDb.getInstance(context).getWritableDatabase();
             }
-            catch (SQLiteDatabaseLockedException | NullPointerException ignored) {
+            catch (SQLiteDatabaseLockedException | NullPointerException ex) {
+                Logger.log(ex);
             }
         }
         return null;

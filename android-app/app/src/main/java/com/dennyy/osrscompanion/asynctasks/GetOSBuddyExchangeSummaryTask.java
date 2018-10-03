@@ -5,10 +5,11 @@ import android.os.AsyncTask;
 
 import com.dennyy.osrscompanion.database.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.interfaces.OSBuddySummaryLoadedListener;
-import com.dennyy.osrscompanion.viewhandlers.GrandExchangeViewHandler;
 import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryDTO;
 import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryItem;
+import com.dennyy.osrscompanion.viewhandlers.GrandExchangeViewHandler;
 
 import org.json.JSONException;
 
@@ -34,7 +35,8 @@ public class GetOSBuddyExchangeSummaryTask extends AsyncTask<Void, Void, HashMap
             try {
                 content = GrandExchangeViewHandler.parseOSBuddySummary(summaryDTO.data);
             }
-            catch (JSONException ignored) {
+            catch (JSONException ex) {
+                Logger.log(summaryDTO.data, ex);
                 return null;
             }
         }
