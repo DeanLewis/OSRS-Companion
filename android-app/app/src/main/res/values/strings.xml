@@ -163,7 +163,7 @@
     <string name="lib_materialprogressbar_author">DreaminginCodeZH</string>
     <string name="lib_eventbus_author">Markus Junginger, greenrobot</string>
     <string name="lib_eventbus">EventBus</string>
-    
+
     <string name="failed_payment_verification">Payment succeeded, but could not verify purchase</string>
     <string name="hiscores_sdmm">SDMM</string>
     <string name="refresh">Refresh</string>
@@ -247,6 +247,9 @@
     <string name="pipe">\u0020|\u0020</string>
     <string name="back_to_overview">Back to overview</string>
     <string name="osb_parse_error">(parse error)</string>
+    <string name="default_quest_source">Default quest source</string>
+    <string name="default_quest_source_info">Select a default quest source to display the guide from</string>
+    <string name="no_runehq_guide">RuneHQ has no quest guide for %1$s (yet?)</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>
@@ -259,7 +262,7 @@
         <item>Combat Calculator</item>
         <item>Experience Calculator</item>
         <item>Skill Calculator</item>
-        <item>RSWiki quest guides</item>
+        <item>Quest guides</item>
         <item>Fairy Rings</item>
         <item>Diary Calculator</item>
         <item>OSRS Wiki</item>
@@ -283,5 +286,15 @@
         <item>osrs_news</item>
     </string-array>
     <string-array name="default_floating_views_selection">
+    </string-array>
+
+    <string-array name="quest_sources">
+        <item>OSRS Wiki</item>
+        <item>RuneHQ</item>
+    </string-array>
+
+    <string-array name="quest_source_values">
+        <item>rswiki</item>
+        <item>runehq</item>
     </string-array>
 </resources>

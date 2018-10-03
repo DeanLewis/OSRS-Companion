@@ -3,7 +3,6 @@ package com.dennyy.osrscompanion.fragments;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -72,12 +71,11 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
         TextView toolbar = getActivity().findViewById(R.id.toolbar_title);
         toolbar.setTextColor(getResources().getColor(R.color.text));
         toolbar.setText(getResources().getString(R.string.settings));
-        preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         editor = preferences.edit();
 
         ((CheckboxDialogPreference) findPreference(Constants.PREF_FLOATING_VIEWS)).addListener(this);
-
-        String[] prefs = new String[]{ Constants.PREF_LANDSCAPE_ONLY, Constants.PREF_FULLSCREEN_ONLY, Constants.PREF_ALIGN_LEFT, Constants.PREF_FLOATING_VIEWS, Constants.PREF_FEEDBACK, Constants.PREF_VIEW_IN_STORE, Constants.PREF_VIEW_OTHER_APPS, Constants.PREF_SHOW_LIBRARIES, Constants.PREF_DOWNLOAD_ITEMIDLIST };
+        String[] prefs = new String[]{ Constants.PREF_LANDSCAPE_ONLY, Constants.PREF_FULLSCREEN_ONLY, Constants.PREF_ALIGN_LEFT, Constants.PREF_FLOATING_VIEWS, Constants.PREF_FEEDBACK, Constants.PREF_VIEW_IN_STORE, Constants.PREF_VIEW_OTHER_APPS, Constants.PREF_SHOW_LIBRARIES, Constants.PREF_DOWNLOAD_ITEMIDLIST, Constants.PREF_QUEST_SOURCE };
         for (String pref : prefs) {
             findPreference(pref).setOnPreferenceClickListener(this);
         }
@@ -86,7 +84,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
     @Override
     public void onResume() {
         super.onResume();
-        ((CheckBoxPreference) findPreference(Constants.PREF_RIGHT_SIDE)).setChecked(PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean(Constants.PREF_RIGHT_SIDE, true));
+        ((CheckBoxPreference) findPreference(Constants.PREF_RIGHT_SIDE)).setChecked(preferences.getBoolean(Constants.PREF_RIGHT_SIDE, true));
         currentPrefs = new CharSequence[]{};
     }
 

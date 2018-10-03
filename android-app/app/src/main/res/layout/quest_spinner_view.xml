@@ -8,10 +8,13 @@
     android:padding="5dp">
 
     <TextView
-        android:id="@+id/quest_name"
+        android:id="@+id/quest_spinner_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
         android:gravity="center_vertical"
+        android:singleLine="true"
         android:textColor="@color/text"
         android:textSize="18sp"/>
 </LinearLayout>
+

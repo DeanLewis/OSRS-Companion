@@ -138,7 +138,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     }
                     else if (key.equals(questHeadName)) {
                         cachedView = inflater.inflate(R.layout.quest_layout, parent, false);
-                        new QuestViewHandler(FloatingViewService.this, cachedView, null);
+                        new QuestViewHandler(FloatingViewService.this, cachedView, true, null);
                     }
                     else if (key.equals(fairyRingHeadName)) {
                         cachedView = inflater.inflate(R.layout.fairy_ring_layout, parent, false);

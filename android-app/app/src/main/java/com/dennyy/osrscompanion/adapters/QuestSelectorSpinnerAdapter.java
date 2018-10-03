@@ -37,13 +37,32 @@ public class QuestSelectorSpinnerAdapter extends BaseAdapter {
     }
 
     @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        ViewHolder viewHolder;
+        if (convertView == null) {
+            final LayoutInflater layoutInflater = LayoutInflater.from(context);
+            convertView = layoutInflater.inflate(R.layout.quest_source_selector_row, null);
+            viewHolder = new ViewHolder();
+            viewHolder.questName = convertView.findViewById(R.id.quest_source_name);
+
+            convertView.setTag(viewHolder);
+        }
+        else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+        Quest quest = quests.get(position);
+        viewHolder.questName.setText(quest.name);
+        return convertView;
+    }
+
+    @Override
     public View getView(int i, View convertView, ViewGroup viewGroup) {
         ViewHolder viewHolder;
         if (convertView == null) {
             final LayoutInflater layoutInflater = LayoutInflater.from(context);
-            convertView = layoutInflater.inflate(R.layout.quest_selector_row, null);
+            convertView = layoutInflater.inflate(R.layout.quest_spinner_view, null);
             viewHolder = new ViewHolder();
-            viewHolder.questName = convertView.findViewById(R.id.quest_name);
+            viewHolder.questName = convertView.findViewById(R.id.quest_spinner_textview);
 
             convertView.setTag(viewHolder);
         }

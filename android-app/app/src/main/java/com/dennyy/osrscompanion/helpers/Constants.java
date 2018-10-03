@@ -79,6 +79,7 @@ public class Constants {
     public static final String PREF_ALIGN_LEFT = "pref_align_floating_views_left";
     public static final String PREF_ALIGN_MARGIN = "pref_alignment_margin";
     public static final String PREF_OPACITY = "pref_opacity";
+    public static final String PREF_QUEST_SOURCE = "pref_quest_source";
 
     public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     public static final String PERMISSION_ACTIVITY = "android.settings.action.MANAGE_OVERLAY_PERMISSION";

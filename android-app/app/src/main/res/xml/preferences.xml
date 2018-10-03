@@ -27,6 +27,20 @@
             android:title="@string/check_for_updated_ge_items"/>
 
     </PreferenceCategory>
+    <PreferenceCategory
+        android:layout="@layout/preference_category"
+        android:title="@string/quest_guide">
+        <ListPreference
+            android:defaultValue="rswiki"
+            android:entries="@array/quest_sources"
+            android:entryValues="@array/quest_source_values"
+            android:key="pref_quest_source"
+            android:layout="@layout/preference_setting_layout"
+            android:persistent="true"
+            android:summary="@string/default_quest_source_info"
+            android:title="@string/default_quest_source"/>
+
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:layout="@layout/preference_category"
@@ -73,13 +87,13 @@
         <CheckBoxPreference
             android:key="pref_only_in_landscape"
             android:layout="@layout/preference_setting_layout"
-            android:title="@string/show_only_in_landscape"
-            android:summary="@string/show_only_in_landscape_info"/>
+            android:summary="@string/show_only_in_landscape_info"
+            android:title="@string/show_only_in_landscape"/>
         <CheckBoxPreference
             android:key="pref_only_in_fullscreen_apps"
             android:layout="@layout/preference_setting_layout"
-            android:title="@string/show_only_in_fullscreen"
-            android:summary="@string/show_only_in_fullscreen_info"/>
+            android:summary="@string/show_only_in_fullscreen_info"
+            android:title="@string/show_only_in_fullscreen"/>
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -45,7 +45,7 @@ public class QuestFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                questViewHandler.cleanup();
+                questViewHandler.clearHistory();
                 questViewHandler.webView.loadUrl(questViewHandler.webView.getUrl());
                 return true;
             default:
@@ -69,7 +69,7 @@ public class QuestFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getString(R.string.quest_guide));
 
-        questViewHandler = new QuestViewHandler(getActivity(), view, new QuestsLoadedCallback() {
+        questViewHandler = new QuestViewHandler(getActivity(), view, false, new QuestsLoadedCallback() {
             @Override
             public void onQuestsLoaded(ArrayList<Quest> loadedQuests) {
                 loadFragment(savedInstanceState);
@@ -84,7 +84,7 @@ public class QuestFragment extends BaseFragment {
         if (savedInstanceState != null) {
             questViewHandler.restoreWebView(savedInstanceState.getBundle(WEBVIEW_STATE_KEY));
             questViewHandler.selectedQuestIndex = savedInstanceState.getInt(SELECTED_QUEST_INDEX_KEY);
-            questViewHandler.questSelectorSpinner.setSelection(questViewHandler.selectedQuestIndex);
+            questViewHandler.questSelectorSpinner.setSelection(questViewHandler.selectedQuestIndex + 1);
             if (questViewHandler.wasRequesting()) {
                 questViewHandler.webView.setVisibility(View.VISIBLE);
             }
