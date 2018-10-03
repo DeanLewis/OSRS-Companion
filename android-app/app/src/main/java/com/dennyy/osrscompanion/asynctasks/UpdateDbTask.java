@@ -26,7 +26,7 @@ public class UpdateDbTask extends AsyncTask<Void, Void, Void> {
                 AppDb.getInstance(context).getWritableDatabase();
                 ActionsDb.getInstance(context).getWritableDatabase();
             }
-            catch (SQLiteDatabaseLockedException | NullPointerException ex) {
+            catch (Exception ex) {
                 Logger.log(ex);
             }
         }
