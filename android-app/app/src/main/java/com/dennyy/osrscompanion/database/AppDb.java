@@ -94,7 +94,7 @@ public class AppDb extends SQLiteOpenHelper {
             onCreate(db);
         }
         if (oldVersion < 8) {
-            String createOSRSNewsTable = "CREATE TABLE " + DB.OSRSNews.tableName + " (" +
+            String createOSRSNewsTable = "CREATE TABLE IF NOT EXISTS " + DB.OSRSNews.tableName + " (" +
                     DB.OSRSNews.id + " INTEGER PRIMARY KEY, " +
                     DB.OSRSNews.data + " TEXT, " +
                     DB.OSRSNews.dateModified + " INTEGER NOT NULL);";
@@ -105,7 +105,7 @@ public class AppDb extends SQLiteOpenHelper {
         }
         if (oldVersion < 10) {
             db.execSQL("DROP TABLE IF EXISTS " + DB.OSBuddyExchangeSummary.tableName);
-            String createOSBuddyExchangeSummaryTable = "CREATE TABLE " + DB.OSBuddyExchangeSummary.tableName + " (" +
+            String createOSBuddyExchangeSummaryTable = "CREATE TABLE IF NOT EXISTS " + DB.OSBuddyExchangeSummary.tableName + " (" +
                     DB.OSBuddyExchangeSummary.id + " INTEGER PRIMARY KEY, " +
                     DB.OSBuddyExchangeSummary.data + " TEXT, " +
                     DB.OSBuddyExchangeSummary.dateModified + " INTEGER NOT NULL);";
