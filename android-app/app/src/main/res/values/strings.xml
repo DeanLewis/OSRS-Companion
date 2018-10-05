@@ -251,6 +251,8 @@
     <string name="no_runehq_guide">RuneHQ has no quest guide for %1$s (yet?)</string>
     <string name="floating_view_size">Size of the floating view</string>
     <string name="floating_view_size_info">Set the size of the floating view, default is 50dp</string>
+    <string name="ge_items_source">Included items</string>
+    <string name="ge_items_source_info">Select the type of items included in the search. Most convenient for f2p players that only search for f2p items</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>
@@ -297,5 +299,17 @@
     <string-array name="quest_source_values">
         <item>rswiki</item>
         <item>runehq</item>
+    </string-array>
+
+    <string-array name="ge_items">
+        <item>Free to play &amp; Members</item>
+        <item>Members only</item>
+        <item>Free to play only</item>
+    </string-array>
+
+    <string-array name="ge_items_source">
+        <item>ge_items_source_both</item>
+        <item>ge_items_source_members</item>
+        <item>ge_items_source_f2p</item>
     </string-array>
 </resources>

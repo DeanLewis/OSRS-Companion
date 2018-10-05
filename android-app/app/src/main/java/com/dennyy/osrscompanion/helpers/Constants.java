@@ -79,6 +79,7 @@ public class Constants {
     public static final String PREF_OPACITY = "pref_opacity";
     public static final String PREF_QUEST_SOURCE = "pref_quest_source";
     public static final String PREF_SIZE = "pref_size";
+    public static final String PREF_GE_SOURCE = "pref_ge_items_source";
 
     public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     public static final String PERMISSION_ACTIVITY = "android.settings.action.MANAGE_OVERLAY_PERMISSION";

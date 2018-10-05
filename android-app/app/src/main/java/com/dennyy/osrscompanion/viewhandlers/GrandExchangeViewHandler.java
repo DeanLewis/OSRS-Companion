@@ -24,6 +24,7 @@ import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.GrandExchangeSearchAdapter;
 import com.dennyy.osrscompanion.asynctasks.GetOSBuddyExchangeSummaryTask;
+import com.dennyy.osrscompanion.asynctasks.LoadGeItemsTask;
 import com.dennyy.osrscompanion.asynctasks.WriteOSBuddyExchangeSummaryTask;
 import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.DelayedAutoCompleteTextView;
@@ -103,7 +104,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         indicators.put(GeGraphDays.MONTH, R.id.ge_graph_show_month);
         indicators.put(GeGraphDays.WEEK, R.id.ge_graph_show_week);
         this.jsonItemsLoadedListener = jsonItemsLoadedListener;
-        new LoadItems(context, this).execute();
+        new LoadGeItemsTask(context, this).execute();
         new GetOSBuddyExchangeSummaryTask(context, loadSummaryDataCallback()).execute();
     }
 
@@ -684,65 +685,6 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         }
         else if (!summaryItems.isEmpty()) {
             handleOSBuddyData();
-        }
-    }
-
-    private static class LoadItems extends AsyncTask<String, Void, ArrayList<JsonItem>> {
-        private WeakReference<Context> context;
-        private JsonItemsLoadedListener jsonItemsLoadedListener;
-        private ArrayList<JsonItem> allItems = new ArrayList<>();
-
-        private LoadItems(Context context, JsonItemsLoadedListener jsonItemsLoadedListener) {
-            this.context = new WeakReference<>(context);
-            this.jsonItemsLoadedListener = jsonItemsLoadedListener;
-        }
-
-        @Override
-        protected ArrayList<JsonItem> doInBackground(String... params) {
-            String json = Utils.readFromFile(context.get(), Constants.ITEMIDLIST_FILE_NAME);
-            try {
-                HashMap<String, Integer> itemLimits = new HashMap<>();
-                String itemLimitsJson = Utils.readFromAssets(context.get(), "ge_limits.json");
-                JSONObject jsonObject = new JSONObject(itemLimitsJson);
-                Iterator itemLimitsIterator = jsonObject.keys();
-                while (itemLimitsIterator.hasNext()) {
-                    String itemId = (String) itemLimitsIterator.next();
-                    int limit = jsonObject.getInt(itemId);
-                    itemLimits.put(itemId, limit);
-                }
-
-                if (Utils.isNullOrEmpty(json)) {
-                    json = Utils.readFromAssets(context.get(), "names.json");
-                }
-                JSONObject obj = new JSONObject(json);
-                String itemsString = obj.getString("items");
-                JSONObject items = new JSONObject(itemsString);
-                Iterator iterator = items.keys();
-                while (iterator.hasNext()) {
-                    String id = (String) iterator.next();
-                    JSONObject result = items.getJSONObject(id);
-                    JsonItem geResult = new JsonItem();
-                    geResult.id = id;
-                    geResult.name = result.getString("name");
-                    geResult.store = result.getString("store");
-                    geResult.limit = itemLimits.containsKey(id) ? itemLimits.get(id) : -1;
-                    allItems.add(geResult);
-                }
-            }
-            catch (JSONException ex) {
-                Logger.log(ex);
-            }
-            return allItems;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<JsonItem> items) {
-            if (items.size() > 0) {
-                jsonItemsLoadedListener.onJsonItemsLoaded(items);
-            }
-            else {
-                jsonItemsLoadedListener.onJsonItemsLoadError();
-            }
         }
     }
 }

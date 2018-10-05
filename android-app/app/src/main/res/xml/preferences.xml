@@ -25,7 +25,14 @@
             android:layout="@layout/preference_setting_layout"
             android:summary="@string/check_for_updated_ge_items_info"
             android:title="@string/check_for_updated_ge_items"/>
-
+        <ListPreference
+            android:defaultValue="ge_items_source_both"
+            android:entries="@array/ge_items"
+            android:entryValues="@array/ge_items_source"
+            android:key="pref_ge_items_source"
+            android:layout="@layout/preference_setting_layout"
+            android:summary="@string/ge_items_source_info"
+            android:title="@string/ge_items_source"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:layout="@layout/preference_category"
@@ -71,8 +78,8 @@
             android:summary="@string/floating_view_size_info"
             android:title="@string/floating_view_size"
             app:defValue="50"
-            app:min="10"
             app:inc="5"
+            app:min="10"
             app:suffix="@string/dp"/>
 
         <CheckBoxPreference
