@@ -23,7 +23,9 @@ public class AppController extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics());
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        }
         mInstance = this;
         new UpdateDbTask(this).execute();
     }
