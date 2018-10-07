@@ -23,13 +23,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.dennyy.osrscompanion.customviews.NestedScrollView
+                <com.dennyy.osrscompanion.customviews.NestedListView
                     android:id="@+id/rsnews_listview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:dividerHeight="5dp">
 
-                </com.dennyy.osrscompanion.customviews.NestedScrollView>
+                </com.dennyy.osrscompanion.customviews.NestedListView>
 
             </LinearLayout>
         </ScrollView>

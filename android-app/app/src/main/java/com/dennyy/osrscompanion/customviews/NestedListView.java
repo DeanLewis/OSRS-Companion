@@ -4,16 +4,16 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ListView;
 
-public class NestedScrollView extends ListView {
-    public NestedScrollView(Context context) {
+public class NestedListView extends ListView {
+    public NestedListView(Context context) {
         super(context);
     }
 
-    public NestedScrollView(Context context, AttributeSet attrs) {
+    public NestedListView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public NestedScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public NestedListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
