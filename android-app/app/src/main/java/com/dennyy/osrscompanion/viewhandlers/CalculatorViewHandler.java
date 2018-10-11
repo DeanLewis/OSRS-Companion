@@ -41,8 +41,8 @@ public class CalculatorViewHandler extends BaseViewHandler {
     }
 
     public void updateView(View view) {
-        equationDisplay = (EditText) view.findViewById(R.id.calc_display);
-        answerDisplay = (TextView) view.findViewById(R.id.calc_answer);
+        equationDisplay = view.findViewById(R.id.calc_display);
+        answerDisplay = view.findViewById(R.id.calc_answer);
         setNumericOnClickListener(view);
         setOperatorOnClickListener(view);
     }

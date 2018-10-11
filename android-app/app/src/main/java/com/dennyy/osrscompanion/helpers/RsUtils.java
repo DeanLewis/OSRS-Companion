@@ -92,7 +92,7 @@ public class RsUtils {
             return 0;
         }
         result = Double.parseDouble(input);
-        return result == 0 ? 0 : result;
+        return result;
     }
 
     public static int getSkillResourceId(int skillId) {

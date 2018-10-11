@@ -73,7 +73,7 @@ public class OSRSNewsParser {
     }
 
     private OSRSNews readNews(XmlPullParser parser)
-            throws XmlPullParserException, IOException, ParseException {
+            throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, ns, "item");
         OSRSNews news = new OSRSNews();
 

@@ -29,7 +29,7 @@ public class LibrariesFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.libraries));
 
-        LinearLayout rootLinearLayout = (LinearLayout) view.findViewById(R.id.libraries_listview);
+        LinearLayout rootLinearLayout = view.findViewById(R.id.libraries_listview);
         int count = rootLinearLayout.getChildCount();
         for (int i = 0; i < count; i++) {
             View v = rootLinearLayout.getChildAt(i);

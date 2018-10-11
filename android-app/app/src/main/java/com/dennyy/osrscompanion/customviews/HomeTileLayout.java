@@ -33,8 +33,8 @@ public class HomeTileLayout extends RelativeLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        TextView tileTextView = (TextView) findViewById(R.id.home_tile_textview);
-        ImageView tileImageView = (ImageView) findViewById(R.id.home_tile_drawable);
+        TextView tileTextView = findViewById(R.id.home_tile_textview);
+        ImageView tileImageView = findViewById(R.id.home_tile_drawable);
 
         tileTextView.setText(tileText);
         tileImageView.setBackground(tileDrawable);
