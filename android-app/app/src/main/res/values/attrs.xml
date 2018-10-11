@@ -8,6 +8,7 @@
     <declare-styleable name="ClearableAutoCompleteTextView">
         <attr name="hint"/>
         <attr name="treshold" format="integer"/>
+        <attr name="overrideDismiss" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="ClearableEditText">

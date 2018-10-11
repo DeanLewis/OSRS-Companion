@@ -147,6 +147,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
                 Utils.hideKeyboard(context, autoCompleteTextView);
+                autoCompleteTextView.forceDismissDropdown();
                 jsonItem = (JsonItem) adapterView.getItemAtPosition(position);
                 if (allowUpdateItem()) {
                     updateItem(jsonItem.id);

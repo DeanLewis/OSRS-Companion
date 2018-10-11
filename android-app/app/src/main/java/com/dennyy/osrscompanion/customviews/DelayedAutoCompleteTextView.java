@@ -12,6 +12,7 @@ import com.dennyy.osrscompanion.R;
 public class DelayedAutoCompleteTextView extends AutoCompleteTextView {
     private CountDownTimer autoCompleteTimer;
     private int autoCompleteDelayMs;
+    private boolean overrideDismiss;
 
     public DelayedAutoCompleteTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -23,6 +24,21 @@ public class DelayedAutoCompleteTextView extends AutoCompleteTextView {
         finally {
             ta.recycle();
         }
+    }
+
+    public void forceDismissDropdown() {
+        super.dismissDropDown();
+    }
+
+    @Override
+    public void dismissDropDown() {
+        if (!overrideDismiss) {
+            super.dismissDropDown();
+        }
+    }
+
+    public void setOverrideDismiss(boolean shouldOverride) {
+        overrideDismiss = shouldOverride;
     }
 
     @Override

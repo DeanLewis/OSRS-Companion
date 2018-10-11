@@ -6,7 +6,7 @@
               android:background="@color/background"
               android:orientation="vertical"
               tools:context="com.dennyy.osrscompanion.fragments.GrandExchangeFragment">
-    
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/ge_refresh_layout"
         android:layout_width="match_parent"
@@ -30,7 +30,8 @@
                     android:layout_height="match_parent"
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/input_background"
-                    app:hint="@string/search_item"/>
+                    app:hint="@string/search_item"
+                    app:overrideDismiss="true"/>
 
                 <LinearLayout
                     android:id="@+id/ge_data"

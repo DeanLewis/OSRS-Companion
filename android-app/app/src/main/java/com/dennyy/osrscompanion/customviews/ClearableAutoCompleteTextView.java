@@ -19,6 +19,7 @@ public class ClearableAutoCompleteTextView extends RelativeLayout implements Tex
     private DelayedAutoCompleteTextView textView;
     private String hint;
     private int threshold;
+    private boolean overrrideDismiss;
 
     public ClearableAutoCompleteTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -26,6 +27,7 @@ public class ClearableAutoCompleteTextView extends RelativeLayout implements Tex
         try {
             hint = ta.getString(R.styleable.ClearableAutoCompleteTextView_hint);
             threshold = ta.getInt(R.styleable.ClearableAutoCompleteTextView_treshold, 3);
+            overrrideDismiss = ta.getBoolean(R.styleable.ClearableAutoCompleteTextView_overrideDismiss, false);
         }
         finally {
             ta.recycle();
@@ -44,6 +46,7 @@ public class ClearableAutoCompleteTextView extends RelativeLayout implements Tex
         textView = findViewById(R.id.delayed_autocomplete_textview);
         textView.setHint(hint);
         textView.addTextChangedListener(this);
+        textView.setOverrideDismiss(overrrideDismiss);
         textView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
