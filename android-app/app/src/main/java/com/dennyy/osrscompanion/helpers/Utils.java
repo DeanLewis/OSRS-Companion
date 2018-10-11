@@ -427,4 +427,8 @@ public class Utils {
             webView = null;
         }
     }
+
+    public static void executeJavaScript(WebView webView, String javaScript) {
+        webView.loadUrl("javascript:(function() { " + javaScript + " })()");
+    }
 }
