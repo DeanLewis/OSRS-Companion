@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import com.dennyy.osrscompanion.enums.GeItemsSource;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
+import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.JsonItemsLoadedListener;
 import com.dennyy.osrscompanion.models.GrandExchange.JsonItem;
@@ -15,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,8 +50,13 @@ public class LoadGeItemsTask extends AsyncTask<String, Void, ArrayList<JsonItem>
                 itemLimits.put(itemId, limit);
             }
 
+            String namesJson = Utils.readFromAssets(context, "names.json");
             if (Utils.isNullOrEmpty(json)) {
-                json = Utils.readFromAssets(context, "names.json");
+                json = namesJson;
+            }
+            else if (RsUtils.getDateFromItemIdList(json).before(RsUtils.getDateFromItemIdList(namesJson))) {
+                Utils.writeToFile(context, Constants.ITEMIDLIST_FILE_NAME, "");
+                json = namesJson;
             }
             JSONObject obj = new JSONObject(json);
             String itemsString = obj.getString("items");
@@ -66,7 +73,7 @@ public class LoadGeItemsTask extends AsyncTask<String, Void, ArrayList<JsonItem>
                 }
             }
         }
-        catch (JSONException ex) {
+        catch (JSONException | ParseException ex) {
             Logger.log(ex);
         }
         return allItems;

@@ -5,8 +5,16 @@ import com.dennyy.osrscompanion.enums.CombatClass;
 import com.dennyy.osrscompanion.models.General.Combat;
 import com.dennyy.osrscompanion.models.General.NextLevel;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -164,6 +172,13 @@ public class RsUtils {
             return R.drawable.clue_scroll_master;
         if (skillId == -1)
             return R.drawable.multicombat_icon;
-        throw new IndexOutOfBoundsException("Invalid skill id");
+        throw new IndexOutOfBoundsException("Invalid skill id " + skillId);
+    }
+
+    public static Date getDateFromItemIdList(String content) throws JSONException, ParseException {
+        JSONObject obj = new JSONObject(content);
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        Date fileDate = format.parse(obj.getString("datetime"));
+        return fileDate;
     }
 }

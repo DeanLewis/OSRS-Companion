@@ -6,18 +6,15 @@ import android.os.AsyncTask;
 import com.dennyy.osrscompanion.enums.ItemIdListUpdateResult;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
+import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.ItemIdListResultListener;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class UpdateItemIdListTask extends AsyncTask<Void, Void, ItemIdListUpdateResult> {
     private WeakReference<Context> context;
@@ -30,13 +27,6 @@ public class UpdateItemIdListTask extends AsyncTask<Void, Void, ItemIdListUpdate
         this.callback = callback;
     }
 
-    private Date getDateFromItemIdList(String content) throws JSONException, ParseException {
-        JSONObject obj = new JSONObject(content);
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Date fileDate = format.parse(obj.getString("datetime"));
-        return fileDate;
-    }
-
     @Override
     protected ItemIdListUpdateResult doInBackground(Void... voids) {
         try {
@@ -44,8 +34,8 @@ public class UpdateItemIdListTask extends AsyncTask<Void, Void, ItemIdListUpdate
             if (Utils.isNullOrEmpty(existingItemIdList)) {
                 existingItemIdList = downloadedItemIdListJson;
                 String assetsItemIdList = Utils.readFromAssets(context.get(), "names.json");
-                Date existingFileDate = getDateFromItemIdList(existingItemIdList);
-                Date assetsDate = getDateFromItemIdList(assetsItemIdList);
+                Date existingFileDate = RsUtils.getDateFromItemIdList(existingItemIdList);
+                Date assetsDate = RsUtils.getDateFromItemIdList(assetsItemIdList);
                 if (assetsDate.before(existingFileDate)) {
                     Utils.writeToFile(context.get(), Constants.ITEMIDLIST_FILE_NAME, downloadedItemIdListJson);
                     return ItemIdListUpdateResult.SUCCESS;
@@ -55,8 +45,8 @@ public class UpdateItemIdListTask extends AsyncTask<Void, Void, ItemIdListUpdate
                     return ItemIdListUpdateResult.UP_TO_DATE;
                 }
             }
-            Date fileDate = getDateFromItemIdList(existingItemIdList);
-            Date resultDate = getDateFromItemIdList(downloadedItemIdListJson);
+            Date fileDate = RsUtils.getDateFromItemIdList(existingItemIdList);
+            Date resultDate = RsUtils.getDateFromItemIdList(downloadedItemIdListJson);
 
             if (fileDate.before(resultDate)) {
                 Utils.writeToFile(context.get(), Constants.ITEMIDLIST_FILE_NAME, downloadedItemIdListJson);
