@@ -102,6 +102,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         indicators.put(GeGraphDays.MONTH, R.id.ge_graph_show_month);
         indicators.put(GeGraphDays.WEEK, R.id.ge_graph_show_week);
         this.jsonItemsLoadedListener = jsonItemsLoadedListener;
+        refreshLayout = view.findViewById(R.id.ge_refresh_layout);
         new LoadGeItemsTask(context, this).execute();
         new GetOSBuddyExchangeSummaryTask(context, loadSummaryDataCallback()).execute();
     }
@@ -109,7 +110,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     @Override
     public void onJsonItemsLoaded(ArrayList<JsonItem> items) {
         allItems = new ArrayList<>(items);
-        updateView(view);
+        updateView();
         if (jsonItemsLoadedListener != null) {
             jsonItemsLoadedListener.onJsonItemsLoaded(null);
         }
@@ -120,13 +121,11 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         showToast(getResources().getString(R.string.exception_occurred, "exception", "loading items from file"), Toast.LENGTH_LONG);
     }
 
-    public void updateView(View view) {
-        this.view = view;
+    private void updateView() {
         initChartSettings(view);
         autoCompleteTextView = ((ClearableAutoCompleteTextView) view.findViewById(R.id.ge_search_input)).getAutoCompleteTextView();
         if (jsonItem != null)
             autoCompleteTextView.setText(jsonItem.name);
-        refreshLayout = view.findViewById(R.id.ge_refresh_layout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
