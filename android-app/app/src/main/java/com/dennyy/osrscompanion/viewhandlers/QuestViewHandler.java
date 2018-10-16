@@ -85,8 +85,6 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     }
 
     private void initWebView() {
-        webView.addPermittedHostname("oldschool.runescape.wiki");
-        webView.addPermittedHostname("runehq.com");
         webView.setThirdPartyCookiesEnabled(false);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
