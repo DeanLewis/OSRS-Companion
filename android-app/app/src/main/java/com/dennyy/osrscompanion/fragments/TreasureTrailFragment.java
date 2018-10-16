@@ -50,10 +50,6 @@ public class TreasureTrailFragment extends BaseFragment {
     }
 
     private void loadFragment(Bundle savedInstanceState) {
-        Window window = getActivity().getWindow();
-        if (window != null) {
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        }
         if (savedInstanceState != null) {
             treasureTrailViewHandler.treasureTrail = (TreasureTrail) savedInstanceState.getSerializable(CLUE_DATA_KEY);
             treasureTrailViewHandler.reloadData();

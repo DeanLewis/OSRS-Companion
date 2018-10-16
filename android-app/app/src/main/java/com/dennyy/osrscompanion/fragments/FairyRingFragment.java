@@ -34,8 +34,6 @@ public class FairyRingFragment extends BaseFragment {
         toolbarTitle.setText(getResources().getString(R.string.fairy_rings));
 
         fairyRingViewHandler = new FairyRingViewHandler(getActivity(), view);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
         if (savedInstanceState != null) {
             fairyRingViewHandler.selectedIndex = savedInstanceState.getInt(FAIRY_RING_INDEX_KEY);
         }

@@ -81,7 +81,6 @@ public class GrandExchangeFragment extends BaseFragment {
 
     private void loadFragment(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             grandExchangeViewHandler.jsonItem = (JsonItem) savedInstanceState.getSerializable(JSON_ITEM);
             grandExchangeViewHandler.geItemData = savedInstanceState.getString(GE_ITEM_DATA);
             grandExchangeViewHandler.geupdateData = savedInstanceState.getString(GE_UPDATE_DATA);
