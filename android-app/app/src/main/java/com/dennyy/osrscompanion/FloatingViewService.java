@@ -163,7 +163,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     }
                     else if (key.equals(timersHeadName)) {
                         cachedView = inflater.inflate(R.layout.timers_layout, parent, false);
-                       timersViewHandler =  new TimersViewHandler(FloatingViewService.this, cachedView, true);
+                        timersViewHandler = new TimersViewHandler(FloatingViewService.this, cachedView, true);
                     }
                     viewCache.put(key, cachedView);
                 }
@@ -190,7 +190,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
 
             @Override
             public Drawable getChatHeadDrawable(String key) {
-                if (iconsMap == null) {
+                if (iconsMap == null || iconsMap.size() < 1) {
                     iconsMap = new HashMap<>();
                     initIconsMap();
                 }
