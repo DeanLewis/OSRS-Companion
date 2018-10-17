@@ -279,6 +279,8 @@
     <string name="timer_restart">Restart</string>
     <string name="timer_disable">Disable</string>
     <string name="timer_run_immediately">Run timer once when starting</string>
+    <string name="tt_view_maps">Maps</string>
+    <string name="puzzles">Puzzles</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

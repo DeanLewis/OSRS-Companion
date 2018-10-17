@@ -18,15 +18,21 @@ public abstract class BaseViewHandler {
     protected View view;
     protected Resources resources;
     protected boolean wasRequesting;
+    protected boolean isFloatingView;
 
     private final Handler keyBoardHandler = new Handler();
     private Runnable keyBoardRunnable;
 
     BaseViewHandler(Context context, View view) {
+        this(context, view, false);
+    }
+
+    BaseViewHandler(Context context, View view, boolean isFloatingView) {
         this.context = context;
         this.view = view;
         this.resources = context.getResources();
         this.defaultRsn = PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.PREF_RSN, "");
+        this.isFloatingView = isFloatingView;
     }
 
     protected void showToast(String message, int duration) {

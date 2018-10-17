@@ -1,5 +1,4 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="cmb_calc_skill_font_size">16sp</dimen>
     <dimen name="exp_list_header_font_size">18sp</dimen>
     <dimen name="exp_list_font_size">16sp</dimen>
@@ -9,4 +8,6 @@
     <dimen name="timer_font_size">16sp</dimen>
     <dimen name="timer_number_font_size">20sp</dimen>
     <dimen name="timer_title_font_size">18sp</dimen>
+    <dimen name="default_margin">10sp</dimen>
+    <dimen name="treasure_trails_puzzle_height">250dp</dimen>
 </resources>

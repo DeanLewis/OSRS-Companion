@@ -13,6 +13,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +40,9 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class TreasureTrailViewHandler extends BaseViewHandler implements View.OnClickListener, AdapterImageClickListener, TreasureTrailsLoadedListener {
     public TreasureTrail treasureTrail;
@@ -56,17 +59,40 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
     private View dimView;
     private ImageView expandedImageView;
     private TreasureTrailsLoadedListener treasureTrailsLoadedListener;
+    private final HashMap<Integer, Integer> containers = new HashMap<>();
+    private int activeIcon;
 
-    public TreasureTrailViewHandler(Context context, View view, TreasureTrailsLoadedListener treasureTrailsLoadedListener) {
-        super(context, view);
+    public TreasureTrailViewHandler(Context context, View view, boolean isFloatingView, TreasureTrailsLoadedListener treasureTrailsLoadedListener) {
+        super(context, view, isFloatingView);
         this.treasureTrailsLoadedListener = treasureTrailsLoadedListener;
+        if (isFloatingView) {
+            loadFloatingViewNavBar();
+        }
+        containers.put(R.id.action_tt_main, R.id.tt_data_layout);
+        containers.put(R.id.action_tt_maps, R.id.tt_maps_listview);
+        containers.put(R.id.action_tt_puzzles, R.id.tt_puzzle_container);
+        for (int id : new int[]{ R.id.puzzle_castle, R.id.puzzle_tree, R.id.puzzle_troll, R.id.puzzle_cerberus, R.id.puzzle_gnome, R.id.puzzle_zulrah }) {
+            view.findViewById(id).setOnClickListener(this);
+        }
         new LoadItems(context, this).execute();
+    }
+
+    private void loadFloatingViewNavBar() {
+        containers.put(R.id.tt_navbar_main, R.id.tt_data_layout);
+        containers.put(R.id.tt_navbar_maps, R.id.tt_maps_listview);
+        containers.put(R.id.tt_navbar_puzzles, R.id.tt_puzzle_container);
+        RelativeLayout ttNavBar = view.findViewById(R.id.tt_navbar);
+        setNavbarIconActive(R.id.tt_navbar_main,false);
+        ttNavBar.setVisibility(View.VISIBLE);
+        for (int id : containers.keySet()) {
+            ttNavBar.findViewById(id).setOnClickListener(this);
+        }
     }
 
     @Override
     public void onTreasureTrailsLoaded(TreasureTrails treasureTrails) {
         allItems = treasureTrails;
-        updateView(view);
+        updateView();
         if (treasureTrailsLoadedListener != null) {
             treasureTrailsLoadedListener.onTreasureTrailsLoaded(null);
         }
@@ -76,10 +102,8 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
     public void onTreasureTrailsLoadError() {
         showToast(resources.getString(R.string.exception_occurred, "exception", "loading items from file"), Toast.LENGTH_LONG);
     }
-
     @SuppressLint("ClickableViewAccessibility")
-    private void updateView(View view) {
-        this.view = view;
+    private void updateView() {
         mapsListView = view.findViewById(R.id.tt_maps_listview);
         expandedImageView = view.findViewById(R.id.expanded_image);
         dimView = view.findViewById(R.id.dim_img_view);
@@ -119,7 +143,6 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
         });
         dimView.setOnClickListener(this);
         expandedImageView.setOnClickListener(this);
-        view.findViewById(R.id.tt_fab).setOnClickListener(this);
         viewPager = view.findViewById(R.id.viewPager);
     }
 
@@ -194,26 +217,53 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
     public void onClick(View view) {
         int id = view.getId();
         switch (id) {
-            case R.id.tt_fab:
-                LinearLayout dataLayout = this.view.findViewById(R.id.tt_data_layout);
-                boolean visible = dataLayout.getVisibility() == View.VISIBLE;
-                dataLayout.setVisibility(visible ? View.GONE : View.VISIBLE);
-                mapsListView.setVisibility(visible ? View.VISIBLE : View.GONE);
+            case R.id.tt_navbar_main:
+            case R.id.tt_navbar_maps:
+            case R.id.tt_navbar_puzzles:
+                setNavbarIconActive(id, false);
                 break;
             case R.id.expanded_image:
             case R.id.dim_img_view:
                 expandedImageView.setVisibility(View.GONE);
                 dimView.setVisibility(View.GONE);
                 break;
+            case R.id.puzzle_castle:
+            case R.id.puzzle_tree:
+            case R.id.puzzle_troll:
+            case R.id.puzzle_cerberus:
+            case R.id.puzzle_gnome:
+            case R.id.puzzle_zulrah:
+                onClickImage(0, view);
+                break;
         }
+    }
+
+    public void setNavbarIconActive(int iconId, boolean containerOnly) {
+        if (iconId == activeIcon)
+            return;
+        activeIcon = iconId;
+        for (Map.Entry<Integer, Integer> entry : containers.entrySet()) {
+            int key = entry.getKey();
+            int value = entry.getValue();
+            if (!containerOnly) {
+                view.findViewById(key).setAlpha(0.4f);
+            }
+            view.findViewById(value).setVisibility(View.GONE);
+        }
+        if (!containerOnly) {
+            view.findViewById(iconId).setAlpha(1.0f);
+        }
+        view.findViewById(containers.get(iconId)).setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onClickImage(int index, View view) {
         if (view instanceof ImageView) {
             dimView.setVisibility(View.VISIBLE);
+            dimView.bringToFront();
             expandedImageView.setVisibility(View.VISIBLE);
             expandedImageView.setImageDrawable(((ImageView) view).getDrawable());
+            expandedImageView.bringToFront();
         }
     }
 

@@ -3,16 +3,17 @@ package com.dennyy.osrscompanion.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.interfaces.TreasureTrailsLoadedListener;
-import com.dennyy.osrscompanion.viewhandlers.TreasureTrailViewHandler;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrail;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrails;
+import com.dennyy.osrscompanion.viewhandlers.TreasureTrailViewHandler;
 
 public class TreasureTrailFragment extends BaseFragment {
 
@@ -38,7 +39,7 @@ public class TreasureTrailFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.treasure_trails));
 
-        treasureTrailViewHandler = new TreasureTrailViewHandler(getActivity(), view, new TreasureTrailsLoadedListener() {
+        treasureTrailViewHandler = new TreasureTrailViewHandler(getActivity(), view, false, new TreasureTrailsLoadedListener() {
             @Override
             public void onTreasureTrailsLoaded(TreasureTrails treasureTrails) {
                 loadFragment(savedInstanceState);
@@ -53,6 +54,28 @@ public class TreasureTrailFragment extends BaseFragment {
         if (savedInstanceState != null) {
             treasureTrailViewHandler.treasureTrail = (TreasureTrail) savedInstanceState.getSerializable(CLUE_DATA_KEY);
             treasureTrailViewHandler.reloadData();
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_treasure_trails, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_tt_main:
+            case R.id.action_tt_maps:
+            case R.id.action_tt_puzzles:
+                if (treasureTrailViewHandler != null) {
+                    treasureTrailViewHandler.setNavbarIconActive(id, true);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
