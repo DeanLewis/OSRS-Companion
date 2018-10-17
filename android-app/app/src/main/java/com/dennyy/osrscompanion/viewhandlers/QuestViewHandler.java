@@ -27,11 +27,12 @@ import com.dennyy.osrscompanion.adapters.QuestSourceSpinnerAdapter;
 import com.dennyy.osrscompanion.asynctasks.QuestLoadTask;
 import com.dennyy.osrscompanion.customviews.ObservableWebView;
 import com.dennyy.osrscompanion.enums.QuestSource;
+import com.dennyy.osrscompanion.enums.ScrollState;
 import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.ObservableScrollViewCallbacks;
 import com.dennyy.osrscompanion.interfaces.QuestsLoadedListener;
-import com.dennyy.osrscompanion.interfaces.WebViewScrollListener;
 import com.dennyy.osrscompanion.models.General.Quest;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ import java.util.Arrays;
 
 import im.delight.android.webview.AdvancedWebView;
 
-public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, AdapterView.OnItemSelectedListener, View.OnClickListener, QuestsLoadedListener, WebViewScrollListener {
+public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, AdapterView.OnItemSelectedListener, View.OnClickListener, QuestsLoadedListener, ObservableScrollViewCallbacks {
 
     public ObservableWebView webView;
     public int selectedQuestIndex = -1;
@@ -60,7 +61,7 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
 
         selectedQuestSource = QuestSource.fromName(PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.PREF_QUEST_SOURCE, QuestSource.RSWIKI.getName()));
         webView = view.findViewById(R.id.webview);
-        webView.setWebViewScrollListener(this);
+        webView.addScrollViewCallbacks(this);
         questSelectorContainer = view.findViewById(R.id.quest_selector_container);
         progressBar = view.findViewById(R.id.progressBar);
         questSelectorSpinner = view.findViewById(R.id.quest_selector_spinner);
@@ -256,22 +257,35 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         clearHistory = true;
     }
 
-    @Override
-    public void onWebViewScrollDown(ObservableWebView observableWebView, int y, int oldY) {
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) questSelectorContainer.getLayoutParams();
-        int height = questSelectorContainer.getHeight() + params.bottomMargin + params.topMargin;
-        questSelectorContainer.animate().translationY(-height).setInterpolator(new AccelerateInterpolator(2));
-        view.findViewById(R.id.webview_container).animate().translationY(0).setInterpolator(new AccelerateInterpolator(2));
-    }
-
-    @Override
-    public void onWebViewScrollUp(ObservableWebView observableWebView, int y, int oldY) {
-        questSelectorContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-        pushWebViewDown();
-    }
-
     private void pushWebViewDown() {
         int height = questSelectorContainer.getHeight();
         view.findViewById(R.id.webview_container).animate().translationY(height).setInterpolator(new AccelerateInterpolator(2));
+    }
+
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        if (scrollState == ScrollState.UP && questSelectorContainer.isShown()) {
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) questSelectorContainer.getLayoutParams();
+            int height = questSelectorContainer.getHeight() + params.bottomMargin + params.topMargin;
+            questSelectorContainer.animate().translationY(-height).setInterpolator(new AccelerateInterpolator(2));
+            view.findViewById(R.id.webview_container).animate().translationY(0).setInterpolator(new AccelerateInterpolator(2));
+            questSelectorContainer.setVisibility(View.GONE);
+        }
+
+        else if (scrollState == ScrollState.DOWN && !questSelectorContainer.isShown()) {
+            questSelectorContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+            questSelectorContainer.setVisibility(View.VISIBLE);
+            pushWebViewDown();
+        }
     }
 }
