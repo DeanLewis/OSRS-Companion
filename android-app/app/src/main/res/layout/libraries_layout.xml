@@ -117,5 +117,13 @@
             app:author="@string/lib_eventbus_author"
             app:title="@string/lib_eventbus"
             app:url="https://github.com/greenrobot/EventBus"/>
+
+        <com.dennyy.osrscompanion.customviews.LibraryCardview
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_marginBottom="5dp"
+            app:author="@string/lib_observeable_webview_author"
+            app:title="@string/lib_observeable_webview"
+            app:url="https://github.com/ksoichiro/Android-ObservableScrollView"/>
     </LinearLayout>
 </ScrollView>
