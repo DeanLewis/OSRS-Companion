@@ -29,6 +29,7 @@ import com.dennyy.osrscompanion.viewhandlers.OSRSNewsViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.QuestViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.RSWikiViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.SkillCalculatorViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.TimersViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.TrackerViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.TreasureTrailViewHandler;
 import com.flipkart.chatheads.ChatHead;
@@ -61,6 +62,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
     private final static String diaryCalcHeadName = DiaryCalculatorViewHandler.class.getSimpleName();
     private final static String rswikiHeadName = RSWikiViewHandler.class.getSimpleName();
     private final static String rsnewsHeadName = OSRSNewsViewHandler.class.getSimpleName();
+    private final static String timersHeadName = TimersViewHandler.class.getSimpleName();
 
     private DefaultChatHeadManager chatHeadManager;
     private WindowManagerContainer windowManagerContainer;
@@ -155,6 +157,10 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     else if (key.equals(rsnewsHeadName)) {
                         cachedView = inflater.inflate(R.layout.rsnews_layout, parent, false);
                         new OSRSNewsViewHandler(FloatingViewService.this, cachedView, true);
+                    }
+                    else if (key.equals(timersHeadName)) {
+                        cachedView = inflater.inflate(R.layout.timers_layout, parent, false);
+                        new TimersViewHandler(FloatingViewService.this, cachedView);
                     }
                     viewCache.put(key, cachedView);
                 }
@@ -307,6 +313,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
         iconsMap.put(diaryCalcHeadName, R.drawable.diary_calc_floating_view);
         iconsMap.put(rswikiHeadName, R.drawable.rswiki_floating_view);
         iconsMap.put(rsnewsHeadName, R.drawable.rsnews_floating_view);
+        iconsMap.put(timersHeadName, R.drawable.timers_floating_view);
     }
 
     private void initNamesMap() {
@@ -325,6 +332,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
         namesMap.put("diary_calc", diaryCalcHeadName);
         namesMap.put("osrs_wiki", rswikiHeadName);
         namesMap.put("osrs_news", rsnewsHeadName);
+        namesMap.put("timers", timersHeadName);
     }
 
     @Override

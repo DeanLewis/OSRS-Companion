@@ -53,6 +53,8 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
         webView.addPermittedHostname("oldschool.runescape.wiki");
         webView.setThirdPartyCookiesEnabled(false);
         webView.setMixedContentAllowed(false);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setLoadWithOverviewMode(true);
         webView.loadUrl(currentUrl);
 
         Activity activity = null;

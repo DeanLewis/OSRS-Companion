@@ -235,7 +235,7 @@
     <string name="diary_skill_requirement">%1$d %2$s </string>
     <string name="diary_dialog_info">NOTE: The calculator does not take in consideration the additional requirements such as quest points, combat levels or minigame completions</string>
     <string name="osrs_wiki">OSRS Wiki</string>
-    <string name="unexpected_error_try_reload">Unexpected error: try reloading this page or restarting the service</string>
+    <string name="unexpected_error_try_reopen">Unexpected error: try reopening this page or restarting the service</string>
     <string name="hiscore_lookup">Hiscore lookup</string>
     <string name="hiscore_compare">Hiscore compare</string>
     <string name="clearable_edittext">clearable_edittext</string>
@@ -253,6 +253,27 @@
     <string name="floating_view_size_info">Set the size of the floating view, default is 50dp</string>
     <string name="ge_items_source">Included items</string>
     <string name="ge_items_source_info">Select the type of items included in the search. Most convenient for f2p players that only search for f2p items</string>
+    <string name="timers">Timers</string>
+    <string name="set_timer">Set timer</string>
+    <string name="save">Save</string>
+    <string name="title">Title</string>
+    <string name="description_optional">Description (optional)</string>
+    <string name="repeated_timer">Repeated timer</string>
+    <string name="timer_notify_after">Notify after</string>
+    <string name="timer_notify_every">Notify every</string>
+    <string name="semicolon">:</string>
+    <string name="optional"><font size="14">(optional)</font></string>
+    <string name="timer_invalid_interval">Enter a valid time</string>
+    <string name="timer_empty_title">Enter a title</string>
+    <string name="hours_hint"><font size="14">(hours)</font></string>
+    <string name="minutes_hint"><font size="14">(mins)</font></string>
+    <string name="seconds_hint"><font size="14">(secs)</font></string>
+    <string name="timer_start">Start</string>
+    <string name="timer_edit">Edit</string>
+    <string name="timer_delete">Delete</string>
+    <string name="timer_repeated">Repeated every %1$s</string>
+    <string name="timer_once">Once after %1$s</string>
+    <string name="channel_description">OSRS Companion timers</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>
@@ -270,6 +291,7 @@
         <item>Diary Calculator</item>
         <item>OSRS Wiki</item>
         <item>OSRS News</item>
+        <item>Timers</item>
     </string-array>
     <string-array name="view_name_value">
         <item>ge</item>
@@ -287,6 +309,7 @@
         <item>diary_calc</item>
         <item>osrs_wiki</item>
         <item>osrs_news</item>
+        <item>timers</item>
     </string-array>
     <string-array name="default_floating_views_selection">
     </string-array>

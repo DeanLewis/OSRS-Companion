@@ -428,6 +428,19 @@ public class Utils {
         }
     }
 
+    public static int tryParseInt(String number, int defaultVal) {
+        try {
+            return Integer.parseInt(number);
+        }
+        catch (NumberFormatException e) {
+            return defaultVal;
+        }
+    }
+
+    public static boolean between(int i, int minValueInclusive, int maxValueInclusive) {
+        return (i >= minValueInclusive && i <= maxValueInclusive);
+    }
+
     public static void executeJavaScript(WebView webView, String javaScript) {
         webView.loadUrl("javascript:(function() { " + javaScript + " })()");
     }

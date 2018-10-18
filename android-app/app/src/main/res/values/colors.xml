@@ -31,4 +31,5 @@
 
     <color name="floating_view_background">#666666</color>
     <color name="floating_view_border">#ff000000</color>
+    <color name="hint_color">#666666</color>
 </resources>

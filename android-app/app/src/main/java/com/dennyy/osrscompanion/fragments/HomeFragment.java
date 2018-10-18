@@ -79,6 +79,7 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
             tiles.add(new TileData(getString(R.string.fairy_rings), getDrawable(R.drawable.fairy_rings)));
             tiles.add(new TileData(getString(R.string.osrs_wiki), getDrawable(R.drawable.rswiki_logo)));
             tiles.add(new TileData(getString(R.string.rsnews), getDrawable(R.drawable.newspaper)));
+            tiles.add(new TileData(getString(R.string.timers), getDrawable(R.drawable.stopwatch)));
             tiles.add(new TileData(getString(R.string.settings), getDrawable(R.drawable.settings)));
         }
 
@@ -210,6 +211,9 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
         }
         else if (tileData.text.equals(getString(R.string.rsnews))) {
             fragment = new OSRSNewsFragment();
+        }
+        else if (tileData.text.equals(getString(R.string.timers))) {
+            fragment = new TimersFragment();
         }
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment, tag);

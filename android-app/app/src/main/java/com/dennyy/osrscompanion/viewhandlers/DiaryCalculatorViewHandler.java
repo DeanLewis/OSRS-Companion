@@ -91,7 +91,7 @@ public class DiaryCalculatorViewHandler extends BaseViewHandler implements Hisco
 
     @Override
     public void onDiariesLoadError() {
-        showToast(getString(R.string.unexpected_error_try_reload), Toast.LENGTH_LONG);
+        showToast(getString(R.string.unexpected_error_try_reopen), Toast.LENGTH_LONG);
     }
 
     private void initializeUser(String rsn) {

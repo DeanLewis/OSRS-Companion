@@ -6,4 +6,7 @@
     <dimen name="list_font_size">16sp</dimen>
     <dimen name="listview_height">400dp</dimen>
     <dimen name="skill_calc_go_button">13sp</dimen>
+    <dimen name="timer_font_size">16sp</dimen>
+    <dimen name="timer_number_font_size">20sp</dimen>
+    <dimen name="timer_title_font_size">18sp</dimen>
 </resources>

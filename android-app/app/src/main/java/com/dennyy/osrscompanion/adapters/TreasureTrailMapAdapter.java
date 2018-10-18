@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.interfaces.AdapterImageClickListener;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrailMap;
 
 import java.util.ArrayList;
@@ -80,13 +81,10 @@ public class TreasureTrailMapAdapter extends BaseAdapter{
         });
         return convertView;
     }
+
     private static class ViewHolder {
         public ImageView mapImage;
         public ImageView ingameImage;
         public TextView location;
-    }
-
-    public interface AdapterImageClickListener {
-        void onClickImage(int index, View view);
     }
 }

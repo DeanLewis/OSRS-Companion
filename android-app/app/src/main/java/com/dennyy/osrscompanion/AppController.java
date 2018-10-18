@@ -2,6 +2,9 @@ package com.dennyy.osrscompanion;
 
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -28,6 +31,7 @@ public class AppController extends Application {
         }
         mInstance = this;
         new UpdateDbTask(this).execute();
+        createNotificationChannel();
     }
 
     public static synchronized AppController getInstance() {
@@ -55,6 +59,18 @@ public class AppController extends Application {
     public void cancelPendingRequests(Object tag) {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(tag);
+        }
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.app_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(BuildConfig.APPLICATION_ID, name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
         }
     }
 }

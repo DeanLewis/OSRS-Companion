@@ -26,6 +26,7 @@ import com.dennyy.osrscompanion.enums.TreasureTrailType;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.AdapterImageClickListener;
 import com.dennyy.osrscompanion.interfaces.TreasureTrailsLoadedListener;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrail;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrailMap;
@@ -40,7 +41,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class TreasureTrailViewHandler extends BaseViewHandler implements View.OnClickListener, TreasureTrailMapAdapter.AdapterImageClickListener, TreasureTrailsLoadedListener {
+public class TreasureTrailViewHandler extends BaseViewHandler implements View.OnClickListener, AdapterImageClickListener, TreasureTrailsLoadedListener {
     public TreasureTrail treasureTrail;
 
     private static final String TT_REQUEST_TAG = "TT_REQUEST_TAG";

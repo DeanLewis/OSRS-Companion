@@ -3,7 +3,6 @@ package com.dennyy.osrscompanion.viewhandlers;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Paint;
-import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.KeyEvent;
@@ -55,7 +54,6 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -183,7 +181,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     public void updateItem(String id) {
         setJsonItem(id);
         if (jsonItem == null) {
-            showToast(getString(R.string.unexpected_error_try_reload), Toast.LENGTH_SHORT);
+            showToast(getString(R.string.unexpected_error_try_reopen), Toast.LENGTH_SHORT);
             return;
         }
         activateRefreshCooldown();
@@ -410,7 +408,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         Utils.getString(Constants.GE_GRAPH_URL(id), GEGRAPH_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                AppDb.getInstance(context).insertOrupdateGrandExchangeGraphData(id, result);
+                AppDb.getInstance(context).insertOrUpdateGrandExchangeGraphData(id, result);
                 geGraphData = result;
                 handleGeGraphData();
             }

@@ -14,7 +14,10 @@ import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeUpdateData;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryDTO;
 import com.dennyy.osrscompanion.models.OSRSNews.OSRSNewsDTO;
+import com.dennyy.osrscompanion.models.Timers.Timer;
 import com.dennyy.osrscompanion.models.Tracker.TrackData;
+
+import java.util.ArrayList;
 
 public class AppDb extends SQLiteOpenHelper {
     private static AppDb instance;
@@ -29,7 +32,7 @@ public class AppDb extends SQLiteOpenHelper {
     private AppDb(Context context) {
         super(context, DB.name, null, DB.version);
     }
-    
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         // run when the database file did not exist and was just created
@@ -65,6 +68,13 @@ public class AppDb extends SQLiteOpenHelper {
                 DB.OSRSNews.id + " INTEGER PRIMARY KEY, " +
                 DB.OSRSNews.data + " TEXT, " +
                 DB.OSRSNews.dateModified + " INTEGER NOT NULL);";
+        String createTimersTable = "CREATE TABLE " + DB.Timers.tableName + " (" +
+                DB.Timers.id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                DB.Timers.title + " TEXT, " +
+                DB.Timers.description + " TEXT, " +
+                DB.Timers.repeat + " INTEGER DEFAULT 0, " +
+                DB.Timers.interval + " INTEGER NOT NULL, " +
+                DB.Timers.dateModified + " INTEGER NOT NULL);";
 
         db.execSQL(createUserStatsTable);
         db.execSQL(createTrackTable);
@@ -73,6 +83,7 @@ public class AppDb extends SQLiteOpenHelper {
         db.execSQL(createGrandExchangeGraphTable);
         db.execSQL(createOSBuddyExchangeSummaryTable);
         db.execSQL(createOSRSNewsTable);
+        db.execSQL(createTimersTable);
     }
 
     @Override
@@ -110,6 +121,16 @@ public class AppDb extends SQLiteOpenHelper {
                     DB.OSBuddyExchangeSummary.data + " TEXT, " +
                     DB.OSBuddyExchangeSummary.dateModified + " INTEGER NOT NULL);";
             db.execSQL(createOSBuddyExchangeSummaryTable);
+        }
+        if (oldVersion < 11) {
+            String createTimersTable = "CREATE TABLE IF NOT EXISTS " + DB.Timers.tableName + " (" +
+                    DB.Timers.id + " INTEGER PRIMARY KEY, " +
+                    DB.Timers.title + " TEXT, " +
+                    DB.Timers.description + " TEXT, " +
+                    DB.Timers.repeat + " INTEGER DEFAULT 0, " +
+                    DB.Timers.interval + " INTEGER NOT NULL, " +
+                    DB.Timers.dateModified + " INTEGER NOT NULL);";
+            db.execSQL(createTimersTable);
         }
     }
 
@@ -306,7 +327,7 @@ public class AppDb extends SQLiteOpenHelper {
         return result;
     }
 
-    public void insertOrupdateGrandExchangeGraphData(String itemId, String newData) {
+    public void insertOrUpdateGrandExchangeGraphData(String itemId, String newData) {
         String query = "SELECT * FROM " + DB.GrandExchangeGraph.tableName + " WHERE " + DB.GrandExchangeGraph.itemId + " = ?";
         Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ itemId });
         if (cursor.moveToFirst()) {
@@ -359,9 +380,51 @@ public class AppDb extends SQLiteOpenHelper {
         }
     }
 
+    public void insertOrUpdateTimer(Timer timer) {
+        String id = String.valueOf(timer.id);
+        String query = "SELECT * FROM " + DB.Timers.tableName + " WHERE " + DB.Timers.id + " = ?";
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ id });
+        ContentValues cv = new ContentValues();
+        cv.put(DB.Timers.title, timer.title);
+        cv.put(DB.Timers.description, timer.description);
+        cv.put(DB.Timers.interval, timer.interval);
+        cv.put(DB.Timers.repeat, timer.repeat);
+        cv.put(DB.Timers.dateModified, System.currentTimeMillis());
+        if (cursor.moveToFirst()) {
+            getWritableDatabase().update(DB.Timers.tableName, cv, DB.Timers.id + " = ?", new String[]{ id });
+            cursor.close();
+        }
+        else {
+            getWritableDatabase().insert(DB.Timers.tableName, null, cv);
+            cursor.close();
+        }
+    }
+
+    public ArrayList<Timer> getTimers() {
+        String query = "SELECT * FROM " + DB.Timers.tableName + " ORDER BY " + DB.Timers.dateModified + " DESC";
+        Cursor cursor = getReadableDatabase().rawQuery(query, null);
+        ArrayList<Timer> timers = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            Timer timer = new Timer();
+            timer.id = cursor.getInt(cursor.getColumnIndex(DB.Timers.id));
+            timer.title = cursor.getString(cursor.getColumnIndex(DB.Timers.title));
+            timer.description = cursor.getString(cursor.getColumnIndex(DB.Timers.description));
+            timer.interval = cursor.getInt(cursor.getColumnIndex(DB.Timers.interval));
+            timer.repeat = cursor.getInt(cursor.getColumnIndex(DB.Timers.repeat)) == 1;
+            timers.add(timer);
+        }
+        cursor.close();
+        return timers;
+    }
+
+    public void deleteTimer(int timerId) {
+        getReadableDatabase().delete(DB.Timers.tableName, DB.Timers.id + " = ?", new String[]{ String.valueOf(timerId) });
+    }
+
     private static class DB {
         private static final String name = "osrscompanion.db";
-        private static final int version = 9;
+        private static final int version = 10;
 
         private static class UserStats {
             private static final String tableName = "UserStats";
@@ -424,6 +487,17 @@ public class AppDb extends SQLiteOpenHelper {
 
             private static final String id = "id";
             private static final String data = "data";
+            private static final String dateModified = "dateModified";
+        }
+
+        private static class Timers {
+            private static final String tableName = "Timers";
+
+            private static final String id = "id";
+            private static final String title = "title";
+            private static final String description = "description";
+            private static final String repeat = "repeat";
+            private static final String interval = "interval";
             private static final String dateModified = "dateModified";
         }
     }
