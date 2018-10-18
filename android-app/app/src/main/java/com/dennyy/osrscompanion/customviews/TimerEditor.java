@@ -23,6 +23,8 @@ public class TimerEditor extends LinearLayout implements View.OnClickListener {
     private EditText minutesEditText;
     private EditText secondsEditText;
     private CheckBox repeatedCheckbox;
+    private TextView editTimerActive;
+    private TextView timerNotifyText;
     private TimerEditorListener listener;
 
     public TimerEditor(Context context, AttributeSet attributeSet) {
@@ -36,12 +38,15 @@ public class TimerEditor extends LinearLayout implements View.OnClickListener {
         super.onFinishInflate();
         findViewById(R.id.timer_save).setOnClickListener(this);
         findViewById(R.id.timer_cancel).setOnClickListener(this);
+        findViewById(R.id.timer_repeat_checkbox_container).setOnClickListener(this);
         titleTextView = findViewById(R.id.timer_editor_title_edittext);
         descriptionTextView = findViewById(R.id.timer_editor_desc_exittext);
         hoursEditText = findViewById(R.id.timer_hours);
         minutesEditText = findViewById(R.id.timer_minutes);
         secondsEditText = findViewById(R.id.timer_seconds);
-        repeatedCheckbox = findViewById(R.id.timer_checkbox);
+        repeatedCheckbox = findViewById(R.id.timer_repeat_checkbox);
+        editTimerActive = findViewById(R.id.timer_edit_active);
+        timerNotifyText = findViewById(R.id.timer_notify_text);
     }
 
     public void setListener(TimerEditorListener listener) {
@@ -51,6 +56,10 @@ public class TimerEditor extends LinearLayout implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         int id = view.getId();
+        if (id == R.id.timer_repeat_checkbox_container) {
+            repeatedCheckbox.setChecked(!repeatedCheckbox.isChecked());
+            timerNotifyText.setText(getResources().getString(repeatedCheckbox.isChecked() ? R.string.timer_notify_every : R.string.timer_notify_after));
+        }
         if (listener == null)
             return;
         if (id == R.id.timer_save) {
@@ -78,7 +87,7 @@ public class TimerEditor extends LinearLayout implements View.OnClickListener {
         repeatedCheckbox.setChecked(false);
     }
 
-    public void setContent(Timer timer){
+    public void setContent(Timer timer) {
         int hours = timer.interval / 3600;
         int secondsLeft = timer.interval - hours * 3600;
         int minutes = secondsLeft / 60;
@@ -89,6 +98,8 @@ public class TimerEditor extends LinearLayout implements View.OnClickListener {
         hoursEditText.setText(String.valueOf(hours));
         minutesEditText.setText(String.valueOf(minutes));
         secondsEditText.setText(String.valueOf(seconds));
-        repeatedCheckbox.setChecked(timer.repeat);
+        repeatedCheckbox.setChecked(timer.isRepeating);
+        editTimerActive.setVisibility(timer.isActive() ? VISIBLE : GONE);
+        timerNotifyText.setText(getResources().getString(repeatedCheckbox.isChecked() ? R.string.timer_notify_every : R.string.timer_notify_after));
     }
 }

@@ -11,10 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.dennyy.osrscompanion.enums.ReloadTimerSource;
 import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.Notes.NoteChangeEvent;
+import com.dennyy.osrscompanion.models.Timers.ReloadTimersEvent;
 import com.dennyy.osrscompanion.viewhandlers.BaseViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.CalculatorViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.CombatCalculatorViewHandler;
@@ -72,6 +74,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
 
     private CalculatorViewHandler calculatorViewHandler;
     private NotesViewHandler notesViewHandler;
+    private TimersViewHandler timersViewHandler;
 
     public FloatingViewService() {
 
@@ -160,7 +163,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     }
                     else if (key.equals(timersHeadName)) {
                         cachedView = inflater.inflate(R.layout.timers_layout, parent, false);
-                        new TimersViewHandler(FloatingViewService.this, cachedView);
+                       timersViewHandler =  new TimersViewHandler(FloatingViewService.this, cachedView, true);
                     }
                     viewCache.put(key, cachedView);
                 }
@@ -269,6 +272,13 @@ public class FloatingViewService extends Service implements WindowManagerContain
     public void onNoteChangeEvent(NoteChangeEvent event) {
         if (notesViewHandler != null) {
             notesViewHandler.setNote(event.note);
+        }
+    }
+
+    @Subscribe
+    public void reloadTimers(ReloadTimersEvent event) {
+        if (timersViewHandler != null && event.source != ReloadTimerSource.FLOATINTG_VIEW) {
+            timersViewHandler.reloadTimers();
         }
     }
 

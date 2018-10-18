@@ -1,19 +1,23 @@
 package com.dennyy.osrscompanion.viewhandlers;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.dennyy.osrscompanion.BuildConfig;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.TimersAdapter;
 import com.dennyy.osrscompanion.asynctasks.GetTimersTask;
+import com.dennyy.osrscompanion.broadcastreceivers.CancelTimerReceiver;
+import com.dennyy.osrscompanion.broadcastreceivers.TimerReceiver;
 import com.dennyy.osrscompanion.customviews.TimerEditor;
 import com.dennyy.osrscompanion.database.AppDb;
+import com.dennyy.osrscompanion.enums.ReloadTimerSource;
+import com.dennyy.osrscompanion.helpers.Logger;
+import com.dennyy.osrscompanion.helpers.TimerIntentHelper;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.AdapterTimerClickListener;
 import com.dennyy.osrscompanion.interfaces.TimerEditorListener;
@@ -25,28 +29,38 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
-public class TimersViewHandler extends BaseViewHandler implements TimerEditorListener, TimersLoadedListener, AdapterTimerClickListener {
+import static android.app.PendingIntent.FLAG_ONE_SHOT;
+
+public class TimersViewHandler extends BaseViewHandler implements TimerEditorListener, TimersLoadedListener, AdapterTimerClickListener, View.OnClickListener {
 
     private ListView timersListView;
     private TimersAdapter timersAdapter;
     private TimerEditor timerEditor;
+    private ScrollView timerEditorScrollView;
+    private ReloadTimerSource reloadTimerSource;
 
-    public TimersViewHandler(Context context, View view) {
+    public TimersViewHandler(Context context, View view, boolean isFloatingView) {
         super(context, view);
 
         timersListView = view.findViewById(R.id.timers_listview);
+        reloadTimerSource = isFloatingView ? ReloadTimerSource.FLOATINTG_VIEW : ReloadTimerSource.FRAGMENT;
+        if (isFloatingView) {
+            view.findViewById(R.id.timers_navbar).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.add_timer).setOnClickListener(this);
+        }
         initEditor();
         reloadTimers();
     }
 
     private void initEditor() {
         timerEditor = view.findViewById(R.id.timer_editor);
+        timerEditorScrollView = view.findViewById(R.id.timer_editor_scrollview);
         timerEditor.setListener(this);
     }
 
     public void openAddTimerView() {
         timersListView.setVisibility(View.GONE);
-        view.findViewById(R.id.timer_editor).setVisibility(View.VISIBLE);
+        timerEditorScrollView.setVisibility(View.VISIBLE);
     }
 
     public void reloadTimers() {
@@ -85,17 +99,22 @@ public class TimersViewHandler extends BaseViewHandler implements TimerEditorLis
         timer.title = title;
         timer.description = description;
         timer.interval = hours * 3600 + minutes * 60 + seconds;
-        timer.repeat = repeated;
-        timerEditor.clear();
+        timer.isRepeating = repeated;
         AppDb.getInstance(context).insertOrUpdateTimer(timer);
-        EventBus.getDefault().post(new ReloadTimersEvent());
+        EventBus.getDefault().post(new ReloadTimersEvent(ReloadTimerSource.ANY));
         onTimerEditorCancel();
+        hideKeyboard();
     }
 
     @Override
     public void onTimerEditorCancel() {
-        view.findViewById(R.id.timer_editor).setVisibility(View.GONE);
+        timerEditor.clear();
+        timerEditorScrollView.setVisibility(View.GONE);
         timersListView.setVisibility(View.VISIBLE);
+    }
+
+    public boolean isTimerEditorOpen() {
+        return timerEditorScrollView.getVisibility() == View.VISIBLE;
     }
 
     @Override
@@ -109,38 +128,57 @@ public class TimersViewHandler extends BaseViewHandler implements TimerEditorLis
     }
 
     @Override
-    public void onStartClick(int id) {
-        if (timersAdapter == null) {
+    public void onStartClick(Timer timer) {
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (timersAdapter == null || manager == null) {
             showToast(getString(R.string.unexpected_error_try_reopen), Toast.LENGTH_SHORT);
             return;
         }
-        Timer timer = timersAdapter.getById(id);
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, BuildConfig.APPLICATION_ID)
-                .setSmallIcon(R.drawable.baseline_timer_white_24dp)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.osrscompanion4))
-                .setContentTitle(timer.title)
-                .setContentText(timer.description)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        PendingIntent pendingIntent = TimerIntentHelper.CreateIntent(context, timer, TimerReceiver.class, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (timer.isActive()) {
+            cancelTimer(timer);
+        }
+        else {
+            manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timer.getDelayMs(), pendingIntent);
+        }
 
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify((int)System.currentTimeMillis(), mBuilder.build());
+        timer.setActive(!timer.isActive());
+        timersAdapter.notifyDataSetChanged();
+        EventBus.getDefault().post(new ReloadTimersEvent(reloadTimerSource));
     }
 
     @Override
-    public void onEditClick(int id) {
+    public void onEditClick(Timer timer) {
         if (timersAdapter == null) {
             showToast(getString(R.string.unexpected_error_try_reopen), Toast.LENGTH_SHORT);
             return;
         }
-        Timer timer = timersAdapter.getById(id);
         timerEditor.setContent(timer);
         openAddTimerView();
     }
 
     @Override
-    public void onDeleteClick(int id) {
-        AppDb.getInstance(context).deleteTimer(id);
-        EventBus.getDefault().post(new ReloadTimersEvent());
+    public void onConfirmDeleteClick(Timer timer) {
+        cancelTimer(timer);
+        AppDb.getInstance(context).deleteTimer(timer.id);
+        EventBus.getDefault().post(new ReloadTimersEvent(reloadTimerSource));
+    }
+
+    private void cancelTimer(Timer timer) {
+        PendingIntent cancelPendingIntent = TimerIntentHelper.CreateIntent(context, timer, CancelTimerReceiver.class, FLAG_ONE_SHOT);
+        try {
+            cancelPendingIntent.send();
+        }
+        catch (PendingIntent.CanceledException e) {
+            Logger.log(e);
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.add_timer) {
+            openAddTimerView();
+        }
     }
 }

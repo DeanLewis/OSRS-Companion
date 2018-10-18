@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.models.Notes.NoteChangeEvent;
+import com.dennyy.osrscompanion.enums.ReloadTimerSource;
 import com.dennyy.osrscompanion.models.Timers.ReloadTimersEvent;
 import com.dennyy.osrscompanion.viewhandlers.TimersViewHandler;
 
@@ -34,7 +34,7 @@ public class TimersFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.timers));
-        timersViewHandler = new TimersViewHandler(getActivity(), view);
+        timersViewHandler = new TimersViewHandler(getActivity(), view, false);
     }
 
     @Override
@@ -65,9 +65,18 @@ public class TimersFragment extends BaseFragment {
 
     @Subscribe
     public void reloadTimers(ReloadTimersEvent event) {
-        if (timersViewHandler != null) {
+        if (timersViewHandler != null && event.source != ReloadTimerSource.FRAGMENT) {
             timersViewHandler.reloadTimers();
         }
+    }
+
+    @Override
+    public boolean onBackClick() {
+        if (timersViewHandler != null && timersViewHandler.isTimerEditorOpen()) {
+            timersViewHandler.onTimerEditorCancel();
+            return true;
+        }
+        return super.onBackClick();
     }
 
     @Override
@@ -81,6 +90,4 @@ public class TimersFragment extends BaseFragment {
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
-
 }
-

@@ -29,6 +29,9 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="" />
+        <receiver android:name=".broadcastreceivers.TimerReceiver" />
+        <receiver android:name=".broadcastreceivers.CancelTimerReceiver" />
+        <receiver android:name=".broadcastreceivers.RestartTimerReceiver" />
     </application>
 
 </manifest>

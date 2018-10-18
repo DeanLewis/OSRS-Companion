@@ -3,9 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/input_background_color"
-    android:orientation="vertical"
-    >
+    android:background="@color/timer_background"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,9 +16,9 @@
         <TextView
             android:id="@+id/timer_listview_title"
             android:layout_width="wrap_content"
-            android:textSize="@dimen/timer_title_font_size"
             android:layout_height="wrap_content"
-            android:textColor="@color/text"/>
+            android:textColor="@color/text"
+            android:textSize="@dimen/timer_title_font_size"/>
 
         <TextView
             android:id="@+id/timer_listview_description"
@@ -49,6 +48,33 @@
         android:orientation="horizontal"
         android:textAlignment="center">
 
+        <LinearLayout
+            android:id="@+id/timer_delete_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/timer_delete_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:background="@android:color/transparent"
+                android:text="@string/cancel"
+                android:textColor="@color/text"
+                android:textStyle="italic"/>
+
+            <Button
+                android:id="@+id/timer_delete_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:background="@android:color/transparent"
+                android:text="@string/timer_delete"
+                android:textColor="@color/red"
+                android:textStyle="italic"/>
+        </LinearLayout>
+
         <Button
             android:id="@+id/timer_delete"
             android:layout_width="0dp"
@@ -56,7 +82,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:text="@string/timer_delete"/>
+            android:text="@string/timer_delete"
+            android:textColor="@color/text"/>
 
         <Button
             android:id="@+id/timer_edit"
@@ -65,7 +92,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:text="@string/timer_edit"/>
+            android:text="@string/timer_edit"
+            android:textColor="@color/text"/>
 
         <Button
             android:id="@+id/timer_startstop"
@@ -74,7 +102,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:text="@string/timer_start"/>
+            android:text="@string/timer_start"
+            android:textColor="@color/text"/>
 
     </LinearLayout>
 </LinearLayout>

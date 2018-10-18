@@ -1,7 +1,9 @@
 package com.dennyy.osrscompanion.interfaces;
 
+import com.dennyy.osrscompanion.models.Timers.Timer;
+
 public interface AdapterTimerClickListener {
-    void onStartClick(int id);
-    void onEditClick(int id);
-    void onDeleteClick(int id);
+    void onStartClick(Timer timer);
+    void onEditClick(Timer timer);
+    void onConfirmDeleteClick(Timer timer);
 }

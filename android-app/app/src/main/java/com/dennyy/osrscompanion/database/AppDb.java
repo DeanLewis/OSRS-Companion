@@ -388,7 +388,7 @@ public class AppDb extends SQLiteOpenHelper {
         cv.put(DB.Timers.title, timer.title);
         cv.put(DB.Timers.description, timer.description);
         cv.put(DB.Timers.interval, timer.interval);
-        cv.put(DB.Timers.repeat, timer.repeat);
+        cv.put(DB.Timers.repeat, timer.isRepeating);
         cv.put(DB.Timers.dateModified, System.currentTimeMillis());
         if (cursor.moveToFirst()) {
             getWritableDatabase().update(DB.Timers.tableName, cv, DB.Timers.id + " = ?", new String[]{ id });
@@ -411,7 +411,7 @@ public class AppDb extends SQLiteOpenHelper {
             timer.title = cursor.getString(cursor.getColumnIndex(DB.Timers.title));
             timer.description = cursor.getString(cursor.getColumnIndex(DB.Timers.description));
             timer.interval = cursor.getInt(cursor.getColumnIndex(DB.Timers.interval));
-            timer.repeat = cursor.getInt(cursor.getColumnIndex(DB.Timers.repeat)) == 1;
+            timer.isRepeating = cursor.getInt(cursor.getColumnIndex(DB.Timers.repeat)) == 1;
             timers.add(timer);
         }
         cursor.close();

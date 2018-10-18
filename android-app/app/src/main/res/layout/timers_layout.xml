@@ -6,17 +6,42 @@
     android:background="@color/background"
     android:orientation="vertical">
 
+    <RelativeLayout
+        android:id="@+id/timers_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/background_dark"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/add_timer"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="end"
+            android:background="@drawable/baseline_add_white_24"/>
+    </RelativeLayout>
+
     <ListView
         android:id="@+id/timers_listview"
-        android:padding="5dp"
-        android:layout_width="match_parent"
-        android:dividerHeight="5dp"
-        android:layout_height="wrap_content">
-    </ListView>
-
-    <com.dennyy.osrscompanion.customviews.TimerEditor
-        android:id="@+id/timer_editor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:divider="@color/background"
+        android:dividerHeight="5dp"
+        android:padding="5dp"
+        android:scrollbarStyle="outsideOverlay">
+    </ListView>
+
+    <ScrollView
+        android:id="@+id/timer_editor_scrollview"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content">
+
+        <com.dennyy.osrscompanion.customviews.TimerEditor
+            android:id="@+id/timer_editor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </ScrollView>
 </LinearLayout>

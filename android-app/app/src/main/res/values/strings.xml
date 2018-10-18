@@ -274,6 +274,11 @@
     <string name="timer_repeated">Repeated every %1$s</string>
     <string name="timer_once">Once after %1$s</string>
     <string name="channel_description">OSRS Companion timers</string>
+    <string name="timer_stop">Stop</string>
+    <string name="timer_edit_active">The timer is currently active, restart the timer for the changes to take effect</string>
+    <string name="timer_restart">Restart</string>
+    <string name="timer_disable">Disable</string>
+    <string name="timer_run_immediately">Run timer once when starting</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

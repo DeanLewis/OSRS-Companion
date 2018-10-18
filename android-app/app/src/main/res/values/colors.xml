@@ -3,6 +3,7 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorPrimary">#212121</color>
     <color name="background">#303030</color>
+    <color name="background_dark">#212121</color>
     <color name="text">#ffffff</color>
     <color name="white">#ffffff</color>
     <color name="buttonColor">#757575</color>
@@ -32,4 +33,5 @@
     <color name="floating_view_background">#666666</color>
     <color name="floating_view_border">#ff000000</color>
     <color name="hint_color">#666666</color>
+    <color name="timer_background">#3c3c3e</color>
 </resources>
