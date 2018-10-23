@@ -58,7 +58,7 @@ public class WorldmapFragment extends BaseFragment {
         toolbarTitle.setText(getString(R.string.worldmap));
 
         worldmapViewHandler = new WorldmapViewHandler(getActivity(), view, false);
-        if (storagePermissionDenied() && !worldmapViewHandler.worldmapExists()) {
+        if (worldmapViewHandler.storagePermissionDenied() && !worldmapViewHandler.worldmapExists()) {
             requestStoragePermission();
             return;
         }
@@ -70,9 +70,6 @@ public class WorldmapFragment extends BaseFragment {
         worldmapViewHandler.loadWorldmap(state);
     }
 
-    private boolean storagePermissionDenied() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
-    }
 
     private void requestStoragePermission() {
         final Intent storageIntent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getActivity().getPackageName()));
@@ -94,7 +91,7 @@ public class WorldmapFragment extends BaseFragment {
             showToast(getString(R.string.unable_to_write_to_storage), Toast.LENGTH_SHORT);
             return;
         }
-        if (storagePermissionDenied()) {
+        if (worldmapViewHandler.storagePermissionDenied()) {
             requestStoragePermission();
             return;
         }

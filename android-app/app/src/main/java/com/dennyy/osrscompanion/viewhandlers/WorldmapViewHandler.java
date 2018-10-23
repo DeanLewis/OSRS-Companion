@@ -1,12 +1,16 @@
 package com.dennyy.osrscompanion.viewhandlers;
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.PointF;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -35,6 +39,7 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
     private MaterialProgressBar progressBar;
     private TextView worldmapInfo;
     private ListView listView;
+    private ImageButton navbarMenu;
     private float listViewWidth;
 
     public WorldmapViewHandler(Context context, View view, boolean isFloatingView) {
@@ -43,20 +48,22 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
         worldmapInfo = view.findViewById(R.id.worldmap_floating_view_info);
         progressBar = view.findViewById(R.id.progressBar);
         listView = view.findViewById(R.id.worldmap_listview);
+        navbarMenu = view.findViewById(R.id.worldmap_navbar_menu);
         listViewWidth = context.getResources().getDimension(R.dimen.worldmap_listview_width);
         listView.setAdapter(new WorldmapCitiesAdapter(context, this));
         worldmapView.setOnImageEventListener(this);
         worldmapView.setOnTouchListener(this);
         toggleMenu();
         if (isFloatingView) {
-            ImageButton navBar = view.findViewById(R.id.worldmap_navbar_menu);
-            navBar.setVisibility(View.VISIBLE);
-            navBar.findViewById(R.id.worldmap_navbar_menu).setOnClickListener(this);
-            if (worldmapExists()) {
+            navbarMenu.setVisibility(View.VISIBLE);
+            navbarMenu.findViewById(R.id.worldmap_navbar_menu).setOnClickListener(this);
+            if (worldmapExists() && !storagePermissionDenied()) {
                 loadWorldmap(null);
             }
             else {
+                navbarMenu.setVisibility(View.GONE);
                 worldmapInfo.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
             }
         }
     }
@@ -88,6 +95,9 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
     public void loadWorldmap(ImageViewState state) {
         worldmapInfo.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
+        if (isFloatingView) {
+            navbarMenu.setVisibility(View.VISIBLE);
+        }
         worldmapView.setImage(ImageSource.uri(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + Constants.WORLDMAP_FILE_PATH), state);
     }
 
@@ -180,5 +190,9 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
     public boolean onTouch(View view, MotionEvent motionEvent) {
         hideMenu();
         return false;
+    }
+
+    public boolean storagePermissionDenied() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
     }
 }

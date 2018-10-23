@@ -297,8 +297,8 @@
     <string name="download_worldmap_info">Do you want to download the worldmap? The image is around 6MB, it will be saved on your device in the documents folder</string>
     <string name="yes">yes</string>
     <string name="unable_to_write_to_storage">Unable to write to storage</string>
-    <string name="worldmap_load_failed">Failed to load worldmap, try downloading it again</string>
-    <string name="worldmap_floating_view_info">In order to use the worldmap here, you have to download the map first in the main app by going to the worldmap section. It requires storage permission to save the map to your device</string>
+    <string name="worldmap_load_failed">Failed to load worldmap, check storage permissions or try downloading it again</string>
+    <string name="worldmap_floating_view_info">In order to use the worldmap here, you have to download the map first in the main app by going to the worldmap section. It requires storage permission to save load the map. Try restarting the floating view service if it\'s still not working</string>
     <string name="download_in_progress">There is already a download in progress</string>
     <string name="worldmap_show_cities">Show cities</string>
 
