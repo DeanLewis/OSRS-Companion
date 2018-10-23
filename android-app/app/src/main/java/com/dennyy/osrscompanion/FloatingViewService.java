@@ -18,7 +18,6 @@ import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.Notes.NoteChangeEvent;
 import com.dennyy.osrscompanion.models.Timers.ReloadTimersEvent;
 import com.dennyy.osrscompanion.models.Worldmap.WorldmapDownloadedEvent;
-import com.dennyy.osrscompanion.viewhandlers.BaseViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.CalculatorViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.CombatCalculatorViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.DiaryCalculatorViewHandler;
@@ -75,7 +74,6 @@ public class FloatingViewService extends Service implements WindowManagerContain
     private Map<String, Integer> iconsMap = new HashMap<>();
     private Map<String, String> namesMap = new HashMap<>();
 
-    private CalculatorViewHandler calculatorViewHandler;
     private NotesViewHandler notesViewHandler;
     private TimersViewHandler timersViewHandler;
     private WorldmapViewHandler worldmapViewHandler;
@@ -107,7 +105,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                     if (key.equals(calcHeadName)) {
                         cachedView = inflater.inflate(R.layout.calculator_layout, parent, false);
-                        calculatorViewHandler = new CalculatorViewHandler(FloatingViewService.this, cachedView);
+                        new CalculatorViewHandler(FloatingViewService.this, cachedView);
                     }
                     else if (key.equals(geHeadName)) {
                         cachedView = inflater.inflate(R.layout.grand_exchange_layout, parent, false);
@@ -242,38 +240,6 @@ public class FloatingViewService extends Service implements WindowManagerContain
                 }
             }
         });
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        updateCalculatorLayout(calcHeadName, calculatorViewHandler);
-    }
-
-    private ViewGroup removeFloatingView(String viewName, BaseViewHandler viewHandler) {
-        View oldView = viewCache.get(viewName);
-        if (oldView == null || viewHandler == null)
-            return null;
-        ViewGroup parent = (ViewGroup) oldView.getParent();
-        if (parent != null) {
-            parent.removeView(oldView);
-        }
-        oldView = null;
-        viewHandler.cancelRunningTasks();
-        return parent;
-    }
-
-    private void updateCalculatorLayout(String viewName, BaseViewHandler viewHandler) {
-        ViewGroup parent = removeFloatingView(viewName, viewHandler);
-        if (parent == null)
-            return;
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View newView = inflater.inflate(R.layout.calculator_layout, parent, false);
-        calculatorViewHandler.updateView(newView);
-        calculatorViewHandler.reloadData();
-
-        viewCache.put(calcHeadName, newView);
     }
 
     @Subscribe

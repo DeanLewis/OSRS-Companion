@@ -57,7 +57,5 @@ public class MathCalculatorFragment extends BaseFragment {
         outState.putBoolean(CALCSTATEERROR, calculatorViewHandler.stateError);
         outState.putBoolean(CALCLASTDOT, calculatorViewHandler.lastDot);
         outState.putBoolean(CALCULATED, calculatorViewHandler.calculated);
-
     }
 }
-
