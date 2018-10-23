@@ -291,8 +291,12 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
             TextView highAlchTextView = view.findViewById(R.id.ge_item_high_alch);
             TextView lowAlchTextView = view.findViewById(R.id.ge_item_low_alch);
-            double lowAlch = Math.floor(Integer.valueOf(jsonItem.store) * 0.4);
-            double highAlch = Math.floor(Integer.valueOf(jsonItem.store) * 0.6);
+            double lowAlch = 0;
+            double highAlch = 0;
+            if (jsonItem.store != null) {
+                lowAlch = Math.floor(Integer.valueOf(jsonItem.store) * 0.4);
+                highAlch = Math.floor(Integer.valueOf(jsonItem.store) * 0.6);
+            }
             lowAlchTextView.setText(RsUtils.kmbt(lowAlch < 1 ? 1 : lowAlch, 2));
             highAlchTextView.setText(RsUtils.kmbt(highAlch < 1 ? 1 : highAlch, 2));
         }
