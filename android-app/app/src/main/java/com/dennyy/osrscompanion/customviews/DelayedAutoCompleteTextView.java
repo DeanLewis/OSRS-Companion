@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 
@@ -57,5 +58,15 @@ public class DelayedAutoCompleteTextView extends AutoCompleteTextView {
                 DelayedAutoCompleteTextView.super.performFiltering(text, keyCode);
             }
         }.start();
+    }
+
+    @Override
+    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && isPopupShowing()) {
+            forceDismissDropdown();
+            return true;
+        }
+
+        return super.onKeyPreIme(keyCode, event);
     }
 }
