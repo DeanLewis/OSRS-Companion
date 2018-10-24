@@ -23,15 +23,16 @@ import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.ActionsAdapter;
 import com.dennyy.osrscompanion.adapters.NothingSelectedSpinnerAdapter;
 import com.dennyy.osrscompanion.adapters.SkillSelectorSpinnerAdapter;
+import com.dennyy.osrscompanion.asynctasks.GetActionsTask;
 import com.dennyy.osrscompanion.customviews.ClearableEditText;
 import com.dennyy.osrscompanion.customviews.HiscoreTypeSelectorLayout;
+import com.dennyy.osrscompanion.database.AppDb;
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.enums.SkillType;
-import com.dennyy.osrscompanion.database.ActionsDb;
-import com.dennyy.osrscompanion.database.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.ActionsLoadListener;
 import com.dennyy.osrscompanion.interfaces.HiscoreTypeSelectedListener;
 import com.dennyy.osrscompanion.models.General.Action;
 import com.dennyy.osrscompanion.models.General.PlayerStats;
@@ -293,11 +294,20 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
             return;
         }
         selectedSkillId = skills.get(selectedIndex);
-        ArrayList<Action> actions = ActionsDb.getInstance(context).getActions(selectedSkillId);
-        adapter.updateList(actions);
-        if (!Utils.isNullOrEmpty(hiscoresData)) {
-            handleHiscoresData(hiscoresData);
-        }
+        new GetActionsTask(context, selectedSkillId, new ActionsLoadListener() {
+            @Override
+            public void onActionsLoaded(ArrayList<Action> actions) {
+                adapter.updateList(actions);
+                if (!Utils.isNullOrEmpty(hiscoresData)) {
+                    handleHiscoresData(hiscoresData);
+                }
+            }
+
+            @Override
+            public void onActionsLoadFailed() {
+                showToast(getString(R.string.error_please_try_again), Toast.LENGTH_SHORT);
+            }
+        }).execute();
     }
 
     @Override

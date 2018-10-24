@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class ActionsDb extends SQLiteAssetHelper {
     private static final String DATABASE_NAME = "actions.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     private static ActionsDb instance;
 
