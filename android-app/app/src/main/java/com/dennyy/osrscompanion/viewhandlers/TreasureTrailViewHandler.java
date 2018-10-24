@@ -82,7 +82,7 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
         containers.put(R.id.tt_navbar_maps, R.id.tt_maps_listview);
         containers.put(R.id.tt_navbar_puzzles, R.id.tt_puzzle_container);
         RelativeLayout ttNavBar = view.findViewById(R.id.tt_navbar);
-        setNavbarIconActive(R.id.tt_navbar_main,false);
+        setNavbarIconActive(R.id.tt_navbar_main, false);
         ttNavBar.setVisibility(View.VISIBLE);
         for (int id : containers.keySet()) {
             ttNavBar.findViewById(id).setOnClickListener(this);
@@ -102,6 +102,7 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
     public void onTreasureTrailsLoadError() {
         showToast(resources.getString(R.string.exception_occurred, "exception", "loading items from file"), Toast.LENGTH_LONG);
     }
+
     @SuppressLint("ClickableViewAccessibility")
     private void updateView() {
         mapsListView = view.findViewById(R.id.tt_maps_listview);
@@ -224,8 +225,7 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
                 break;
             case R.id.expanded_image:
             case R.id.dim_img_view:
-                expandedImageView.setVisibility(View.GONE);
-                dimView.setVisibility(View.GONE);
+                hideExpandedImageView();
                 break;
             case R.id.puzzle_castle:
             case R.id.puzzle_tree:
@@ -236,6 +236,15 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
                 onClickImage(0, view);
                 break;
         }
+    }
+
+    public boolean expandedImageViewVisible() {
+        return expandedImageView != null && expandedImageView.getVisibility() == View.VISIBLE;
+    }
+
+    public void hideExpandedImageView() {
+        expandedImageView.setVisibility(View.GONE);
+        dimView.setVisibility(View.GONE);
     }
 
     public void setNavbarIconActive(int iconId, boolean containerOnly) {

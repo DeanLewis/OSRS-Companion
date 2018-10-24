@@ -90,4 +90,13 @@ public class TreasureTrailFragment extends BaseFragment {
         super.onSaveInstanceState(outState);
         outState.putSerializable(CLUE_DATA_KEY, treasureTrailViewHandler.treasureTrail);
     }
+
+    @Override
+    public boolean onBackClick() {
+        if (treasureTrailViewHandler != null && treasureTrailViewHandler.expandedImageViewVisible()) {
+            treasureTrailViewHandler.hideExpandedImageView();
+            return true;
+        }
+        return super.onBackClick();
+    }
 }
