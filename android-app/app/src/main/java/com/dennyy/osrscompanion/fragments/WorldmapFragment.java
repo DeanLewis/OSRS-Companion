@@ -83,6 +83,14 @@ public class WorldmapFragment extends BaseFragment {
                     startActivity(new Intent(Settings.ACTION_SETTINGS));
                 }
             }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (worldmapViewHandler != null) {
+                    worldmapViewHandler.hideProgressBar();
+                }
+                showToast(getString(R.string.storage_permission_not_granted), Toast.LENGTH_SHORT);
+            }
         });
     }
 
@@ -116,7 +124,7 @@ public class WorldmapFragment extends BaseFragment {
                 }
                 worldmapViewHandler.downloadWorldmap(forceDownload);
             }
-        });
+        }, null);
     }
 
     @Override

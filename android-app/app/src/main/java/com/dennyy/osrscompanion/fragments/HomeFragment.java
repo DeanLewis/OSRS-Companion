@@ -120,7 +120,7 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
                                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                             }
                         }
-                    });
+                    }, null);
                     mainSwitch.setChecked(false);
                 }
                 else if (System.currentTimeMillis() - lastSwitchTimeMs < 1000) {

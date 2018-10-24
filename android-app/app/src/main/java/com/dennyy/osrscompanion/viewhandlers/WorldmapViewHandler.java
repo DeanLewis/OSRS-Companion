@@ -152,7 +152,7 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
 
     @Override
     public void onImageLoaded() {
-        progressBar.setVisibility(View.GONE);
+        hideProgressBar();
     }
 
     @Override
@@ -163,7 +163,7 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
     @Override
     public void onImageLoadError(Exception e) {
         showToast(getString(R.string.worldmap_load_failed), Toast.LENGTH_SHORT);
-        progressBar.setVisibility(View.GONE);
+        hideProgressBar();
         deleteWorldmap();
     }
 
@@ -184,6 +184,10 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
     @Override
     public void cancelRunningTasks() {
 
+    }
+
+    public void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override

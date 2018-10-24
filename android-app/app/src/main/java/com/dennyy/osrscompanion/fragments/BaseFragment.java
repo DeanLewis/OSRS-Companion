@@ -85,17 +85,22 @@ public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackC
         return getResources().getDrawable(resourceId);
     }
 
-    protected void showInfoDialog(String title, String message, String positiveButtonText, boolean cancelable, DialogInterface.OnClickListener listener) {
+    protected void showInfoDialog(String title, String message, String positiveButtonText, boolean cancelable, DialogInterface.OnClickListener listener, DialogInterface.OnClickListener cancelListener) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity())
                 .setTitle(title)
                 .setMessage(message)
                 .setCancelable(cancelable)
-                .setPositiveButton(positiveButtonText, listener)
-                .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+                .setPositiveButton(positiveButtonText, listener);
+        if (cancelListener != null) {
+            alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel), cancelListener);
+        }
+        else {
+            alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            });
+        }
         alertDialogBuilder.create().show();
     }
 
