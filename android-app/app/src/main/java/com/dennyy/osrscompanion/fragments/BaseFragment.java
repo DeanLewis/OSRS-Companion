@@ -26,6 +26,7 @@ public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackC
     protected String defaultRsn;
     private Toast toast;
     private IBackButtonHandler.BackButtonHandlerInterface backButtonHandler;
+    private boolean isTransactionSafe;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -96,5 +97,21 @@ public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackC
                     }
                 });
         alertDialogBuilder.create().show();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isTransactionSafe = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isTransactionSafe = true;
+    }
+
+    public boolean isTransactionSafe() {
+        return isTransactionSafe;
     }
 }

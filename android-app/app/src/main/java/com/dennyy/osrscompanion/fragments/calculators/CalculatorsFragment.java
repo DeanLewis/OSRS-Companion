@@ -54,6 +54,9 @@ public class CalculatorsFragment extends BaseTileFragment implements AdapterView
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if (!isTransactionSafe()) {
+            return;
+        }
         TileData tileData = tiles.get(i);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         Fragment fragment = null;

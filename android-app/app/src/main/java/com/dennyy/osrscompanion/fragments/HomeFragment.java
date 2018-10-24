@@ -1,7 +1,6 @@
 package com.dennyy.osrscompanion.fragments;
 
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
@@ -177,6 +176,9 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if (!isTransactionSafe()) {
+            return;
+        }
         TileData tileData = tiles.get(i);
         Fragment fragment = null;
         String tag = "";

@@ -64,9 +64,9 @@ public class MainActivity extends AppCompatActivity implements IBackButtonHandle
         for (WeakReference<IBackButtonHandler.OnBackClickListener> weakRef : backClickListenersList) {
             IBackButtonHandler.OnBackClickListener onBackClickListener = weakRef.get();
             if (onBackClickListener != null) {
-                boolean isFragmIntercept = onBackClickListener.onBackClick();
+                boolean isFragmentIntercept = onBackClickListener.onBackClick();
                 if (!isIntercept)
-                    isIntercept = isFragmIntercept;
+                    isIntercept = isFragmentIntercept;
             }
         }
         return isIntercept;
