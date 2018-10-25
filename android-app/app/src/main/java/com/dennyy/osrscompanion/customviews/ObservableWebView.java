@@ -1,26 +1,21 @@
 package com.dennyy.osrscompanion.customviews;
 
 import android.content.Context;
-import android.util.AttributeSet;
-
-import com.dennyy.osrscompanion.enums.ScrollState;
-import com.dennyy.osrscompanion.interfaces.ObservableScrollViewCallbacks;
-import com.dennyy.osrscompanion.interfaces.Scrollable;
-import com.dennyy.osrscompanion.interfaces.WebViewScrollListener;
-
-import im.delight.android.webview.AdvancedWebView;
-
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
+
+import com.dennyy.osrscompanion.enums.ScrollState;
+import com.dennyy.osrscompanion.interfaces.ObservableScrollViewCallbacks;
+import com.dennyy.osrscompanion.interfaces.Scrollable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import im.delight.android.webview.AdvancedWebView;
 
 /**
  * WebView that its scroll position can be observed.
@@ -32,7 +27,6 @@ public class ObservableWebView extends AdvancedWebView implements Scrollable {
     private int mScrollY;
 
     // Fields that don't need to be saved onSaveInstanceState
-    private ObservableScrollViewCallbacks mCallbacks;
     private List<ObservableScrollViewCallbacks> mCallbackCollection;
     private ScrollState mScrollState;
     private boolean mFirstScroll;
@@ -85,9 +79,11 @@ public class ObservableWebView extends AdvancedWebView implements Scrollable {
 
         if (mPrevScrollY < t) {
             mScrollState = ScrollState.UP;
-        } else if (t < mPrevScrollY) {
+        }
+        else if (t < mPrevScrollY) {
             mScrollState = ScrollState.DOWN;
-        } else {
+        }
+        else {
             mScrollState = ScrollState.STOP;
         }
         mPrevScrollY = t;
@@ -145,7 +141,8 @@ public class ObservableWebView extends AdvancedWebView implements Scrollable {
                     final ViewGroup parent;
                     if (mTouchInterceptionViewGroup == null) {
                         parent = (ViewGroup) getParent();
-                    } else {
+                    }
+                    else {
                         parent = mTouchInterceptionViewGroup;
                     }
 
@@ -189,11 +186,6 @@ public class ObservableWebView extends AdvancedWebView implements Scrollable {
     }
 
     @Override
-    public void setScrollViewCallbacks(ObservableScrollViewCallbacks listener) {
-        mCallbacks = listener;
-    }
-
-    @Override
     public void addScrollViewCallbacks(ObservableScrollViewCallbacks listener) {
         if (mCallbackCollection == null) {
             mCallbackCollection = new ArrayList<>();
@@ -231,9 +223,6 @@ public class ObservableWebView extends AdvancedWebView implements Scrollable {
     }
 
     private void dispatchOnDownMotionEvent() {
-        if (mCallbacks != null) {
-            mCallbacks.onDownMotionEvent();
-        }
         if (mCallbackCollection != null) {
             for (int i = 0; i < mCallbackCollection.size(); i++) {
                 ObservableScrollViewCallbacks callbacks = mCallbackCollection.get(i);
@@ -243,9 +232,6 @@ public class ObservableWebView extends AdvancedWebView implements Scrollable {
     }
 
     private void dispatchOnScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-        if (mCallbacks != null) {
-            mCallbacks.onScrollChanged(scrollY, firstScroll, dragging);
-        }
         if (mCallbackCollection != null) {
             for (int i = 0; i < mCallbackCollection.size(); i++) {
                 ObservableScrollViewCallbacks callbacks = mCallbackCollection.get(i);
@@ -255,9 +241,6 @@ public class ObservableWebView extends AdvancedWebView implements Scrollable {
     }
 
     private void dispatchOnUpOrCancelMotionEvent(ScrollState scrollState) {
-        if (mCallbacks != null) {
-            mCallbacks.onUpOrCancelMotionEvent(scrollState);
-        }
         if (mCallbackCollection != null) {
             for (int i = 0; i < mCallbackCollection.size(); i++) {
                 ObservableScrollViewCallbacks callbacks = mCallbackCollection.get(i);
@@ -267,7 +250,7 @@ public class ObservableWebView extends AdvancedWebView implements Scrollable {
     }
 
     private boolean hasNoCallbacks() {
-        return mCallbacks == null && mCallbackCollection == null;
+        return mCallbackCollection == null;
     }
 
     static class SavedState extends BaseSavedState {

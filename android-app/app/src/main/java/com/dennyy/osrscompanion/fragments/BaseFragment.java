@@ -1,6 +1,8 @@
 package com.dennyy.osrscompanion.fragments;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -82,4 +84,17 @@ public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackC
         return getResources().getDrawable(resourceId);
     }
 
+    protected void showInfoDialog(String title, String message, String positiveButtonText, boolean cancelable, DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity())
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(cancelable)
+                .setPositiveButton(positiveButtonText, listener)
+                .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialogBuilder.create().show();
+    }
 }

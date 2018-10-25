@@ -80,6 +80,7 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
             tiles.add(new TileData(getString(R.string.osrs_wiki), getDrawable(R.drawable.rswiki_logo)));
             tiles.add(new TileData(getString(R.string.rsnews), getDrawable(R.drawable.newspaper)));
             tiles.add(new TileData(getString(R.string.timers), getDrawable(R.drawable.stopwatch)));
+            tiles.add(new TileData(getString(R.string.worldmap), getDrawable(R.drawable.worldmap)));
             tiles.add(new TileData(getString(R.string.settings), getDrawable(R.drawable.settings)));
         }
 
@@ -215,22 +216,14 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
         else if (tileData.text.equals(getString(R.string.timers))) {
             fragment = new TimersFragment();
         }
+        else if (tileData.text.equals(getString(R.string.worldmap))) {
+            fragment = new WorldmapFragment();
+        }
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment, tag);
         transaction.addToBackStack(null);
         transaction.commit();
     }
 
-    private void showInfoDialog(String title, String message, String positiveButtonText, boolean cancelable, DialogInterface.OnClickListener listener) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
-        alertDialogBuilder.setTitle(title);
-
-        alertDialogBuilder.setMessage(message).setCancelable(cancelable).setPositiveButton(positiveButtonText, listener).setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-        alertDialogBuilder.create().show();
-    }
 }

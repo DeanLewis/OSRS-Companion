@@ -98,7 +98,7 @@
     <string name="inactive_floating_view_opacity">Inactive opacity</string>
     <string name="inactive_floating_view_opacity_info">The opacity when the floating view is inactive</string>
     <string name="floating_view_settings">Floating views</string>
-    <string name="enable_floating_views_first">Select a minimum of one floating view to display on your screen in the settings</string>
+    <string name="enable_floating_views_first">Select a minimum of one floating view in the settings to display on your screen</string>
     <string name="wait_for_service">Waiting for the service finish…</string>
     <string name="cancel">Cancel</string>
     <string name="draw_dialog_info">This feature does not work without the permission to draw over your screen. This is needed to display the views as an overlay. Do you want to turn on draw permissions?</string>
@@ -165,7 +165,9 @@
     <string name="lib_eventbus">EventBus</string>
     <string name="lib_observeable_webview_author">Soichiro Kashima</string>
     <string name="lib_observeable_webview">Android-ObservableScrollView</string>
-
+    <string name="lib_subsampling_scale_image_view_author">David Morrissey</string>
+    <string name="lib_subsampling_scale_image_view">Subsampling Scale Image View</string>
+    
     <string name="failed_payment_verification">Payment succeeded, but could not verify purchase</string>
     <string name="hiscores_sdmm">SDMM</string>
     <string name="refresh">Refresh</string>
@@ -283,6 +285,22 @@
     <string name="timer_run_immediately">Run timer once when starting</string>
     <string name="tt_view_maps">Maps</string>
     <string name="puzzles">Puzzles</string>
+    <string name="worldmap">Worldmap</string>
+    <string name="downloading_worldmap">Downloading worldmap…</string>
+    <string name="storage_permission_required">Storage permission required</string>
+    <string name="storage_dialog_info">The app needs storage permission to download and display the worldmap. The download is a once time process and the map can be found in the documents folder</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="storage_permission_not_granted">Failed to obtain storage permission</string>
+    <string name="storage_permission_granted">Storage permission granted</string>
+    <string name="download_worldmap_complete">Worldmap downloaded</string>
+    <string name="download_worldmap">Download worldmap</string>
+    <string name="download_worldmap_info">Do you want to download the worldmap? The image is around 6MB, it will be saved on your device in the documents folder</string>
+    <string name="yes">yes</string>
+    <string name="unable_to_write_to_storage">Unable to write to storage</string>
+    <string name="worldmap_load_failed">Failed to load worldmap, try downloading it again</string>
+    <string name="worldmap_floating_view_info">In order to use the worldmap here, you have to download the map first in the main app by going to the worldmap section. It requires storage permission to save the map to your device</string>
+    <string name="download_in_progress">There is already a download in progress</string>
+    <string name="worldmap_show_cities">Show cities</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>
@@ -301,6 +319,7 @@
         <item>OSRS Wiki</item>
         <item>OSRS News</item>
         <item>Timers</item>
+        <item>Worldmap</item>
     </string-array>
     <string-array name="view_name_value">
         <item>ge</item>
@@ -319,6 +338,7 @@
         <item>osrs_wiki</item>
         <item>osrs_news</item>
         <item>timers</item>
+        <item>worldmap</item>
     </string-array>
     <string-array name="default_floating_views_selection">
     </string-array>

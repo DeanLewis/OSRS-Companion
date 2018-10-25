@@ -90,5 +90,4 @@ public class TreasureTrailFragment extends BaseFragment {
         super.onSaveInstanceState(outState);
         outState.putSerializable(CLUE_DATA_KEY, treasureTrailViewHandler.treasureTrail);
     }
-
 }

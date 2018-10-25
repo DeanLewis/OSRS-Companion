@@ -1,5 +1,7 @@
 package com.dennyy.osrscompanion.helpers;
 
+import android.os.Environment;
+
 import com.dennyy.osrscompanion.BuildConfig;
 
 import java.io.UnsupportedEncodingException;
@@ -8,6 +10,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public class Constants {
+    public static final String APP_NAME = "OSRS Companion";
     public static final String GE_IMG_SMALL_URL = "https://services.runescape.com/m=itemdb_oldschool/obj_sprite.gif?id=";
     public static final String GE_ITEM_URL = "https://services.runescape.com/m=itemdb_oldschool/api/catalogue/detail.json?item=";
     public static final String GE_IMG_LARGE_URL = "https://services.runescape.com/m=itemdb_oldschool/obj_big.gif?id=";
@@ -82,6 +85,7 @@ public class Constants {
     public static final String PREF_GE_SOURCE = "pref_ge_items_source";
 
     public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
+    public static final int CODE_STORAGE_PERMISSION = 2085;
     public static final String PERMISSION_ACTIVITY = "android.settings.action.MANAGE_OVERLAY_PERMISSION";
     public static final int FUZZY_RATIO = 80;
 
@@ -95,4 +99,8 @@ public class Constants {
     public static final int MIN_TOTAL_LEVEL = 32;
 
     public static DecimalFormatSymbols LOCALE = DecimalFormatSymbols.getInstance(Locale.US);
+    public static final String WORLDMAP_DOWNLOAD_KEY = BuildConfig.APPLICATION_ID + ".worldmap_download";
+    public static final String WORLDMAP_DIRECTORY_PATH = String.format("/%1$s", APP_NAME);
+    public static final String WORLDMAP_FILE_PATH = String.format("/%1$s/worldmap.png", APP_NAME);
+    public static final int WORLDMAP_NOTIFICATION_ID = 966;
 }

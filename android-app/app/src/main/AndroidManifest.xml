@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:tools="http://schemas.android.com/tools"
-          package="com.dennyy.osrscompanion"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="com.dennyy.osrscompanion"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
     <application
         android:name="com.dennyy.osrscompanion.AppController"
         android:allowBackup="true"
@@ -14,9 +16,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:windowSoftInputMode="stateHidden"
+            android:name="com.dennyy.osrscompanion.MainActivity"
             android:configChanges="orientation|screenSize"
-            android:name="com.dennyy.osrscompanion.MainActivity">
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -30,9 +32,15 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="" />
-        <receiver android:name=".broadcastreceivers.TimerReceiver" />
-        <receiver android:name=".broadcastreceivers.CancelTimerReceiver" />
-        <receiver android:name=".broadcastreceivers.RestartTimerReceiver" />
+
+        <receiver android:name=".broadcastreceivers.TimerReceiver"/>
+        <receiver android:name=".broadcastreceivers.CancelTimerReceiver"/>
+        <receiver android:name=".broadcastreceivers.RestartTimerReceiver"/>
+        <receiver android:name=".broadcastreceivers.DownloadReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

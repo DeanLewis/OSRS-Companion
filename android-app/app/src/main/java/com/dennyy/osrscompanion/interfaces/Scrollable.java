@@ -7,16 +7,6 @@ import android.view.ViewGroup;
  */
 public interface Scrollable {
     /**
-     * Set a callback listener.<br>
-     * Developers should use {@link #addScrollViewCallbacks(ObservableScrollViewCallbacks)}
-     * and {@link #removeScrollViewCallbacks(ObservableScrollViewCallbacks)}.
-     *
-     * @param listener Listener to set.
-     */
-    @Deprecated
-    void setScrollViewCallbacks(ObservableScrollViewCallbacks listener);
-
-    /**
      * Add a callback listener.
      *
      * @param listener Listener to add.
