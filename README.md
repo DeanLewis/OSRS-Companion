@@ -9,4 +9,4 @@ Play store: https://play.google.com/store/apps/details?id=com.dennyy.osrscompani
 
 
 ### Promo banner
-![features](https://i.imgur.com/emZFSX9.png)
+![features](https://i.imgur.com/wSEU8Oz.png)
