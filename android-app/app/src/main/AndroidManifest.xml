@@ -29,9 +29,6 @@
             android:name="com.dennyy.osrscompanion.FloatingViewService"
             android:enabled="true"
             android:exported="false"/>
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="" />
 
         <receiver android:name=".broadcastreceivers.TimerReceiver"/>
         <receiver android:name=".broadcastreceivers.CancelTimerReceiver"/>

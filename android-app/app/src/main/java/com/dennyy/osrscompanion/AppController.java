@@ -10,10 +10,7 @@ import android.text.TextUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.crashlytics.android.Crashlytics;
 import com.dennyy.osrscompanion.asynctasks.UpdateDbTask;
-
-import io.fabric.sdk.android.Fabric;
 
 public class AppController extends Application {
 
@@ -26,9 +23,6 @@ public class AppController extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (!BuildConfig.DEBUG) {
-            Fabric.with(this, new Crashlytics());
-        }
         mInstance = this;
         new UpdateDbTask(this).execute();
         createNotificationChannel();
