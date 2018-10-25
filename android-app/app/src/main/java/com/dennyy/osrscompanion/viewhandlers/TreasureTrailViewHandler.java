@@ -68,9 +68,11 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
         if (isFloatingView) {
             loadFloatingViewNavBar();
         }
-        containers.put(R.id.action_tt_main, R.id.tt_data_layout);
-        containers.put(R.id.action_tt_maps, R.id.tt_maps_listview);
-        containers.put(R.id.action_tt_puzzles, R.id.tt_puzzle_container);
+        else {
+            containers.put(R.id.action_tt_main, R.id.tt_data_layout);
+            containers.put(R.id.action_tt_maps, R.id.tt_maps_listview);
+            containers.put(R.id.action_tt_puzzles, R.id.tt_puzzle_container);
+        }
         for (int id : new int[]{ R.id.puzzle_castle, R.id.puzzle_tree, R.id.puzzle_troll, R.id.puzzle_cerberus, R.id.puzzle_gnome, R.id.puzzle_zulrah }) {
             view.findViewById(id).setOnClickListener(this);
         }
