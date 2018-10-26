@@ -7,43 +7,53 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dennyy.osrscompanion.R;
+import com.dennyy.osrscompanion.customviews.ObservableWebView;
+import com.dennyy.osrscompanion.enums.ScrollState;
 import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.ObservableScrollViewCallbacks;
 
 import im.delight.android.webview.AdvancedWebView;
 
-public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, View.OnClickListener {
+public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, View.OnClickListener, ObservableScrollViewCallbacks {
 
-    public AdvancedWebView webView;
+    public ObservableWebView webView;
 
     private ProgressBar progressBar;
     private boolean clearHistory;
-    private String currentUrl;
     private TextView navBarTitle;
     private final Handler handler = new Handler();
     private Runnable runnable;
+    private LinearLayout navBar;
+    private LinearLayout webviewContainer;
 
     public RSWikiViewHandler(final Context context, View view, boolean isFloatingView) {
-        super(context, view);
+        super(context, view, isFloatingView);
 
-        currentUrl = "https://oldschool.runescape.wiki";
         webView = view.findViewById(R.id.webview);
         progressBar = view.findViewById(R.id.progressBar);
         navBarTitle = view.findViewById(R.id.webview_navbar_title);
+        navBar = view.findViewById(R.id.webview_navbar);
+        webviewContainer = view.findViewById(R.id.webview_container);
         ImageButton navBarLeft = view.findViewById(R.id.webview_navbar_left);
         ImageButton navBarRight = view.findViewById(R.id.webview_navbar_right);
         if (isFloatingView) {
+            webView.addScrollViewCallbacks(this);
             navBarLeft.setOnClickListener(this);
             navBarRight.setOnClickListener(this);
-            view.findViewById(R.id.webview_navbar).setVisibility(View.VISIBLE);
+            navBar.setVisibility(View.VISIBLE);
         }
         initWebView();
     }
@@ -54,7 +64,7 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
         webView.setMixedContentAllowed(false);
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setLoadWithOverviewMode(true);
-        webView.loadUrl(currentUrl);
+        webView.loadUrl("https://oldschool.runescape.wiki");
 
         Activity activity = null;
         if (context instanceof Activity) {
@@ -153,18 +163,43 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
     @Override
     public void cancelRunningTasks() {
         handler.removeCallbacks(runnable);
-        if (webView != null) {
-            webView.clearHistory();
-            webView.clearCache(true);
-            webView.loadUrl("about:blank");
-            webView.removeAllViews();
-            webView.destroyDrawingCache();
-            webView.destroy();
-            webView = null;
-        }
+        Utils.clearWebView(webView);
     }
 
     public void cleanup() {
         clearHistory = true;
+    }
+
+
+    private void pushWebViewDown() {
+        int height = navBar.getHeight();
+        webviewContainer.animate().translationY(height).setInterpolator(new AccelerateInterpolator(2));
+    }
+
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        if (scrollState == ScrollState.UP && navBar.isShown()) {
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) navBar.getLayoutParams();
+            int height = navBar.getHeight() + params.bottomMargin + params.topMargin;
+            navBar.animate().translationY(-height).setInterpolator(new AccelerateInterpolator(2));
+            webviewContainer.animate().translationY(0).setInterpolator(new AccelerateInterpolator(2));
+            navBar.setVisibility(View.GONE);
+        }
+
+        else if (scrollState == ScrollState.DOWN && !navBar.isShown()) {
+            navBar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+            navBar.setVisibility(View.VISIBLE);
+            pushWebViewDown();
+        }
     }
 }
