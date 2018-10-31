@@ -17,6 +17,7 @@ public class PlayerStats extends LinkedHashMap<SkillType, Skill> {
      */
     public PlayerStats(String stats) {
         super(33);
+        stats = stats.trim();
         if (Utils.isNullOrEmpty(stats) || stats.split("\n").length < Constants.REQUIRED_STATS_LENGTH) {
             return;
         }
