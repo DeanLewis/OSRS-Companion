@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -14,24 +15,26 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.ExpandableListView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.adapters.NothingSelectedSpinnerAdapter;
-import com.dennyy.osrscompanion.adapters.QuestSelectorSpinnerAdapter;
+import com.dennyy.osrscompanion.adapters.QuestListAdapter;
 import com.dennyy.osrscompanion.adapters.QuestSourceSpinnerAdapter;
 import com.dennyy.osrscompanion.asynctasks.QuestLoadTask;
 import com.dennyy.osrscompanion.customviews.ObservableWebView;
+import com.dennyy.osrscompanion.enums.QuestSortType;
 import com.dennyy.osrscompanion.enums.QuestSource;
 import com.dennyy.osrscompanion.enums.ScrollState;
 import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.ObservableScrollViewCallbacks;
+import com.dennyy.osrscompanion.interfaces.QuestAdapterClickListener;
 import com.dennyy.osrscompanion.interfaces.QuestsLoadedListener;
 import com.dennyy.osrscompanion.models.General.Quest;
 
@@ -40,21 +43,23 @@ import java.util.Arrays;
 
 import im.delight.android.webview.AdvancedWebView;
 
-public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, AdapterView.OnItemSelectedListener, View.OnClickListener, QuestsLoadedListener, ObservableScrollViewCallbacks {
+public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, AdapterView.OnItemSelectedListener, View.OnClickListener, QuestsLoadedListener, ObservableScrollViewCallbacks, QuestAdapterClickListener {
 
     public ObservableWebView webView;
-    public int selectedQuestIndex = -1;
-    public Spinner questSelectorSpinner;
 
     private QuestSource selectedQuestSource;
     private ProgressBar progressBar;
     private ArrayList<Quest> quests;
     private ArrayList<QuestSource> questSources;
+    private ArrayList<QuestSortType> questSortTypes;
     private boolean clearHistory;
     private final Handler handler = new Handler();
     private Runnable runnable;
     private QuestsLoadedListener questsLoadedListener;
     private RelativeLayout questSelectorContainer;
+    private ExpandableListView questListView;
+    private QuestListAdapter adapter;
+    private Quest currentQuest;
 
     public QuestViewHandler(final Context context, View view, boolean isFloatingView, QuestsLoadedListener questsLoadedListener) {
         super(context, view);
@@ -64,8 +69,8 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         webView.addScrollViewCallbacks(this);
         questSelectorContainer = view.findViewById(R.id.quest_selector_container);
         progressBar = view.findViewById(R.id.progressBar);
-        questSelectorSpinner = view.findViewById(R.id.quest_selector_spinner);
-        questSelectorSpinner.setOnItemSelectedListener(this);
+        questListView = view.findViewById(R.id.expandable_quest_listview);
+        view.findViewById(R.id.sort_button).setOnClickListener(this);
         if (isFloatingView) {
             Button backButton = view.findViewById(R.id.navigate_back_button);
             backButton.setVisibility(View.VISIBLE);
@@ -109,10 +114,17 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     @Override
     public void onQuestsLoaded(ArrayList<Quest> loadedQuests) {
         quests = new ArrayList<>(loadedQuests);
-        QuestSelectorSpinnerAdapter questSelectorSpinnerAdapter = new QuestSelectorSpinnerAdapter(context, quests);
-        questSelectorSpinner.setAdapter(new NothingSelectedSpinnerAdapter(questSelectorSpinnerAdapter, getString(R.string.select_a_quest), context));
+        adapter = new QuestListAdapter(context, quests, this);
+        questListView.setAdapter(adapter);
+        expandGroups();
         if (questsLoadedListener != null) {
             questsLoadedListener.onQuestsLoaded(null);
+        }
+    }
+
+    private void expandGroups() {
+        for (int i = 0; i < adapter.getGroupCount(); i++) {
+            questListView.expandGroup(i);
         }
     }
 
@@ -128,6 +140,40 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
             if (webView.canGoBack()) {
                 webView.goBack();
             }
+            else if (isWebViewVisible()) {
+                hideWebView();
+            }
+        }
+        else if (id == R.id.sort_button) {
+            if (adapter == null) {
+                showToast(getString(R.string.unexpected_error_try_reopen), Toast.LENGTH_SHORT);
+                return;
+            }
+            PopupMenu popupMenu = new PopupMenu(context, view);
+            popupMenu.inflate(R.menu.menu_sort_quest);
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    if (menuItem.getItemId() == R.id.action_sort_alphabetically) {
+                        adapter.updateSorting(QuestSortType.NAME);
+                    }
+                    else if (menuItem.getItemId() == R.id.action_sort_members) {
+                        adapter.updateSorting(QuestSortType.MEMBERS);
+                    }
+                    else if (menuItem.getItemId() == R.id.action_sort_difficulty) {
+                        adapter.updateSorting(QuestSortType.DIFFICULTY);
+                    }
+                    else if (menuItem.getItemId() == R.id.action_sort_length) {
+                        adapter.updateSorting(QuestSortType.LENGTH);
+                    }
+                    else if (menuItem.getItemId() == R.id.action_sort_qp) {
+                        adapter.updateSorting(QuestSortType.QP);
+                    }
+                    expandGroups();
+                    return true;
+                }
+            });
+            popupMenu.show();
         }
     }
 
@@ -139,6 +185,11 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
 
     @Override
     public void onPageFinished(String url) {
+        if (clearHistory) {
+            clearHistory = false;
+            webView.clearHistory();
+        }
+        wasRequesting = false;
         handler.removeCallbacks(runnable);
         runnable = new Runnable() {
             @Override
@@ -153,13 +204,8 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         Utils.executeJavaScript(webView, "document.styleSheets[0].insertRule('.header-container .search-box { display: table-cell !important }',0);");
         Utils.executeJavaScript(webView, "document.styleSheets[0].insertRule('.header-container .header > .overlay-title { display: table-cell !important }', 0);");
         Utils.executeJavaScript(webView, "document.styleSheets[0].insertRule('#searchIcon { display: none !important }', 0);");
-        wasRequesting = false;
+
         progressBar.setProgress(progressBar.getMax());
-        webView.setVisibility(View.VISIBLE);
-        if (clearHistory) {
-            clearHistory = false;
-            webView.clearHistory();
-        }
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
@@ -203,39 +249,39 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-        if (adapterView.getId() == R.id.quest_selector_spinner) {
-            pos = pos - 1;
-            if (pos < 0) {
-                return;
-            }
-            selectedQuestIndex = pos;
-            selectQuest();
-        }
-        else if (adapterView.getId() == R.id.quest_source_spinner) {
+        if (adapterView.getId() == R.id.quest_source_spinner) {
             QuestSource questSource = questSources.get(pos);
             if (selectedQuestSource == questSource || quests == null) {
                 return;
             }
             selectedQuestSource = questSource;
-            if (selectedQuestIndex > -1) {
+            if (isWebViewVisible()) {
                 selectQuest();
             }
         }
     }
 
+    @Override
+    public void onQuestClick(Quest quest) {
+        currentQuest = quest;
+        selectQuest();
+    }
+
     private void selectQuest() {
-        Quest quest = quests.get(selectedQuestIndex);
+        if (currentQuest == null) {
+            return;
+        }
         clearHistory();
         switch (selectedQuestSource) {
             case RSWIKI:
-                loadQuestUrl(quest.url);
+                loadQuestUrl(currentQuest.url);
                 break;
             case RUNEHQ:
-                if (quest.hasRuneHqUrl()) {
-                    loadQuestUrl(quest.runeHqUrl);
+                if (currentQuest.hasRuneHqUrl()) {
+                    loadQuestUrl(currentQuest.runeHqUrl);
                 }
                 else {
-                    showToast(getString(R.string.no_runehq_guide, quest.name), Toast.LENGTH_LONG);
+                    showToast(getString(R.string.no_runehq_guide, currentQuest.name), Toast.LENGTH_LONG);
                 }
                 break;
         }
@@ -243,8 +289,23 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     }
 
     private void loadQuestUrl(String url) {
-        webView.loadUrl(url);
         webView.setVisibility(View.VISIBLE);
+        webView.loadUrl(url);
+        questListView.setVisibility(View.GONE);
+    }
+
+
+    public void hideWebView() {
+        webView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+        questListView.setVisibility(View.VISIBLE);
+        clearHistory();
+        questSelectorContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        questSelectorContainer.setVisibility(View.VISIBLE);
+    }
+
+    public boolean isWebViewVisible() {
+        return webView.getVisibility() == View.VISIBLE;
     }
 
     @Override
@@ -275,7 +336,7 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
         if (scrollState == ScrollState.UP && questSelectorContainer.isShown()) {
-            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) questSelectorContainer.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) questSelectorContainer.getLayoutParams();
             int height = questSelectorContainer.getHeight() + params.bottomMargin + params.topMargin;
             questSelectorContainer.animate().translationY(-height).setInterpolator(new AccelerateInterpolator(2));
             view.findViewById(R.id.webview_container).animate().translationY(0).setInterpolator(new AccelerateInterpolator(2));

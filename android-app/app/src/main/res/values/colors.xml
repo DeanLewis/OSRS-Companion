@@ -34,4 +34,6 @@
     <color name="floating_view_border">#ff000000</color>
     <color name="hint_color">#666666</color>
     <color name="timer_background">#3c3c3e</color>
+
+    <color name="quest_popup_menu_background">#3A3A3A</color>
 </resources>

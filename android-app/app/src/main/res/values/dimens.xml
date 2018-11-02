@@ -11,4 +11,5 @@
     <dimen name="default_margin">10sp</dimen>
     <dimen name="treasure_trails_puzzle_height">250dp</dimen>
     <dimen name="worldmap_listview_width">250dp</dimen>
+    <dimen name="quest_list_font_size">16sp</dimen>
 </resources>

@@ -12,6 +12,7 @@
         <item name="android:alertDialogTheme">@style/dialog</item>
         <item name="preferenceTheme">@style/PreferenceScreen</item>
         <item name="alertDialogTheme">@style/PreferenceScreen</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
     </style>
 
     <style name="PreferenceScreen" parent="Theme.AppCompat.Dialog">
@@ -50,5 +51,10 @@
     <style name="DialogWindowTitle">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">@color/quest_popup_menu_background</item>
+        <item name="android:textColor">@color/text</item>
     </style>
 </resources>

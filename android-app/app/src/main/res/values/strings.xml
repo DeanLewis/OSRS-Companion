@@ -301,6 +301,14 @@
     <string name="worldmap_floating_view_info">In order to use the worldmap here, you have to download the map first in the main app by going to the worldmap section. It requires storage permission to save load the map. Try restarting the floating view service if it\'s still not working</string>
     <string name="download_in_progress">There is already a download in progress</string>
     <string name="worldmap_show_cities">Show cities</string>
+    <string name="quest_sort_members">By members</string>
+    <string name="quest_sort_length">By length</string>
+    <string name="quest_sort_difficulty">By difficulty</string>
+    <string name="members">Members</string>
+    <string name="freetoplay">Free to play</string>
+    <string name="sort">Sort…</string>
+    <string name="quest_sort_alphabetically">Alphabetically</string>
+    <string name="quest_sort_qp">By quest points</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

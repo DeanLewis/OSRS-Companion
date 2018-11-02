@@ -33,7 +33,13 @@ public class QuestLoadTask extends AsyncTask<String, Void, ArrayList<Quest>> {
             JSONArray array = new JSONArray(Utils.readFromAssets(context.get(), "quests.json"));
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
-                Quest quest = new Quest(obj.getString("name"), obj.getString("url"), obj.getString("runehqurl"));
+                Quest quest = new Quest(obj.getString("name"),
+                        obj.getString("url"),
+                        obj.getString("runehqurl"),
+                        obj.getInt("difficulty"),
+                        obj.getInt("length"),
+                        obj.getBoolean("p2p"),
+                        obj.getInt("qp"));
                 quests.add(quest);
             }
             Collections.sort(quests, new Comparator<Quest>() {

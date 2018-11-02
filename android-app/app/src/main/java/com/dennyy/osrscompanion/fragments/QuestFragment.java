@@ -10,15 +10,14 @@ import android.view.ViewGroup;
 
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.interfaces.QuestsLoadedListener;
-import com.dennyy.osrscompanion.viewhandlers.QuestViewHandler;
 import com.dennyy.osrscompanion.models.General.Quest;
+import com.dennyy.osrscompanion.viewhandlers.QuestViewHandler;
 
 import java.util.ArrayList;
 
 public class QuestFragment extends BaseFragment {
 
     private static final String WEBVIEW_STATE_KEY = "webview_state";
-    private static final String SELECTED_QUEST_INDEX_KEY = "selected_quest_index";
     private static final String WAS_REQUESTING_KEY = "was_requesting";
 
     private QuestViewHandler questViewHandler;
@@ -59,6 +58,10 @@ public class QuestFragment extends BaseFragment {
             questViewHandler.webView.goBack();
             return true;
         }
+        else if (questViewHandler.isWebViewVisible()) {
+            questViewHandler.hideWebView();
+            return true;
+        }
         else {
             return super.onBackClick();
         }
@@ -83,8 +86,6 @@ public class QuestFragment extends BaseFragment {
     private void loadFragment(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             questViewHandler.restoreWebView(savedInstanceState.getBundle(WEBVIEW_STATE_KEY));
-            questViewHandler.selectedQuestIndex = savedInstanceState.getInt(SELECTED_QUEST_INDEX_KEY);
-            questViewHandler.questSelectorSpinner.setSelection(questViewHandler.selectedQuestIndex + 1);
             if (questViewHandler.wasRequesting()) {
                 questViewHandler.webView.setVisibility(View.VISIBLE);
             }
@@ -97,7 +98,6 @@ public class QuestFragment extends BaseFragment {
         Bundle bundle = new Bundle();
         questViewHandler.webView.saveState(bundle);
         outState.putBundle(WEBVIEW_STATE_KEY, bundle);
-        outState.putInt(SELECTED_QUEST_INDEX_KEY, questViewHandler.selectedQuestIndex);
         outState.putBoolean(WAS_REQUESTING_KEY, questViewHandler.wasRequesting());
     }
 
