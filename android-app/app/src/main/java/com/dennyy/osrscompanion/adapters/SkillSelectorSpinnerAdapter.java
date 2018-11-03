@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dennyy.osrscompanion.R;
+import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class SkillSelectorSpinnerAdapter extends BaseAdapter {
         }
         int skill = skills.get(i);
         viewHolder.skillName.setText(RsUtils.getSkill(skill));
-        viewHolder.skillIcon.setImageDrawable(context.getResources().getDrawable(RsUtils.getSkillResourceId(skill)));
+        viewHolder.skillIcon.setImageDrawable(context.getResources().getDrawable(SkillType.fromId(skill).getDrawable()));
         return convertView;
     }
 

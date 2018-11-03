@@ -21,8 +21,9 @@ import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.customviews.ClearableEditText;
 import com.dennyy.osrscompanion.customviews.LineIndicatorButton;
-import com.dennyy.osrscompanion.enums.TrackDurationType;
 import com.dennyy.osrscompanion.database.AppDb;
+import com.dennyy.osrscompanion.enums.SkillType;
+import com.dennyy.osrscompanion.enums.TrackDurationType;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
@@ -332,7 +333,7 @@ public class TrackerViewHandler extends BaseViewHandler implements View.OnClickL
         TableRow row = new TableRow(context);
 
         ImageView skillImageView = new ImageView(context);
-        skillImageView.setImageDrawable(resources.getDrawable(RsUtils.getSkillResourceId(skillId - 1)));
+        skillImageView.setImageDrawable(resources.getDrawable(SkillType.fromId(skillId - 1).getDrawable()));
         skillImageView.setLayoutParams(imageParams);
         row.addView(skillImageView);
 

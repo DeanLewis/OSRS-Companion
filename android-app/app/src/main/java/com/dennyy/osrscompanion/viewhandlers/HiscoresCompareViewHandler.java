@@ -346,7 +346,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
         TableRow row = new TableRow(context);
 
         ImageView skillImageView = new ImageView(context);
-        skillImageView.setImageDrawable(resources.getDrawable(RsUtils.getSkillResourceId(skillId)));
+        skillImageView.setImageDrawable(resources.getDrawable(SkillType.fromId(skillId).getDrawable()));
         skillImageView.setLayoutParams(isMinigameRow ? rowParams : imageParams);
         row.addView(skillImageView);
 

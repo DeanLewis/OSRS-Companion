@@ -5,6 +5,7 @@ import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
 
 public enum SkillType {
+    COMBAT(-1, R.drawable.multicombat_icon),
     OVERALL(0, R.drawable.stats_icon),
     ATTACK(1, R.drawable.attack_icon),
     DEFENCE(2, R.drawable.defence_icon),
@@ -29,15 +30,15 @@ public enum SkillType {
     RUNECRAFTING(21, R.drawable.runecrafting_icon),
     HUNTER(22, R.drawable.hunter_icon),
     CONSTRUCTION(23, R.drawable.construction_icon),
-    CLUE_EASY(24, R.drawable.clue_scroll_easy),
-    CLUE_MED(25, R.drawable.clue_scroll_med),
+    BH(24, R.drawable.bounty_hunter),
+    BHR(25, R.drawable.bounty_hunter_rogue),
     CLUE_TOTAL(26, R.drawable.clue_scroll),
-    BHR(27, R.drawable.bounty_hunter_rogue),
-    BH(28, R.drawable.bounty_hunter),
+    CLUE_EASY(27, R.drawable.clue_scroll_easy),
+    CLUE_MED(28, R.drawable.clue_scroll_med),
     CLUE_HARD(29, R.drawable.clue_scroll_hard),
-    LMS(30, R.drawable.lms),
-    CLUE_ELITE(31, R.drawable.clue_scroll_elite),
-    CLUE_MASTER(32, R.drawable.clue_scroll_master);
+    CLUE_ELITE(30, R.drawable.clue_scroll_elite),
+    CLUE_MASTER(31, R.drawable.clue_scroll_master),
+    LMS(32, R.drawable.lms);
 
     private int id;
     private int drawable;
