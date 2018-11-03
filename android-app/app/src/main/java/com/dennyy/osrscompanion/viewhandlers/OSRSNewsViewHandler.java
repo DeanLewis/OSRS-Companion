@@ -148,7 +148,7 @@ public class OSRSNewsViewHandler extends BaseViewHandler implements SwipeRefresh
         }
         catch (Exception ex) {
             Logger.log(result, ex);
-            showToast(getString(R.string.unexpected_error, ex.getClass().getSimpleName()), Toast.LENGTH_SHORT);
+            showToast(getString(R.string.unexpected_error, "unable to reach runescape.com"), Toast.LENGTH_SHORT);
         }
     }
 
