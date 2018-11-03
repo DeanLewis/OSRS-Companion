@@ -208,9 +208,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
         });
 
         String[] selected = preferences.getString(Constants.PREF_FLOATING_VIEWS, "").split("~");
-        String[] availableFloatingViews = getResources().getStringArray(R.array.view_name_value);
         for (String selection : selected) {
-            Utils.containsCaseInsensitive(selection, availableFloatingViews);
             chatHeadManager.addChatHead(namesMap.get(selection), false);
         }
 
