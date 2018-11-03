@@ -2,9 +2,11 @@ package com.dennyy.osrscompanion.models.General;
 
 import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 public class PlayerStats extends LinkedHashMap<SkillType, Skill> {
     private int totalLevel;
@@ -18,10 +20,15 @@ public class PlayerStats extends LinkedHashMap<SkillType, Skill> {
     public PlayerStats(String stats) {
         super(33);
         stats = stats.trim();
-        if (Utils.isNullOrEmpty(stats) || stats.split("\n").length < Constants.REQUIRED_STATS_LENGTH) {
+        if (Utils.isNullOrEmpty(stats)) {
             return;
         }
         String[] statsArray = stats.split("\n");
+        int length = statsArray.length;
+        if (length < Constants.REQUIRED_STATS_LENGTH || length > Constants.MAX_SKILLS_LENGTH) {
+            Logger.log(stats, new IllegalArgumentException(String.format(Locale.getDefault(), "failed to parse stats with length: %d", length)));
+            return;
+        }
         for (int i = 0; i < statsArray.length; i++) {
             String[] line = statsArray[i].split(",");
             SkillType skillType = SkillType.fromId(i);
