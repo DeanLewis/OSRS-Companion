@@ -305,7 +305,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
 
             @Override
             public void onActionsLoadFailed() {
-                showToast(getString(R.string.error_please_try_again), Toast.LENGTH_SHORT);
+                showToast(getString(R.string.unexpected_error_try_reopen), Toast.LENGTH_SHORT);
             }
         }).execute();
     }

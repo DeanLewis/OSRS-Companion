@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.dennyy.osrscompanion.database.ActionsDb;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.interfaces.ActionsLoadListener;
 import com.dennyy.osrscompanion.models.General.Action;
 
@@ -27,7 +28,13 @@ public class GetActionsTask extends AsyncTask<Void, Void, ArrayList<Action>> {
         if (context == null) {
             return null;
         }
-        ArrayList<Action> actions = ActionsDb.getInstance(context).getActions(selectedSkillId);
+        ArrayList<Action> actions = null;
+        try {
+            actions = ActionsDb.getInstance(context).getActions(selectedSkillId);
+        }
+        catch (Exception ex) {
+            Logger.log("Failed to load actions with context: " + context.getClass().getName(), ex);
+        }
         return actions;
     }
 
