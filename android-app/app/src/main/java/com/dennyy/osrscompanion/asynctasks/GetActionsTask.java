@@ -33,7 +33,7 @@ public class GetActionsTask extends AsyncTask<Void, Void, ArrayList<Action>> {
             actions = ActionsDb.getInstance(context).getActions(selectedSkillId);
         }
         catch (Exception ex) {
-            Logger.log("Failed to load actions with context: " + context.getClass().getName(), ex);
+            Logger.log("Failed to load actions with context: " + context, ex);
         }
         return actions;
     }
