@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.dennyy.osrscompanion.enums.ReloadTimerSource;
 import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.Notes.NoteChangeEvent;
 import com.dennyy.osrscompanion.models.Timers.ReloadTimersEvent;
@@ -48,6 +49,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class FloatingViewService extends Service implements WindowManagerContainer.ArrangementChangeListener {
     private final static String calcHeadName = CalculatorViewHandler.class.getSimpleName();
@@ -196,11 +198,11 @@ public class FloatingViewService extends Service implements WindowManagerContain
 
             @Override
             public Drawable getChatHeadDrawable(String key) {
-                if (iconsMap == null || iconsMap.size() < 1) {
-                    iconsMap = new HashMap<>();
-                    initIconsMap();
+                Integer resourceId = iconsMap.get(key);
+                if (resourceId == null) {
+                    resourceId = R.drawable.default_floating_view;
+                    Logger.log(new NoSuchElementException("no chathead drawable found for key " + key));
                 }
-                int resourceId = iconsMap.get(key);
                 Drawable drawable = getResources().getDrawable(resourceId);
                 return drawable;
 
