@@ -252,7 +252,9 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             int red = getResources().getColor(R.color.red);
             int green = getResources().getColor(R.color.green);
 
-            Glide.with(context).load(Constants.GE_IMG_LARGE_URL + item.id).into((ImageView) view.findViewById(R.id.ge_item_icon));
+            if (Utils.isValidContextForGlide(context)) {
+                Glide.with(context).load(Constants.GE_IMG_LARGE_URL + item.id).into((ImageView) view.findViewById(R.id.ge_item_icon));
+            }
             ((ImageView) view.findViewById(R.id.ge_item_members_indicator)).setImageDrawable(item.members ? getResources().getDrawable(R.drawable.members) : null);
 
             ((TextView) view.findViewById(R.id.ge_item_name)).setText(item.name);
@@ -656,7 +658,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         return wasRequestingGe || wasRequestingGegraph || wasRequestingGeupdate || wasRequestingOsBuddy;
     }
 
-    public void reloadOnOrientationChanged() {
+    public void restorePageFromSavedState() {
         if (wasRequestingGe) {
             updateItem(jsonItem.id);
         }

@@ -8,7 +8,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.GeGraphDays;
@@ -91,7 +90,7 @@ public class GrandExchangeFragment extends BaseFragment {
             grandExchangeViewHandler.wasRequestingGeupdate = savedInstanceState.getBoolean(WAS_REQUESTING_GEUPDATE);
             grandExchangeViewHandler.wasRequestingOsBuddy = savedInstanceState.getBoolean(WAS_REQUESTING_OSBUDDY);
 
-            grandExchangeViewHandler.reloadOnOrientationChanged();
+            grandExchangeViewHandler.restorePageFromSavedState();
         }
     }
 
