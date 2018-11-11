@@ -157,4 +157,64 @@
 	"code": "CLS",
 	"location": "Islands: Hazelmere's home",
 	"points of interest": "Hazelmere lives nearby"
+},
+{
+	"code": "DIP",
+	"location": "Other Realms: Abyssal Nexus",
+	"points of interest": "Abyssal Sire"
+},
+{
+	"code": "DIR",
+	"location": "Other Realms: Gorak's Plane",
+	"points of interest": "The only place Goraks can be found other than the God Wars Dungeon."
+},
+{
+	"code": "DIQ",
+	"location": "Player-owned house Superior Garden",
+	"points of interest": "Only works if the player has one in their house."
+},
+{
+	"code": "DIS",
+	"location": "Misthalin: Wizards' Tower",
+	"points of interest": "Wizards' Tower, Rune essence mine. Required for the Medium Lumbridge & Draynor Diary."
+},
+{
+	"code": "DJP",
+	"location": "Kandarin: Tower of Life",
+	"points of interest": "Ardougne Monastery west, East Ardougne north-west, Port Khazard south"
+},
+{
+	"code": "DJR",
+	"location": "Zeah: Chasm of Fire",
+	"points of interest": "Chasm of Fire, north-west corner of the Shayzien House"
+},
+{
+	"code": "DKP",
+	"location": "Karamja: South of Musa Point",
+	"points of interest": "Karambwan fishing spots"
+},
+{
+	"code": "DKR",
+	"location": "Misthalin: Edgeville",
+	"points of interest": "Grand Exchange east, Edgeville bank west, Wilderness north"
+},
+{
+	"code": "DKS",
+	"location": "Kandarin: Polar Hunter area",
+	"points of interest": "Keldagrim entrance, Brine Rat Cavern, Rock crabs, Rellekka west"
+},
+{
+	"code": "DLQ",
+	"location": "Kharidian Desert: North of Nardah",
+	"points of interest": "Desert lizards, Jackals, Nardah south"
+},
+{
+	"code": "DLR",
+	"location": "Islands: Poison Waste south of Isafdar",
+	"points of interest": "Player can use Broken Handz's telescope to spectate players fighting Zulrah. There are also unattackable badgers on the island."
+},
+{
+	"code": "DLS",
+	"location": "Dungeons: Myreque hideout under The Hollows",
+	"points of interest": "Must complete In Search of the Myreque quest. Find the cracks in the walls to enter the main tunnel under the Hair of the Dog pub in Canifis."
 }]
