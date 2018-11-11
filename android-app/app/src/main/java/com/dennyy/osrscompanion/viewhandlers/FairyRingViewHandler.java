@@ -1,45 +1,45 @@
 package com.dennyy.osrscompanion.viewhandlers;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.FairyRingListAdapter;
 import com.dennyy.osrscompanion.adapters.FairyRingSearchAdapter;
+import com.dennyy.osrscompanion.asynctasks.GetFairyRingsTask;
 import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.DelayedAutoCompleteTextView;
-import com.dennyy.osrscompanion.helpers.Logger;
+import com.dennyy.osrscompanion.customviews.ObservableListView;
+import com.dennyy.osrscompanion.enums.ScrollState;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.FairyRingsLoadedListener;
+import com.dennyy.osrscompanion.interfaces.ObservableScrollViewCallbacks;
 import com.dennyy.osrscompanion.models.FairyRings.FairyRing;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher {
+public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher, ObservableScrollViewCallbacks {
     public int selectedIndex;
 
+    private ClearableAutoCompleteTextView clearableAutoCompleteTextView;
     private DelayedAutoCompleteTextView autoCompleteTextView;
-    private ListView listView;
+    private ObservableListView listView;
     private FairyRingSearchAdapter searchAdapter;
     private FairyRingListAdapter listViewAdapter;
     private ArrayList<FairyRing> fairyRings;
 
     public FairyRingViewHandler(Context context, final View view) {
         super(context, view);
-        new LoadItems(context, new FairyRingsLoadedListener() {
+        new GetFairyRingsTask(context, new FairyRingsLoadedListener() {
             @Override
             public void onFairyRingsLoaded(ArrayList<FairyRing> items) {
                 fairyRings = new ArrayList<>(items);
@@ -54,8 +54,10 @@ public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher
     }
 
     private void updateView(View view) {
+        clearableAutoCompleteTextView = view.findViewById(R.id.fr_search_input);
         listView = view.findViewById(R.id.fairy_rings_listview);
-        autoCompleteTextView = ((ClearableAutoCompleteTextView) view.findViewById(R.id.fr_search_input)).getAutoCompleteTextView();
+        listView.addScrollViewCallbacks(this);
+        autoCompleteTextView = clearableAutoCompleteTextView.getAutoCompleteTextView();
 
         if (searchAdapter == null) {
             searchAdapter = new FairyRingSearchAdapter(context, fairyRings);
@@ -108,44 +110,29 @@ public class FairyRingViewHandler extends BaseViewHandler implements TextWatcher
         }
     }
 
-    private static class LoadItems extends AsyncTask<String, Void, ArrayList<FairyRing>> {
-        private WeakReference<Context> context;
-        private FairyRingsLoadedListener fairyRingsLoadedListener;
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
 
-        private LoadItems(Context context, FairyRingsLoadedListener fairyRingsLoadedLoadedCallback) {
-            this.context = new WeakReference<>(context);
-            this.fairyRingsLoadedListener = fairyRingsLoadedLoadedCallback;
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        if (scrollState == ScrollState.UP && clearableAutoCompleteTextView.isShown()) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) clearableAutoCompleteTextView.getLayoutParams();
+            int height = clearableAutoCompleteTextView.getHeight() + params.bottomMargin + params.topMargin;
+            clearableAutoCompleteTextView.animate().translationY(-height).setInterpolator(new AccelerateInterpolator(2));
+            listView.animate().translationY(0).setInterpolator(new AccelerateInterpolator(2));
+            clearableAutoCompleteTextView.setVisibility(View.GONE);
         }
 
-        @Override
-        protected ArrayList<FairyRing> doInBackground(String... params) {
-            ArrayList<FairyRing> fairyRings = new ArrayList<>();
-            try {
-                String fairyRingsString = Utils.readFromAssets(context.get(), "fairyrings.json");
-                JSONArray fairyRingJsonArray = new JSONArray(fairyRingsString);
-                for (int i = 0; i < fairyRingJsonArray.length(); i++) {
-                    JSONObject jsonObject = fairyRingJsonArray.getJSONObject(i);
-                    FairyRing fairyRing = new FairyRing();
-                    fairyRing.code = jsonObject.getString("code");
-                    fairyRing.location = jsonObject.getString("location");
-                    fairyRing.pointsOfInterest = jsonObject.getString("points of interest");
-                    fairyRings.add(fairyRing);
-                }
-            }
-            catch (JSONException ex) {
-                Logger.log(ex);
-            }
-            return fairyRings;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<FairyRing> items) {
-            if (items.size() > 0) {
-                fairyRingsLoadedListener.onFairyRingsLoaded(items);
-            }
-            else {
-                fairyRingsLoadedListener.onFairyRingsLoadError();
-            }
+        else if (scrollState == ScrollState.DOWN && !clearableAutoCompleteTextView.isShown()) {
+            clearableAutoCompleteTextView.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+            clearableAutoCompleteTextView.setVisibility(View.VISIBLE);
         }
     }
 
