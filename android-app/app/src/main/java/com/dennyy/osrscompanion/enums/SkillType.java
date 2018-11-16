@@ -5,62 +5,56 @@ import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
 
 public enum SkillType {
-    COMBAT(-1, R.drawable.multicombat_icon),
-    OVERALL(0, R.drawable.stats_icon),
-    ATTACK(1, R.drawable.attack_icon),
-    DEFENCE(2, R.drawable.defence_icon),
-    STRENGTH(3, R.drawable.strength_icon),
-    HITPOINTS(4, R.drawable.hitpoints_icon),
-    RANGED(5, R.drawable.ranged_icon),
-    PRAYER(6, R.drawable.prayer_icon),
-    MAGIC(7, R.drawable.magic_icon),
-    COOKING(8, R.drawable.cooking_icon),
-    WOODCUTTING(9, R.drawable.woodcutting_icon),
-    FLETCHING(10, R.drawable.fletching_icon),
-    FISHING(11, R.drawable.fishing_icon),
-    FIREMAKING(12, R.drawable.firemaking_icon),
-    CRAFTING(13, R.drawable.crafting_icon),
-    SMITHING(14, R.drawable.smithing_icon),
-    MINING(15, R.drawable.mining_icon),
-    HERBLORE(16, R.drawable.herblore_icon),
-    AGILITY(17, R.drawable.agility_icon),
-    THIEVING(18, R.drawable.thieving_icon),
-    SLAYER(19, R.drawable.slayer_icon),
-    FARMING(20, R.drawable.farming_icon),
-    RUNECRAFTING(21, R.drawable.runecrafting_icon),
-    HUNTER(22, R.drawable.hunter_icon),
-    CONSTRUCTION(23, R.drawable.construction_icon),
-    BH(24, R.drawable.bounty_hunter),
-    BHR(25, R.drawable.bounty_hunter_rogue),
-    CLUE_TOTAL(26, R.drawable.clue_scroll),
-    CLUE_EASY(27, R.drawable.clue_scroll_easy),
-    CLUE_MED(28, R.drawable.clue_scroll_med),
-    CLUE_HARD(29, R.drawable.clue_scroll_hard),
-    CLUE_ELITE(30, R.drawable.clue_scroll_elite),
-    CLUE_MASTER(31, R.drawable.clue_scroll_master),
-    LMS(32, R.drawable.lms);
+    COMBAT(-1, R.drawable.multicombat_icon, "Combat"),
+    OVERALL(0, R.drawable.stats_icon, "Overall"),
+    ATTACK(1, R.drawable.attack_icon, "Attack"),
+    DEFENCE(2, R.drawable.defence_icon, "Defence"),
+    STRENGTH(3, R.drawable.strength_icon, "Strength"),
+    HITPOINTS(4, R.drawable.hitpoints_icon, "Hitpoints"),
+    RANGED(5, R.drawable.ranged_icon, "Ranged"),
+    PRAYER(6, R.drawable.prayer_icon, "Prayer"),
+    MAGIC(7, R.drawable.magic_icon, "Magic"),
+    COOKING(8, R.drawable.cooking_icon, "Cooking"),
+    WOODCUTTING(9, R.drawable.woodcutting_icon, "Woodcutting"),
+    FLETCHING(10, R.drawable.fletching_icon, "Fletching"),
+    FISHING(11, R.drawable.fishing_icon, "Fishing"),
+    FIREMAKING(12, R.drawable.firemaking_icon, "Firemaking"),
+    CRAFTING(13, R.drawable.crafting_icon, "Crafting"),
+    SMITHING(14, R.drawable.smithing_icon, "Smithing"),
+    MINING(15, R.drawable.mining_icon, "Mining"),
+    HERBLORE(16, R.drawable.herblore_icon, "Herblore"),
+    AGILITY(17, R.drawable.agility_icon, "Agility"),
+    THIEVING(18, R.drawable.thieving_icon, "Thieving"),
+    SLAYER(19, R.drawable.slayer_icon, "Slayer"),
+    FARMING(20, R.drawable.farming_icon, "Farming"),
+    RUNECRAFTING(21, R.drawable.runecrafting_icon, "Runecraft"),
+    HUNTER(22, R.drawable.hunter_icon, "Hunter"),
+    CONSTRUCTION(23, R.drawable.construction_icon, "Construction"),
+    BH(24, R.drawable.bounty_hunter, "Bounty Hunter"),
+    BHR(25, R.drawable.bounty_hunter_rogue, "Bounty Hunter Rogue"),
+    CLUE_TOTAL(26, R.drawable.clue_scroll, "Total clues"),
+    CLUE_EASY(27, R.drawable.clue_scroll_easy, "Easy clues"),
+    CLUE_MED(28, R.drawable.clue_scroll_med, "Medium clues"),
+    CLUE_HARD(29, R.drawable.clue_scroll_hard, "Hard clues"),
+    CLUE_ELITE(30, R.drawable.clue_scroll_elite, "Elite clues"),
+    CLUE_MASTER(31, R.drawable.clue_scroll_master, "Master clues"),
+    LMS(32, R.drawable.lms, "LMS");
 
-    private int id;
-    private int drawable;
+    public final int id;
+    public final int drawable;
+    public final String name;
 
-    SkillType(int id, int drawable) {
+    SkillType(int id, int drawable, String name) {
         this.id = id;
         this.drawable = drawable;
+        this.name = name;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public int getDrawable() {
-        return drawable;
-    }
-
-    public boolean isMinigame() { return getId() >= Constants.REQUIRED_STATS_LENGTH;}
+    public boolean isMinigame() { return id >= Constants.REQUIRED_STATS_LENGTH;}
 
     public static SkillType fromId(int id) {
         for (SkillType skillType : SkillType.values()) {
-            if (skillType.getId() == id) {
+            if (skillType.id == id) {
                 return skillType;
             }
         }

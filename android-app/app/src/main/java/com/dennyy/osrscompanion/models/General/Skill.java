@@ -24,7 +24,7 @@ public class Skill {
     }
 
     public int getId() {
-        return skillType.getId();
+        return skillType.id;
     }
 
     public SkillType getType() {

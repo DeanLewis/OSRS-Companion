@@ -303,7 +303,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
             keySet = playerTwoStats.keySet();
         }
         for (SkillType skillType : keySet) {
-            int skillId = skillType.getId();
+            int skillId = skillType.id;
             Skill playerOneSkill = playerOneStats.getSkill(skillType);
             Skill playerTwoSkill = playerTwoStats.getSkill(skillType);
             if (selectedComparison == CompareMode.LEVEL) {
@@ -346,7 +346,7 @@ public class HiscoresCompareViewHandler extends BaseViewHandler implements View.
         TableRow row = new TableRow(context);
 
         ImageView skillImageView = new ImageView(context);
-        skillImageView.setImageDrawable(resources.getDrawable(SkillType.fromId(skillId).getDrawable()));
+        skillImageView.setImageDrawable(resources.getDrawable(SkillType.fromId(skillId).drawable));
         skillImageView.setLayoutParams(isMinigameRow ? rowParams : imageParams);
         row.addView(skillImageView);
 

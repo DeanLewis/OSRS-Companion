@@ -333,7 +333,7 @@ public class TrackerViewHandler extends BaseViewHandler implements View.OnClickL
         TableRow row = new TableRow(context);
 
         ImageView skillImageView = new ImageView(context);
-        skillImageView.setImageDrawable(resources.getDrawable(SkillType.fromId(skillId - 1).getDrawable()));
+        skillImageView.setImageDrawable(resources.getDrawable(SkillType.fromId(skillId - 1).drawable));
         skillImageView.setLayoutParams(imageParams);
         row.addView(skillImageView);
 

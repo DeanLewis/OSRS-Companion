@@ -221,7 +221,7 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
         TableRow row = new TableRow(context);
 
         ImageView skillImageView = new ImageView(context);
-        skillImageView.setImageDrawable(resources.getDrawable(SkillType.fromId(skillId).getDrawable()));
+        skillImageView.setImageDrawable(resources.getDrawable(SkillType.fromId(skillId).drawable));
         skillImageView.setLayoutParams(imageParams);
         row.addView(skillImageView);
         if (!isMinigameRow) {
