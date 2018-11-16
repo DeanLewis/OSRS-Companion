@@ -9,6 +9,7 @@
     android:numColumns="2"
     android:padding="10dp"
     android:stretchMode="columnWidth"
+    android:scrollbarStyle="outsideOverlay"
     android:verticalSpacing="7dp">
 </GridView>
 
