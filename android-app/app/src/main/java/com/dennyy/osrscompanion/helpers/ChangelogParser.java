@@ -24,6 +24,7 @@ public class ChangelogParser {
     private static final String TAG_CHANGELOG = "changelog";
     private static final String TAG_CHANGELOG_VERSION = "changelogversion";
     private static final String TAG_CHANGELOG_TEXT = "changelogtext";
+    private static final String TAG_CHANGELOG_IMPORTANT = "changelogimportant";
     private static final String TAG_CHANGELOG_BUG = "changelogbug";
     private static final String TAG_CHANGELOG_NEW = "changelognew";
 
@@ -74,26 +75,38 @@ public class ChangelogParser {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals(TAG_CHANGELOG_TEXT)) {
-                ChangelogEntry entry = new ChangelogEntry();
-                entry.text = readChangelog(parser, TAG_CHANGELOG_TEXT);
-                entry.changelogType = ChangelogType.IMPROVEMENT;
-                entries.add(entry);
-            }
-            else if (name.equals(TAG_CHANGELOG_NEW)) {
-                ChangelogEntry entry = new ChangelogEntry();
-                entry.text = readChangelog(parser, TAG_CHANGELOG_NEW);
-                entry.changelogType = ChangelogType.NEW;
-                entries.add(entry);
-            }
-            else if (name.equals(TAG_CHANGELOG_BUG)) {
-                ChangelogEntry entry = new ChangelogEntry();
-                entry.text = readChangelog(parser, TAG_CHANGELOG_BUG);
-                entry.changelogType = ChangelogType.BUG_FIX;
-                entries.add(entry);
-            }
-            else {
-                skip(parser);
+            switch (name) {
+                case TAG_CHANGELOG_TEXT: {
+                    ChangelogEntry entry = new ChangelogEntry();
+                    entry.text = readChangelog(parser, TAG_CHANGELOG_TEXT);
+                    entry.changelogType = ChangelogType.REGULAR;
+                    entries.add(entry);
+                    break;
+                }
+                case TAG_CHANGELOG_NEW: {
+                    ChangelogEntry entry = new ChangelogEntry();
+                    entry.text = readChangelog(parser, TAG_CHANGELOG_NEW);
+                    entry.changelogType = ChangelogType.NEW;
+                    entries.add(entry);
+                    break;
+                }
+                case TAG_CHANGELOG_BUG: {
+                    ChangelogEntry entry = new ChangelogEntry();
+                    entry.text = readChangelog(parser, TAG_CHANGELOG_BUG);
+                    entry.changelogType = ChangelogType.BUG_FIX;
+                    entries.add(entry);
+                    break;
+                }
+                case TAG_CHANGELOG_IMPORTANT: {
+                    ChangelogEntry entry = new ChangelogEntry();
+                    entry.text = readChangelog(parser, TAG_CHANGELOG_IMPORTANT);
+                    entry.changelogType = ChangelogType.IMPORTANT;
+                    entries.add(entry);
+                    break;
+                }
+                default:
+                    skip(parser);
+                    break;
             }
         }
         return entries;

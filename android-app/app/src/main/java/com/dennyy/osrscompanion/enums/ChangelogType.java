@@ -1,5 +1,5 @@
 package com.dennyy.osrscompanion.enums;
 
 public enum ChangelogType {
-    NEW, IMPROVEMENT, BUG_FIX
+    REGULAR, NEW, IMPORTANT, BUG_FIX
 }

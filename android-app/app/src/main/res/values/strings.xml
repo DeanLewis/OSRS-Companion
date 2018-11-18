@@ -323,6 +323,7 @@
     <string name="whats_new">What\'s new?</string>
     <string name="changelog_bugfix">Bugfix</string>
     <string name="changelog_new">New</string>
+    <string name="changelog_important">Important</string>
     <string name="version_info">Tap to view changelog</string>
     <string name="floating_view_service_running">Floating view service is currently running</string>
 

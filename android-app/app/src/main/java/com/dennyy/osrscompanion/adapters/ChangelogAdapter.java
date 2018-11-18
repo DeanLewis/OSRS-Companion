@@ -64,7 +64,10 @@ public class ChangelogAdapter extends BaseAdapter {
         for (int i = 0; i < changelog.entriesSize; i++) {
             ChangelogEntry entry = changelog.entries.get(i);
             String type = "";
-            if (entry.changelogType == ChangelogType.BUG_FIX) {
+            if (entry.changelogType == ChangelogType.IMPORTANT) {
+                type = context.getResources().getString(R.string.changelog_important) + ": ";
+            }
+            else if (entry.changelogType == ChangelogType.BUG_FIX) {
                 type = context.getResources().getString(R.string.changelog_bugfix) + ": ";
             }
             else if (entry.changelogType == ChangelogType.NEW) {
