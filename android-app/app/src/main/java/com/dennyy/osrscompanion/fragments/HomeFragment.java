@@ -68,7 +68,10 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
     }
 
     private void initializeChangelog() {
-        if (checkAppStart() == AppStart.FIRST_TIME_VERSION) {
+        AppStart appStart = checkAppStart();
+        String floatingViews = preferences.getString(Constants.PREF_FLOATING_VIEWS, null);
+        boolean firstTimeAppUpgrade = appStart == AppStart.FIRST_TIME && !Utils.isNullOrEmpty(floatingViews);
+        if (appStart == AppStart.FIRST_TIME_VERSION || firstTimeAppUpgrade) {
             try {
                 Utils.showChangelogs(getActivity());
             }
@@ -80,8 +83,8 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
 
     @Override
     public void onOptionsMenuCreated() {
-        String currentPreferences = preferences.getString(Constants.PREF_FLOATING_VIEWS, null);
-        if (Utils.isNullOrEmpty(currentPreferences)) {
+        String floatingViews = preferences.getString(Constants.PREF_FLOATING_VIEWS, null);
+        if (Utils.isNullOrEmpty(floatingViews)) {
             new MaterialShowcaseView.Builder(getActivity())
                     .setTarget(mainSwitch)
                     .setDismissOnTargetTouch(true)
