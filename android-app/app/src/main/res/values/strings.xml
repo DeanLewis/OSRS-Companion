@@ -326,6 +326,8 @@
     <string name="changelog_important">Important</string>
     <string name="version_info">Tap to view changelog</string>
     <string name="floating_view_service_running">Floating view service is currently running</string>
+    <string name="go_to_app_settings">Go directly to the app settings on your device</string>
+    <string name="system_settings">System settings</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>
