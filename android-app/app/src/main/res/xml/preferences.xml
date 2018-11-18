@@ -17,37 +17,6 @@
         </EditTextPreference>
 
     </PreferenceCategory>
-    <PreferenceCategory
-        android:layout="@layout/preference_category"
-        android:title="@string/grandexchange">
-        <Preference
-            android:key="pref_download_itemidlist"
-            android:layout="@layout/preference_setting_layout"
-            android:summary="@string/check_for_updated_ge_items_info"
-            android:title="@string/check_for_updated_ge_items"/>
-        <ListPreference
-            android:defaultValue="ge_items_source_both"
-            android:entries="@array/ge_items"
-            android:entryValues="@array/ge_items_source"
-            android:key="pref_ge_items_source"
-            android:layout="@layout/preference_setting_layout"
-            android:summary="@string/ge_items_source_info"
-            android:title="@string/ge_items_source"/>
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:layout="@layout/preference_category"
-        android:title="@string/quest_guide">
-        <ListPreference
-            android:defaultValue="rswiki"
-            android:entries="@array/quest_sources"
-            android:entryValues="@array/quest_source_values"
-            android:key="pref_quest_source"
-            android:layout="@layout/preference_setting_layout"
-            android:persistent="true"
-            android:summary="@string/default_quest_source_info"
-            android:title="@string/default_quest_source"/>
-
-    </PreferenceCategory>
 
     <PreferenceCategory
         android:layout="@layout/preference_category"
@@ -112,6 +81,39 @@
             android:layout="@layout/preference_setting_layout"
             android:summary="@string/show_only_in_fullscreen_info"
             android:title="@string/show_only_in_fullscreen"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/preference_category"
+        android:title="@string/grandexchange">
+        <Preference
+            android:key="pref_download_itemidlist"
+            android:layout="@layout/preference_setting_layout"
+            android:summary="@string/check_for_updated_ge_items_info"
+            android:title="@string/check_for_updated_ge_items"/>
+        <ListPreference
+            android:defaultValue="ge_items_source_both"
+            android:entries="@array/ge_items"
+            android:entryValues="@array/ge_items_source"
+            android:key="pref_ge_items_source"
+            android:layout="@layout/preference_setting_layout"
+            android:summary="@string/ge_items_source_info"
+            android:title="@string/ge_items_source"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/preference_category"
+        android:title="@string/quest_guide">
+        <ListPreference
+            android:defaultValue="rswiki"
+            android:entries="@array/quest_sources"
+            android:entryValues="@array/quest_source_values"
+            android:key="pref_quest_source"
+            android:layout="@layout/preference_setting_layout"
+            android:persistent="true"
+            android:summary="@string/default_quest_source_info"
+            android:title="@string/default_quest_source"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory
