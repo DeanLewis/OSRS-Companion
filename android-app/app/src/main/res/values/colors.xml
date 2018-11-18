@@ -3,6 +3,7 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorPrimary">#212121</color>
     <color name="background">#303030</color>
+    <color name="background_light">#3A3A3A</color>
     <color name="background_dark">#212121</color>
     <color name="text">#ffffff</color>
     <color name="white">#ffffff</color>
