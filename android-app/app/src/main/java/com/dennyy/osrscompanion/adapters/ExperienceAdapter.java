@@ -57,6 +57,12 @@ public class ExperienceAdapter extends BaseAdapter {
         viewHolder.lvl.setText(String.valueOf(experience.level));
         viewHolder.exp.setText(Utils.formatNumber(experience.experience));
         viewHolder.diff.setText(Utils.formatNumber(experience.difference));
+        if (experience.level % 2 == 1) {
+            convertView.setBackgroundResource(R.color.background_light);
+        }
+        else {
+            convertView.setBackgroundResource(R.color.background);
+        }
         return convertView;
     }
 

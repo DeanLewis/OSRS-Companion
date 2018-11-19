@@ -10,6 +10,7 @@ import com.dennyy.osrscompanion.fragments.BaseFragment;
 import com.dennyy.osrscompanion.viewhandlers.ExpCalculatorViewHandler;
 
 public class ExpCalculatorFragment extends BaseFragment {
+    private ExpCalculatorViewHandler expCalculatorViewHandler;
 
     public ExpCalculatorFragment() {
         // Required empty public constructor
@@ -26,6 +27,21 @@ public class ExpCalculatorFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.experience_calculator));
 
-        new ExpCalculatorViewHandler(getActivity(), view);
+        expCalculatorViewHandler = new ExpCalculatorViewHandler(getActivity(), view, false);
+    }
+
+    @Override
+    public boolean onBackClick() {
+        if (expCalculatorViewHandler != null && !expCalculatorViewHandler.inputContainerVisible()) {
+            expCalculatorViewHandler.toggleInputContainer(true);
+            return true;
+        }
+        return super.onBackClick();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        expCalculatorViewHandler.cancelRunningTasks();
     }
 }

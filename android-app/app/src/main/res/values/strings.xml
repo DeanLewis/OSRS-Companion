@@ -322,6 +322,7 @@
     <string name="version_info">Tap to view changelog</string>
     <string name="floating_view_service_running">Floating view service is currently running</string>
     <string name="system_settings">System settings</string>
+    <string name="view_exp_table">View exp table</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

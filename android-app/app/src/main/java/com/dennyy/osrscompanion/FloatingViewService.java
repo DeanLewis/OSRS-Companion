@@ -143,7 +143,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     }
                     else if (key.equals(expListHeadName)) {
                         cachedView = inflater.inflate(R.layout.exp_calc_layout, parent, false);
-                        new ExpCalculatorViewHandler(FloatingViewService.this, cachedView);
+                        new ExpCalculatorViewHandler(FloatingViewService.this, cachedView, true);
                     }
                     else if (key.equals(skillCalcHeadName)) {
                         cachedView = inflater.inflate(R.layout.skill_calculator_layout, parent, false);

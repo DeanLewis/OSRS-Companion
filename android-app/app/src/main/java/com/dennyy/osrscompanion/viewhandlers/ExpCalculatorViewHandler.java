@@ -7,7 +7,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,11 +22,27 @@ import com.dennyy.osrscompanion.models.General.Experience;
 
 import java.util.ArrayList;
 
-public class ExpCalculatorViewHandler extends BaseViewHandler {
+public class ExpCalculatorViewHandler extends BaseViewHandler implements View.OnClickListener {
 
-    public ExpCalculatorViewHandler(Context context, View view) {
-        super(context, view);
+    private ListView expListView;
+    private LinearLayout listViewContainer;
+    private ScrollView inputContainer;
+    private RelativeLayout navbar;
+
+    public ExpCalculatorViewHandler(Context context, View view, boolean isFloatingView) {
+        super(context, view, isFloatingView);
+        listViewContainer = view.findViewById(R.id.listview_container);
+        inputContainer = view.findViewById(R.id.input_container);
+        navbar = view.findViewById(R.id.navbar);
+        expListView = listViewContainer.findViewById(R.id.exp_listview);
         initializeListView();
+        if (isFloatingView) {
+            navbar.findViewById(R.id.navbar_back).setOnClickListener(this);
+        }
+        initListeners();
+    }
+
+    private void initListeners() {
         ((EditText) view.findViewById(R.id.exp_or_lvl_input)).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
@@ -98,6 +117,7 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
                 handler.postDelayed(workRunnable, 500);
             }
         });
+        inputContainer.findViewById(R.id.exp_table_button).setOnClickListener(this);
     }
 
     private void calculateDifference() {
@@ -110,7 +130,6 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
         }
 
         int diff = RsUtils.exp(toEditTextValue) - RsUtils.exp(fromEditTextValue);
-
         ((TextView) view.findViewById(R.id.lvl_diff_textview)).setText(String.valueOf(Utils.formatNumber(diff)));
     }
 
@@ -146,7 +165,6 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
     }
 
     private void initializeListView() {
-        ListView expListView = view.findViewById(R.id.exp_listview);
         ArrayList<Experience> experiences = new ArrayList<>();
         for (int i = 1; i < 127; i++) {
             Experience experience = new Experience();
@@ -159,6 +177,18 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
         expListView.setAdapter(adapter);
     }
 
+    public void toggleInputContainer(boolean visible) {
+        inputContainer.setVisibility(visible ? View.VISIBLE : View.GONE);
+        listViewContainer.setVisibility(visible ? View.GONE : View.VISIBLE);
+        if (isFloatingView) {
+            navbar.setVisibility(inputContainer.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    public boolean inputContainerVisible() {
+        return inputContainer.getVisibility() == View.VISIBLE;
+    }
+
     @Override
     public boolean wasRequesting() {
         return false;
@@ -167,5 +197,18 @@ public class ExpCalculatorViewHandler extends BaseViewHandler {
     @Override
     public void cancelRunningTasks() {
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        switch (id) {
+            case R.id.navbar_back:
+                toggleInputContainer(true);
+                break;
+            case R.id.exp_table_button:
+                toggleInputContainer(false);
+                break;
+        }
     }
 }
