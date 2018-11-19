@@ -109,12 +109,14 @@ public class WorldmapFragment extends BaseFragment {
         final long worldmapDownloadId = prefs.getLong(Constants.WORLDMAP_DOWNLOAD_KEY, -1);
         query.setFilterById(worldmapDownloadId);
         Cursor cursor = downloadManager.query(query);
-        if (cursor.moveToFirst() && cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_RUNNING) {
+        if (cursor != null) {
+            if (cursor.moveToFirst() && cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_RUNNING) {
+                cursor.close();
+                showToast(getString(R.string.download_in_progress), Toast.LENGTH_SHORT);
+                return;
+            }
             cursor.close();
-            showToast(getString(R.string.download_in_progress), Toast.LENGTH_SHORT);
-            return;
         }
-        cursor.close();
         String title = getString(R.string.download_worldmap);
         String description = getString(R.string.download_worldmap_info);
         showInfoDialog(title, description, getResources().getString(R.string.yes), false, new DialogInterface.OnClickListener() {
