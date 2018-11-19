@@ -25,6 +25,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.WorldmapCitiesAdapter;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.interfaces.WorldmapCityClickListener;
 import com.dennyy.osrscompanion.models.Worldmap.City;
 
@@ -72,20 +73,26 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
         if (forceDownload) {
             deleteWorldmap();
         }
-        Uri url = Uri.parse("https://cdn.runescape.com/assets/img/external/oldschool/web/osrs_world_map_sept06_2018.png");
-        DownloadManager.Request request = new DownloadManager.Request(url);
-        request.setTitle(context.getResources().getString(R.string.downloading_worldmap));
-        request.setVisibleInDownloadsUi(false);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOCUMENTS, Constants.WORLDMAP_FILE_PATH);
+        try {
+            Uri url = Uri.parse("https://cdn.runescape.com/assets/img/external/oldschool/web/osrs_world_map_sept06_2018.png");
+            DownloadManager.Request request = new DownloadManager.Request(url);
+            request.setTitle(context.getResources().getString(R.string.downloading_worldmap));
+            request.setVisibleInDownloadsUi(false);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOCUMENTS, Constants.WORLDMAP_FILE_PATH);
 
-        DownloadManager downloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong(Constants.WORLDMAP_DOWNLOAD_KEY, downloadManager.enqueue(request));
-        editor.apply();
+            DownloadManager downloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putLong(Constants.WORLDMAP_DOWNLOAD_KEY, downloadManager.enqueue(request));
+            editor.apply();
 
-        progressBar.setVisibility(View.VISIBLE);
-        showToast(getString(R.string.downloading_worldmap), Toast.LENGTH_SHORT);
+            progressBar.setVisibility(View.VISIBLE);
+            showToast(getString(R.string.downloading_worldmap), Toast.LENGTH_SHORT);
+        }
+        catch (Exception e) {
+            Logger.log(e);
+            showToast(getString(R.string.download_worldmap_failed, e.getMessage()), Toast.LENGTH_LONG);
+        }
     }
 
     public ImageViewState getWorldmapState() {
@@ -111,9 +118,14 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
     }
 
     private void deleteWorldmap() {
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), Constants.WORLDMAP_FILE_PATH);
-        if (file.exists()) {
-            file.delete();
+        try {
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), Constants.WORLDMAP_FILE_PATH);
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+        catch (Exception e) {
+            Logger.log("worldmap deletion failed", e);
         }
     }
 

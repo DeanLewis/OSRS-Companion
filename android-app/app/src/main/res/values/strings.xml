@@ -294,6 +294,7 @@
     <string name="download_worldmap_complete">Worldmap downloaded</string>
     <string name="download_worldmap">Download worldmap</string>
     <string name="download_worldmap_info">Do you want to download the worldmap? The image is around 6MB, it will be saved on your device in the documents folder</string>
+    <string name="download_worldmap_failed">Worldmap download failed: %1$s</string>
     <string name="yes">yes</string>
     <string name="unable_to_write_to_storage">Unable to write to storage</string>
     <string name="worldmap_load_failed">Failed to load worldmap, check storage permissions or try downloading it again</string>
