@@ -287,8 +287,12 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
     }
 
     protected void showToast(String message, int duration) {
-        if (toast != null)
+        if (toast != null) {
             toast.cancel();
+        }
+        if (getActivity() == null || getActivity().isFinishing() || !isAdded()) {
+            return;
+        }
         toast = Toast.makeText(getActivity(), message, duration);
         toast.show();
     }

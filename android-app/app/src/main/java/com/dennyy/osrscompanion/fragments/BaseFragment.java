@@ -74,7 +74,7 @@ public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackC
         if (toast != null) {
             toast.cancel();
         }
-        if (getActivity() == null || getActivity().isFinishing()) {
+        if (getActivity() == null || getActivity().isFinishing() || !isAdded()) {
             return;
         }
         toast = Toast.makeText(getActivity(), message, duration);
