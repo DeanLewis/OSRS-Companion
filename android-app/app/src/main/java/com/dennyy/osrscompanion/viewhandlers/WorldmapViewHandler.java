@@ -42,6 +42,7 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
     private ListView listView;
     private ImageButton navbarMenu;
     private float listViewWidth;
+    private static final int minimumDpi = 50;
 
     public WorldmapViewHandler(Context context, View view, boolean isFloatingView) {
         super(context, view);
@@ -54,6 +55,7 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
         listView.setAdapter(new WorldmapCitiesAdapter(context, this));
         worldmapView.setOnImageEventListener(this);
         worldmapView.setOnTouchListener(this);
+        worldmapView.setMinimumDpi(minimumDpi);
         toggleMenu();
         if (isFloatingView) {
             navbarMenu.setVisibility(View.VISIBLE);
@@ -133,7 +135,9 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
     public void onWorldmapCityClick(int index, City city) {
         if (worldmapView.isReady()) {
             toggleMenu();
+            worldmapView.setMinimumDpi(160); // library default
             worldmapView.animateScaleAndCenter(worldmapView.getMaxScale(), new PointF(city.location.x, city.location.y)).start();
+            worldmapView.setMinimumDpi(minimumDpi);
         }
     }
 
