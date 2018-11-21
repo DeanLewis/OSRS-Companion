@@ -86,7 +86,7 @@ public class ActionsAdapter extends BaseAdapter {
         viewHolder.action.setText(skillDataAction.name);
         viewHolder.exp.setText(decimalFormat.format(exp));
         viewHolder.amount.setText(expDifference == -1 ? "N/A" : String.valueOf(Utils.formatNumber((int) Math.ceil(expDifference / exp))));
-        if (skillDataBonus != null && skillDataAction.ignoreBonus) {
+        if (skillDataBonus != null && !skillDataBonus.isEmpty() && skillDataAction.ignoreBonus) {
             convertView.setAlpha(0.3f);
         }
         else {

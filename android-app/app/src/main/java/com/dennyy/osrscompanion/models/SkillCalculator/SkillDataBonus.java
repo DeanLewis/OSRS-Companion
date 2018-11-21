@@ -8,4 +8,8 @@ public class SkillDataBonus {
         this.name = name;
         this.value = value;
     }
+
+    public boolean isEmpty() {
+        return this.value == 0;
+    }
 }
