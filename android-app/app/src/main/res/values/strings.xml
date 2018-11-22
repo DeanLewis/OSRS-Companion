@@ -318,6 +318,12 @@
     <string name="actions">Actions</string>
     <string name="first_start_info">Select your floating views in the settings and activate here</string>
     <string name="got_it">GOT IT</string>
+    <string name="title_changelog">Change log</string>
+    <string name="changelog_close">Close</string>
+    <string name="whats_new">What\'s new?</string>
+    <string name="changelog_bugfix">Bugfix</string>
+    <string name="changelog_new">New</string>
+    <string name="version_info">Tap to view changelog</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

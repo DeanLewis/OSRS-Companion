@@ -29,6 +29,7 @@ import com.dennyy.osrscompanion.asynctasks.UpdateItemIdListTask;
 import com.dennyy.osrscompanion.customviews.CheckboxDialogPreference;
 import com.dennyy.osrscompanion.customviews.SeekBarPreference;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.ItemIdListResultListener;
 import com.dennyy.osrscompanion.interfaces.SeekBarPreferenceListener;
@@ -67,6 +68,22 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    private String[] getPreferenceKeys() {
+        String[] prefs = new String[]{
+                Constants.PREF_LANDSCAPE_ONLY,
+                Constants.PREF_FULLSCREEN_ONLY,
+                Constants.PREF_PADDING_SIDE,
+                Constants.PREF_FLOATING_VIEWS,
+                Constants.PREF_FEEDBACK,
+                Constants.PREF_VIEW_IN_STORE,
+                Constants.PREF_VIEW_OTHER_APPS,
+                Constants.PREF_SHOW_LIBRARIES,
+                Constants.PREF_DOWNLOAD_ITEMIDLIST,
+                Constants.PREF_QUEST_SOURCE,
+                Constants.PREF_VERSION };
+        return prefs;
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -77,7 +94,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
         editor = preferences.edit();
 
         ((CheckboxDialogPreference) findPreference(Constants.PREF_FLOATING_VIEWS)).addListener(this);
-        String[] prefs = new String[]{ Constants.PREF_LANDSCAPE_ONLY, Constants.PREF_FULLSCREEN_ONLY, Constants.PREF_PADDING_SIDE, Constants.PREF_FLOATING_VIEWS, Constants.PREF_FEEDBACK, Constants.PREF_VIEW_IN_STORE, Constants.PREF_VIEW_OTHER_APPS, Constants.PREF_SHOW_LIBRARIES, Constants.PREF_DOWNLOAD_ITEMIDLIST, Constants.PREF_QUEST_SOURCE };
+        String[] prefs = getPreferenceKeys();
         for (String pref : prefs) {
             findPreference(pref).setOnPreferenceClickListener(this);
         }
@@ -85,6 +102,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
         for (String pref : seekBarPref) {
             ((SeekBarPreference) findPreference(pref)).setListener(this);
         }
+        findPreference(Constants.PREF_VERSION).setTitle(getResources().getString(R.string.version_string, BuildConfig.VERSION_NAME));
     }
 
     @Override
@@ -215,6 +233,15 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
                 break;
             case Constants.PREF_PADDING_SIDE:
                 showToast(getResources().getString(R.string.restart_to_take_effect), Toast.LENGTH_LONG);
+                break;
+            case Constants.PREF_VERSION:
+                try {
+                    Utils.showChangelogs(getActivity());
+                }
+                catch (Exception e) {
+                    Logger.log("showing changelogs from preferencefragment", e);
+                    showToast(getResources().getString(R.string.error_please_try_again), Toast.LENGTH_SHORT);
+                }
                 break;
         }
         return false;

@@ -18,11 +18,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.dennyy.osrscompanion.AppController;
+import com.dennyy.osrscompanion.customviews.ChangelogDialog;
 import com.dennyy.osrscompanion.customviews.InfoDialog;
+import com.dennyy.osrscompanion.models.Changelog.Changelogs;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -315,6 +318,18 @@ public class Utils {
         args.putBoolean(InfoDialog.ARG_SHOW_CANCEL, showCancelButton);
         dialog.setArguments(args);
         dialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "");
+    }
+
+    public static void showChangelogs(Context context) throws IOException, XmlPullParserException {
+        if (!(context instanceof AppCompatActivity)) {
+            return;
+        }
+        Changelogs changelogs = new ChangelogParser(context).parse();
+        ChangelogDialog dialog = new ChangelogDialog();
+        Bundle args = new Bundle();
+        args.putSerializable(ChangelogDialog.ARG_CHANGELOGS, changelogs);
+        dialog.setArguments(args);
+        dialog.show(((AppCompatActivity) context).getSupportFragmentManager(), Constants.FIRST_VERSION_STARTUP);
     }
 
     /**

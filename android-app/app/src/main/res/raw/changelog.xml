@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelog>
+
+    <changelogversion versionName="1.9-beta1">
+        <changelognew>Added this awesome changelog</changelognew>
+        <changelognew>The changelog is also available from the settings</changelognew>
+        <changelognew>Added small tutorial for first time users</changelognew>
+        <changelognew>Improved skill calculator layout and use separate view for the actions</changelognew>
+        <changelogtext>Added missing clue</changelogtext>
+        <changelogtext>Use new data structure for skill calculator</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="1.8.3">
+        <changelogtext>Added missing fairy rings</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="1.8.2">
+        <changelognew>Ability to sort quests</changelognew>
+        <changelogtext>Changed hiscores display order</changelogtext>
+        <changelogtext>Added more checks to prevent crashes</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="1.8.1">
+        <changelogbug>Fixed rswiki scroll issue</changelogbug>
+    </changelogversion>
+
+    <changelogversion versionName="1.8">
+        <changelognew>Added timers to send notifications on an interval or once after a period of time</changelognew>
+        <changelognew>Added a basic worldmap, a new storage permission is needed to download it to your device</changelognew>
+        <changelognew>Setting to display only f2p items in GE</changelognew>
+        <changelognew>Added clue scroll puzzles</changelognew>
+        <changelogbug>Fix for members icon displaying incorrectly</changelogbug>
+        <changelogbug>The usual bugfixes and improvements</changelogbug>
+    </changelogversion>
+
+    <changelogversion versionName="1.7.2">
+        <changelogtext>Temporary fix for search button in rswiki</changelogtext>
+        <changelogbug>Fix GE dropdown hiding incorrectly for some users</changelogbug>
+    </changelogversion>
+
+    <changelogversion versionName="1.7.1">
+        <changelogbug>Crash fixes for some users</changelogbug>
+    </changelogversion>
+
+    <changelogversion versionName="1.7">
+        <changelognew>Use the official rswiki (https://oldschool.runescape.wiki/)</changelognew>
+        <changelognew>Added option to set the size of the floating views</changelognew>
+        <changelognew>Added RuneHQ as quest guide source</changelognew>
+        <changelognew>Added miniquests to quest guides</changelognew>
+        <changelogbug>Fixed startup crashes</changelogbug>
+        <changelogtext>Added Crashlytics for better crash analysis</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="1.6.1">
+        <changelogbug>Fixed Kandarin cooking req</changelogbug>
+        <changelogbug>Possible fix for birdhouses not displaying</changelogbug>
+        <changelogbug>Possible fix for crash caused by a TransactionTooLargeException</changelogbug>
+    </changelogversion>
+
+    <changelogversion versionName="1.6">
+        <changelognew>Added OSRS News + floating window</changelognew>
+        <changelognew>Added buy limit info to common items</changelognew>
+        <changelognew>Added birdhouses to hunter skill calculator</changelognew>
+        <changelogtext>More stable OSBuddy price display</changelogtext>
+        <changelogtext>Under the hood performance improvements</changelogtext>
+        <changelogtext>Probably some bugfixes</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="1.5.1">
+        <changelogbug>Fix for hiscores lookup due to HTTP requests being rejected by jagex</changelogbug>
+    </changelogversion>
+
+    <changelogversion versionName="1.5">
+        <changelognew>Added farming to skill calculator</changelognew>
+        <changelognew>Split hiscore lookup and hiscore compare into different views</changelognew>
+        <changelognew>Added quest requirements to diary calculator</changelognew>
+        <changelogtext>More stable autocomplete in GE &amp; hide keyboard when scrolling</changelogtext>
+        <changelogtext>Lots of under the hood changes to make the app better and more manageable</changelogtext>
+        <changelogtext>No fullscreen keyboards when entering text</changelogtext>
+        <changelogtext>Various crash fixes</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="1.4.2">
+        <changelogbug>Fix for rswiki sections not expanding</changelogbug>
+    </changelogversion>
+
+    <changelogversion versionName="1.4.1">
+        <changelognew>Added basic adblocker for rswiki</changelognew>
+    </changelogversion>
+
+    <changelogversion versionName="1.4">
+        <changelognew>Scrollable floating views when a lot are active</changelognew>
+        <changelognew>Added fairy rings</changelognew>
+        <changelognew>Added diary calculator</changelognew>
+        <changelognew>Added rswiki webview</changelognew>
+        <changelogtext>Massively reduced app size</changelogtext>
+        <changelogtext>Search for treasure trails like the text in-game</changelogtext>
+        <changelogtext>Improved skill calculator input handling</changelogtext>
+        <changelogtext>Other small bugfixes and improvements</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="1.3.3">
+        <changelognew>Added extra checks to combat calculator and tracker</changelognew>
+    </changelogversion>
+
+    <changelogversion versionName="1.3.2">
+        <changelognew>Added treasure trails maps</changelognew>
+        <changelognew>Added credits page for used libraries</changelognew>
+    </changelogversion>
+
+    <changelogversion versionName="1.3.1">
+        <changelogbug>Fixed crashes in skill calculator</changelogbug>
+    </changelogversion>
+
+    <changelogversion versionName="1.3">
+        <changelognew>Added quest guides webview using rswiki</changelognew>
+        <changelogbug>Fixed crash in combat calculator</changelogbug>
+        <changelogbug>Fixed crash in combat skill calculator</changelogbug>
+        <changelogtext>Other bugfixes and improvement</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="1.2.2">
+        <changelogbug>Fixed crash in calculator</changelogbug>
+        <changelogbug>Fixed crash in tracker when having more than 2b exp</changelogbug>
+    </changelogversion>
+
+    <changelogversion versionName="1.2.1">
+        <changelognew>Added option to align floating view headers left + option to set margin</changelognew>
+        <changelogtext>Updated hiscore skill images</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="1.2">
+        <changelognew>Increased maximum allowed floating views to 3</changelognew>
+        <changelogbug>Fixed alpha setting</changelogbug>
+        <changelogtext>Other bugfixes and improvement</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="1.1.2">
+        <changelognew>Added skill calculator</changelognew>
+        <changelognew>Added experience calculator</changelognew>
+    </changelogversion>
+
+    <changelogversion versionName="1.1.1">
+        <changelognew>Added combat calculator</changelognew>
+    </changelogversion>
+
+    <changelogversion versionName="1.1">
+        <changelognew>Option to hide floating views in fullscreen apps</changelognew>
+        <changelogtext>Allow hyphens and underscores in rsn</changelogtext>
+        <changelognew>Added 'time ago' in GE</changelognew>
+        <changelog>Display message in GE when cache data is used</changelog>
+        <changelognew>Show OSBuddy prices in GE</changelognew>
+        <changelogtext>Lots of bugfixes and improvement</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="1.0">
+        <changelogtext>Initial release</changelogtext>
+    </changelogversion>
+
+</changelog>

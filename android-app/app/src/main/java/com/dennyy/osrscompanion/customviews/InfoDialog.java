@@ -32,7 +32,7 @@ public class InfoDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(R.string.ok,null);
+                .setPositiveButton(R.string.ok, null);
         if (showCancelButton)
             builder.setNegativeButton(android.R.string.no, null);
         return builder.create();

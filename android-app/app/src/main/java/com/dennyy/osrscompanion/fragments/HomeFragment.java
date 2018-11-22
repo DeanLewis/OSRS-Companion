@@ -7,6 +7,8 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
@@ -30,9 +32,11 @@ import com.dennyy.osrscompanion.FloatingViewService;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.TileAdapter;
 import com.dennyy.osrscompanion.customviews.CheckboxDialogPreference;
+import com.dennyy.osrscompanion.enums.AppStart;
 import com.dennyy.osrscompanion.fragments.calculators.CalculatorsFragment;
 import com.dennyy.osrscompanion.fragments.hiscores.HiscoresFragment;
 import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.General.TileData;
 
@@ -60,6 +64,18 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         initializeTiles();
+        initializeChangelog();
+    }
+
+    private void initializeChangelog() {
+        if (checkAppStart() == AppStart.FIRST_TIME_VERSION) {
+            try {
+                Utils.showChangelogs(getActivity());
+            }
+            catch (Exception e) {
+                Logger.log("showing changelogs from homefragment", e);
+            }
+        }
     }
 
     @Override
@@ -247,5 +263,33 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
         transaction.commit();
     }
 
+
+    private AppStart checkAppStart() {
+        AppStart appStart = AppStart.NORMAL;
+        try {
+            String packageName = getActivity().getPackageName();
+            PackageInfo pInfo = getActivity().getPackageManager().getPackageInfo(packageName, 0);
+            int previousVersionCode = preferences.getInt(Constants.PREVIOUS_APP_VERSION, -1);
+            int currentVersionCode = pInfo.versionCode;
+            appStart = checkAppStart(currentVersionCode, previousVersionCode);
+            preferences.edit().putInt(Constants.PREVIOUS_APP_VERSION, currentVersionCode).apply();
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            Logger.log(e);
+        }
+        return appStart;
+    }
+
+    private AppStart checkAppStart(int currentVersionCode, int previousVersionCode) {
+        if (previousVersionCode == -1) {
+            return AppStart.FIRST_TIME;
+        }
+        else if (previousVersionCode < currentVersionCode) {
+            return AppStart.FIRST_TIME_VERSION;
+        }
+        else {
+            return AppStart.NORMAL;
+        }
+    }
 
 }

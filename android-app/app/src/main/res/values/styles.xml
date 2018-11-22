@@ -57,4 +57,14 @@
         <item name="android:popupBackground">@color/quest_popup_menu_background</item>
         <item name="android:textColor">@color/text</item>
     </style>
+
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:windowTitleStyle">@style/TitleDialogTextStyle</item>
+    </style>
+
+    <style name="TitleDialogTextStyle" parent="Base.DialogWindowTitle.AppCompat">
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textAppearance">@style/DialogWindowTitle</item>
+    </style>
 </resources>

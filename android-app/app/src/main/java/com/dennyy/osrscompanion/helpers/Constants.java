@@ -83,6 +83,7 @@ public class Constants {
     public static final String PREF_QUEST_SOURCE = "pref_quest_source";
     public static final String PREF_SIZE = "pref_size";
     public static final String PREF_GE_SOURCE = "pref_ge_items_source";
+    public static final String PREF_VERSION = "pref_version";
 
     public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     public static final int CODE_STORAGE_PERMISSION = 2085;
@@ -106,4 +107,6 @@ public class Constants {
     public static final int WORLDMAP_NOTIFICATION_ID = 966;
 
     public static final String FIRST_STARTUP = BuildConfig.APPLICATION_ID + ".pref_first_startup";
+    public static final String FIRST_VERSION_STARTUP = BuildConfig.APPLICATION_ID + ".pref_first_version_startup";
+    public static final String PREVIOUS_APP_VERSION = BuildConfig.APPLICATION_ID + ".previous_app_version";
 }

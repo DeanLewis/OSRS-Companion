@@ -138,5 +138,11 @@
             android:layout="@layout/preference_setting_layout"
             android:summary="@string/libraries_info"
             android:title="@string/libraries"/>
+
+        <Preference
+            android:key="pref_version"
+            android:layout="@layout/preference_setting_layout"
+            android:summary="@string/version_info"
+            android:title="@string/version_string"/>
     </PreferenceCategory>
 </PreferenceScreen>
