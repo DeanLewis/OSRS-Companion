@@ -9,8 +9,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,8 +25,10 @@ import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.ActionsAdapter;
 import com.dennyy.osrscompanion.adapters.NothingSelectedSpinnerAdapter;
+import com.dennyy.osrscompanion.adapters.SkillBonusSpinnerAdapter;
 import com.dennyy.osrscompanion.adapters.SkillSelectorSpinnerAdapter;
 import com.dennyy.osrscompanion.asynctasks.GetActionsTask;
+import com.dennyy.osrscompanion.asynctasks.GetUserStatsTask;
 import com.dennyy.osrscompanion.customviews.ClearableEditText;
 import com.dennyy.osrscompanion.customviews.HiscoreTypeSelectorLayout;
 import com.dennyy.osrscompanion.database.AppDb;
@@ -34,13 +39,16 @@ import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.ActionsLoadListener;
 import com.dennyy.osrscompanion.interfaces.HiscoreTypeSelectedListener;
-import com.dennyy.osrscompanion.models.General.Action;
+import com.dennyy.osrscompanion.interfaces.UserStatsLoadedListener;
 import com.dennyy.osrscompanion.models.General.PlayerStats;
 import com.dennyy.osrscompanion.models.General.Skill;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
+import com.dennyy.osrscompanion.models.SkillCalculator.SkillCalculatorTypes;
+import com.dennyy.osrscompanion.models.SkillCalculator.SkillData;
+import com.dennyy.osrscompanion.models.SkillCalculator.SkillDataAction;
+import com.dennyy.osrscompanion.models.SkillCalculator.SkillDataBonus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class SkillCalculatorViewHandler extends BaseViewHandler implements HiscoreTypeSelectedListener, View.OnClickListener, AdapterView.OnItemSelectedListener, TextWatcher {
     public String hiscoresData;
@@ -58,30 +66,41 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
     private int refreshCount;
     private SwipeRefreshLayout refreshLayout;
     private Spinner skillSelectorSpinner;
+    private Spinner bonusSpinner;
+    private NothingSelectedSpinnerAdapter nothingSelectedSpinnerAdapter;
+    private SkillSelectorSpinnerAdapter skillSelectorSpinnerAdapter;
+    private SkillBonusSpinnerAdapter bonusAdapter;
     private ActionsAdapter adapter;
-    private ArrayList<Integer> skills;
+    private SkillCalculatorTypes skillCalculatorTypes;
+    private LinearLayout listViewContainer;
+    private RelativeLayout navbar;
+    private ListView actionsListView;
 
-    public SkillCalculatorViewHandler(final Context context, View view) {
+    public SkillCalculatorViewHandler(final Context context, View view, boolean isFloatingView) {
         super(context, view);
         selectedSkillId = -1;
         rsnEditText = ((ClearableEditText) view.findViewById(R.id.rsn_input)).getEditText();
         refreshLayout = view.findViewById(R.id.refresh_layout);
-
-        view.findViewById(R.id.get_stats_button).setOnClickListener(this);
+        refreshLayout.setEnabled(false);
+        listViewContainer = view.findViewById(R.id.listview_container);
+        navbar = view.findViewById(R.id.navbar);
         hiscoreTypeSelectorLayout = view.findViewById(R.id.hiscore_type_selector);
-        hiscoreTypeSelectorLayout.setOnTypeSelectedListener(this);
         selectedHiscoreType = hiscoreTypeSelectorLayout.getHiscoreType();
 
         skillSelectorSpinner = view.findViewById(R.id.skill_selector_spinner);
-        skills = new ArrayList<>(Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23));
+        bonusSpinner = view.findViewById(R.id.bonus_selector_spinner);
+        skillCalculatorTypes = new SkillCalculatorTypes();
+        skillSelectorSpinnerAdapter = new SkillSelectorSpinnerAdapter(context, skillCalculatorTypes);
+        nothingSelectedSpinnerAdapter = new NothingSelectedSpinnerAdapter(skillSelectorSpinnerAdapter, getString(R.string.select_a_skill), context);
+        skillSelectorSpinner.setAdapter(nothingSelectedSpinnerAdapter);
 
-        skillSelectorSpinner.setAdapter(new NothingSelectedSpinnerAdapter(new SkillSelectorSpinnerAdapter(context, skills), getString(R.string.select_a_skill), context));
-        skillSelectorSpinner.setOnItemSelectedListener(this);
-
-        ListView actionsListView = view.findViewById(R.id.actions_listview);
-        adapter = new ActionsAdapter(context, new ArrayList<Action>());
+        actionsListView = view.findViewById(R.id.actions_listview);
+        adapter = new ActionsAdapter(context, new ArrayList<SkillDataAction>());
         actionsListView.setAdapter(adapter);
-
+        if (isFloatingView) {
+            navbar.setVisibility(View.VISIBLE);
+            navbar.findViewById(R.id.navbar_back).setOnClickListener(this);
+        }
         initializeListeners();
         initializeCachedUser();
         final Handler handler = new Handler();
@@ -95,13 +114,22 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
 
     private void initializeCachedUser() {
         String inputRsn = getRsn(rsnEditText);
-        UserStats cachedData = AppDb.getInstance(context).getUserStats(inputRsn, hiscoreTypeSelectorLayout.getHiscoreType());
-        if (cachedData == null) {
-            return;
-        }
-        hiscoresData = cachedData.stats;
-        showToast(resources.getString(R.string.last_updated_at, Utils.convertTime(cachedData.dateModified)), Toast.LENGTH_LONG);
-        handleHiscoresData(hiscoresData);
+        new GetUserStatsTask(context, inputRsn, hiscoreTypeSelectorLayout.getHiscoreType(), new UserStatsLoadedListener() {
+            @Override
+            public void onUserStatsLoaded(UserStats userStats) {
+                if (userStats == null) {
+                    return;
+                }
+                hiscoresData = userStats.stats;
+                showToast(resources.getString(R.string.last_updated_at, Utils.convertTime(userStats.dateModified)), Toast.LENGTH_LONG);
+                handleHiscoresData(hiscoresData);
+            }
+
+            @Override
+            public void onUserStatsLoadFailed() {
+
+            }
+        }).execute();
     }
 
     private void initializeListeners() {
@@ -118,20 +146,24 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
                 return false;
             }
         });
+        view.findViewById(R.id.get_stats_button).setOnClickListener(this);
         view.findViewById(R.id.calc_with_target_exp).setOnClickListener(this);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (allowUpdateUser())
-                    updateUser();
-            }
-        });
+        skillSelectorSpinner.setOnItemSelectedListener(this);
+        hiscoreTypeSelectorLayout.setOnTypeSelectedListener(this);
         ((EditText) view.findViewById(R.id.current_lvl)).addTextChangedListener(this);
         ((EditText) view.findViewById(R.id.target_lvl)).addTextChangedListener(this);
         ((EditText) view.findViewById(R.id.current_exp)).addTextChangedListener(this);
         ((EditText) view.findViewById(R.id.target_exp)).addTextChangedListener(this);
+        bonusSpinner.setOnItemSelectedListener(this);
+        actionsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (adapter.getItem(position).ignoreBonus) {
+                    showToast(getString(R.string.bonus_not_applied), Toast.LENGTH_SHORT);
+                }
+            }
+        });
     }
-
 
     public void handleHiscoresData(String result) {
         PlayerStats playerStats = new PlayerStats(result);
@@ -139,19 +171,20 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
             showToast(resources.getString(R.string.player_not_found), Toast.LENGTH_LONG);
             return;
         }
-        int selectedIndex = skillSelectorSpinner.getSelectedItemPosition() - 1;
-        if (selectedIndex < 0) {
+
+        String dataFile = (String) nothingSelectedSpinnerAdapter.getItem(skillSelectorSpinner.getSelectedItemPosition());
+        if (dataFile == null) {
             return;
         }
-        int selectedSkillId = skills.get(selectedIndex);
-        Skill skill = playerStats.getSkill(SkillType.fromId(selectedSkillId));
-        setValueToEditText(R.id.current_lvl, skill.getLevel());
-        setValueToEditText(R.id.target_lvl, Math.min(126, skill.getLevel() + 1));
+        SkillDataAction action = adapter.getItem(selectedSkillId);
+        Skill skill = playerStats.getSkill(action.skillType);
+        int lvl = RsUtils.lvl(skill.getExp(), false);
+        setValueToEditText(R.id.current_lvl, lvl);
+        setValueToEditText(R.id.target_lvl, Math.min(126, lvl + 1));
         setValueToEditText(R.id.current_exp, skill.getExp());
-        setValueToEditText(R.id.target_exp, RsUtils.exp(skill.getLevel() + 1));
+        setValueToEditText(R.id.target_exp, RsUtils.exp(Math.min(126, lvl + 1)));
         adapter.updateListFromExp(getValueFromEditText(R.id.current_exp, 0, Constants.MAX_EXP), getValueFromEditText(R.id.target_exp, 0, Constants.MAX_EXP));
     }
-
 
     public boolean allowUpdateUser() {
         long refreshPeriod = System.currentTimeMillis() - lastRefreshTimeMs;
@@ -178,7 +211,6 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
             lastRefreshTimeMs = System.currentTimeMillis();
         refreshCount++;
     }
-
 
     public void updateUser() {
         final String rsn = rsnEditText.getText().toString();
@@ -253,7 +285,19 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
             case R.id.calc_with_target_exp:
                 calculateWithTargetExp();
                 break;
+            case R.id.navbar_back:
+                toggleInputContainer(!inputContainerVisible());
         }
+    }
+
+    public void toggleInputContainer(boolean visible) {
+        refreshLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
+        listViewContainer.setVisibility(visible ? View.GONE : View.VISIBLE);
+        ((Button) navbar.findViewById(R.id.navbar_back)).setText(visible ? R.string.actions : R.string.back);
+    }
+
+    public boolean inputContainerVisible() {
+        return refreshLayout.getVisibility() == View.VISIBLE;
     }
 
     private void calculateWithTargetExp() {
@@ -281,6 +325,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
         setValueToEditText(R.id.target_lvl, RsUtils.lvl(toExp, false));
         adapter.updateListFromExp(fromExp, toExp);
         Utils.hideKeyboard(context, this.view);
+        toggleInputContainer(false);
     }
 
     public void updateIndicators() {
@@ -288,26 +333,45 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        int selectedIndex = i - 1;
-        if (selectedIndex < 0) {
+    public void onItemSelected(AdapterView<?> adapterView, View view, int index, long l) {
+        if (adapterView.getId() == R.id.skill_selector_spinner) {
+            String dataFile = (String) nothingSelectedSpinnerAdapter.getItem(index);
+            if (dataFile == null) {
+                return;
+            }
+            selectedSkillId = index - 1;
+            SkillType skillType = skillSelectorSpinnerAdapter.getSelectedSkillType(selectedSkillId);
+
+            new GetActionsTask(context, skillType, dataFile, new ActionsLoadListener() {
+                @Override
+                public void onActionsLoaded(SkillData skillData) {
+                    loadBonuses(skillData);
+                    adapter.updateList(skillData.actions);
+                    if (!Utils.isNullOrEmpty(hiscoresData)) {
+                        handleHiscoresData(hiscoresData);
+                    }
+                }
+
+                @Override
+                public void onActionsLoadFailed() {
+                    showToast(getString(R.string.unexpected_error_try_reopen), Toast.LENGTH_SHORT);
+                }
+            }).execute();
+        }
+        else if (adapterView.getId() == R.id.bonus_selector_spinner) {
+            SkillDataBonus bonus = bonusAdapter.getItem(index);
+            adapter.updateBonus(bonus);
+        }
+    }
+
+    private void loadBonuses(SkillData skillData) {
+        if (!skillData.hasBonuses()) {
+            bonusSpinner.setVisibility(View.GONE);
             return;
         }
-        selectedSkillId = skills.get(selectedIndex);
-        new GetActionsTask(context, selectedSkillId, new ActionsLoadListener() {
-            @Override
-            public void onActionsLoaded(ArrayList<Action> actions) {
-                adapter.updateList(actions);
-                if (!Utils.isNullOrEmpty(hiscoresData)) {
-                    handleHiscoresData(hiscoresData);
-                }
-            }
-
-            @Override
-            public void onActionsLoadFailed() {
-                showToast(getString(R.string.unexpected_error_try_reopen), Toast.LENGTH_SHORT);
-            }
-        }).execute();
+        bonusAdapter = new SkillBonusSpinnerAdapter(context, skillData.bonuses);
+        bonusSpinner.setAdapter(bonusAdapter);
+        bonusSpinner.setVisibility(View.VISIBLE);
     }
 
     @Override

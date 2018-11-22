@@ -2,9 +2,6 @@ package com.dennyy.osrscompanion.fragments.calculators;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -41,7 +38,7 @@ public class SkillCalculatorFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.skill_calculator));
 
-        skillCalculatorViewHandler = new SkillCalculatorViewHandler(getActivity(), view);
+        skillCalculatorViewHandler = new SkillCalculatorViewHandler(getActivity(), view, false);
         if (savedInstanceState != null) {
             skillCalculatorViewHandler.selectedHiscoreType = HiscoreType.fromValue(savedInstanceState.getInt(HISCORE_TYPE_KEY));
             skillCalculatorViewHandler.hiscoresData = savedInstanceState.getString(HISCORE_DATA_KEY);
@@ -77,21 +74,12 @@ public class SkillCalculatorFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_refresh_only, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                if (skillCalculatorViewHandler.allowUpdateUser())
-                    skillCalculatorViewHandler.updateUser();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+    public boolean onBackClick() {
+        if (skillCalculatorViewHandler != null && !skillCalculatorViewHandler.inputContainerVisible()) {
+            skillCalculatorViewHandler.toggleInputContainer(true);
+            return true;
         }
+        return super.onBackClick();
     }
 
     @Override

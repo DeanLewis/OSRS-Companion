@@ -13,4 +13,8 @@ public class Logger {
     public static void log(Exception exception) {
 
     }
+
+    public static void log(String message) {
+        Log.d(AppController.TAG, message);
+    }
 }

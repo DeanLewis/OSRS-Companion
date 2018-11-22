@@ -10,34 +10,40 @@ import android.widget.TextView;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
-import com.dennyy.osrscompanion.models.General.Action;
+import com.dennyy.osrscompanion.models.SkillCalculator.SkillDataAction;
+import com.dennyy.osrscompanion.models.SkillCalculator.SkillDataBonus;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class ActionsAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<Action> actions;
+    private ArrayList<SkillDataAction> skillDataActions;
     private int expDifference;
     private int currentLvl;
     private int targetLvl;
+    private SkillDataBonus skillDataBonus;
+    private DecimalFormat decimalFormat;
 
-
-    public ActionsAdapter(Context context, ArrayList<Action> actions) {
+    public ActionsAdapter(Context context, ArrayList<SkillDataAction> skillDataActions) {
         this.context = context;
-        this.actions = actions;
+        this.skillDataActions = skillDataActions;
         this.expDifference = -1;
         this.currentLvl = -1;
         this.targetLvl = -1;
+        this.decimalFormat = new DecimalFormat("#.#");
+        this.decimalFormat.setRoundingMode(RoundingMode.FLOOR);
     }
 
     @Override
     public int getCount() {
-        return actions.size();
+        return skillDataActions.size();
     }
 
     @Override
-    public Action getItem(int i) {
-        return actions.get(i);
+    public SkillDataAction getItem(int i) {
+        return skillDataActions.get(i);
     }
 
     @Override
@@ -62,35 +68,48 @@ public class ActionsAdapter extends BaseAdapter {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        Action action = actions.get(i);
-        viewHolder.lvl.setText(String.valueOf(action.level));
+        SkillDataAction skillDataAction = skillDataActions.get(i);
+        viewHolder.lvl.setText(String.valueOf(skillDataAction.level));
         if (targetLvl > 0 || currentLvl > 0) {
-            if (action.level <= currentLvl){
+            if (skillDataAction.level <= currentLvl) {
                 viewHolder.lvl.setTextColor(context.getResources().getColor(R.color.green));
             }
-            else if (action.level <= targetLvl) {
+            else if (skillDataAction.level <= targetLvl) {
                 viewHolder.lvl.setTextColor(context.getResources().getColor(R.color.orange));
             }
-            else if (action.level > currentLvl) {
+            else if (skillDataAction.level > currentLvl) {
                 viewHolder.lvl.setTextColor(context.getResources().getColor(R.color.red));
             }
         }
-        viewHolder.action.setText(action.name);
-        viewHolder.exp.setText(String.valueOf(action.exp));
-        viewHolder.amount.setText(expDifference == -1 ? "N/A" : String.valueOf(Utils.formatNumber((int) Math.ceil(expDifference / action.exp))));
+
+        double exp = skillDataAction.exp + (!skillDataAction.ignoreBonus && skillDataBonus != null ? skillDataBonus.value * skillDataAction.exp : 0);
+        viewHolder.action.setText(skillDataAction.name);
+        viewHolder.exp.setText(decimalFormat.format(exp));
+        viewHolder.amount.setText(expDifference == -1 ? "N/A" : String.valueOf(Utils.formatNumber((int) Math.ceil(expDifference / exp))));
+        if (skillDataBonus != null && skillDataAction.ignoreBonus) {
+            convertView.setAlpha(0.3f);
+        }
+        else {
+            convertView.setAlpha(1.0f);
+        }
         return convertView;
     }
 
-    public void updateList(ArrayList<Action> actions) {
-        this.actions.clear();
-        this.actions.addAll(actions);
+    public void updateList(ArrayList<SkillDataAction> skillDataActions) {
+        this.skillDataActions.clear();
+        this.skillDataActions.addAll(skillDataActions);
         notifyDataSetChanged();
     }
 
     public void updateListFromExp(int currentExp, int targetExp) {
         expDifference = targetExp - currentExp;
-        this.currentLvl = RsUtils.lvl(currentExp,true);
-        this.targetLvl = RsUtils.lvl(targetExp,true);
+        this.currentLvl = RsUtils.lvl(currentExp, true);
+        this.targetLvl = RsUtils.lvl(targetExp, true);
+        notifyDataSetChanged();
+    }
+
+    public void updateBonus(SkillDataBonus bonus) {
+        skillDataBonus = bonus;
         notifyDataSetChanged();
     }
 

@@ -9,7 +9,7 @@ public class UserStats implements Serializable {
 
     public String rsn;
     public String stats;
-    public int hiscoreType = HiscoreType.NORMAL.getValue();
+    public int hiscoreType;
     public long dateModified;
 
     public UserStats(String rsn, String stats, HiscoreType hiscoreType) {

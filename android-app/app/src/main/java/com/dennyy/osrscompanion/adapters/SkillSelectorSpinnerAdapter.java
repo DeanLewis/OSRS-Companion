@@ -10,27 +10,32 @@ import android.widget.TextView;
 
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.SkillType;
-import com.dennyy.osrscompanion.helpers.RsUtils;
-
-import java.util.ArrayList;
+import com.dennyy.osrscompanion.models.SkillCalculator.SkillCalculatorTypes;
+import com.dennyy.osrscompanion.models.SkillCalculator.SkillDataBonus;
 
 public class SkillSelectorSpinnerAdapter extends BaseAdapter {
-    private ArrayList<Integer> skills;
+    private SkillCalculatorTypes skillCalculatorTypes;
     private Context context;
+    private SkillType[] keys;
 
-    public SkillSelectorSpinnerAdapter(Context context, ArrayList<Integer> skills) {
+    public SkillSelectorSpinnerAdapter(Context context, SkillCalculatorTypes skillCalculatorTypes) {
         this.context = context;
-        this.skills = skills;
+        this.skillCalculatorTypes = skillCalculatorTypes;
+        this.keys = skillCalculatorTypes.keySet().toArray(new SkillType[skillCalculatorTypes.size()]);
     }
 
     @Override
     public int getCount() {
-        return skills.size();
+        return skillCalculatorTypes.size();
     }
 
     @Override
-    public Integer getItem(int i) {
-        return skills.get(i);
+    public String getItem(int position) {
+        return skillCalculatorTypes.get(keys[position]);
+    }
+
+    public SkillType getSelectedSkillType(int position) {
+        return keys[position];
     }
 
     @Override
@@ -53,9 +58,9 @@ public class SkillSelectorSpinnerAdapter extends BaseAdapter {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        int skill = skills.get(i);
-        viewHolder.skillName.setText(RsUtils.getSkill(skill));
-        viewHolder.skillIcon.setImageDrawable(context.getResources().getDrawable(SkillType.fromId(skill).getDrawable()));
+        SkillType skillType = keys[i];
+        viewHolder.skillName.setText(skillType.name);
+        viewHolder.skillIcon.setImageDrawable(context.getResources().getDrawable(skillType.drawable));
         return convertView;
     }
 
