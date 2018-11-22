@@ -104,4 +104,6 @@ public class Constants {
     public static final String WORLDMAP_DIRECTORY_PATH = String.format("/%1$s", APP_NAME);
     public static final String WORLDMAP_FILE_PATH = String.format("/%1$s/worldmap.png", APP_NAME);
     public static final int WORLDMAP_NOTIFICATION_ID = 966;
+
+    public static final String FIRST_STARTUP = BuildConfig.APPLICATION_ID + ".pref_first_startup";
 }

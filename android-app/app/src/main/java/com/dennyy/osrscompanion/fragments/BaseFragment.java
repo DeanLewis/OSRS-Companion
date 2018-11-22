@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -17,9 +19,10 @@ import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.IBackButtonHandler;
+import com.dennyy.osrscompanion.interfaces.OptionsMenuListener;
 import com.github.mikephil.charting.jobs.MoveViewJob;
 
-public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackClickListener {
+public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackClickListener, OptionsMenuListener {
 
     protected View view;
     protected TextView toolbarTitle;
@@ -27,10 +30,12 @@ public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackC
     private Toast toast;
     private IBackButtonHandler.BackButtonHandlerInterface backButtonHandler;
     private boolean isTransactionSafe;
+    private OptionsMenuListener optionsMenuListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        optionsMenuListener = this;
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -41,6 +46,17 @@ public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackC
             activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        optionsMenuListener.onOptionsMenuCreated();
+    }
+
+    @Override
+    public void onOptionsMenuCreated() {
+
     }
 
     @Override

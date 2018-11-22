@@ -47,4 +47,5 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation project(':library')
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
+    implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
 }

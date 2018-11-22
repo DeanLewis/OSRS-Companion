@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,8 +36,11 @@ import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.General.TileData;
 
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 public class HomeFragment extends BaseTileFragment implements AdapterView.OnItemClickListener{
+    private Switch mainSwitch;
     private long lastSwitchTimeMs;
+    private SharedPreferences preferences;
 
     public HomeFragment() {
         super(2, 4);
@@ -54,7 +58,24 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.app_name));
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         initializeTiles();
+    }
+
+    @Override
+    public void onOptionsMenuCreated() {
+        String currentPreferences = preferences.getString(Constants.PREF_FLOATING_VIEWS, null);
+        if (Utils.isNullOrEmpty(currentPreferences)) {
+            new MaterialShowcaseView.Builder(getActivity())
+                    .setTarget(mainSwitch)
+                    .setDismissOnTargetTouch(true)
+                    .setMaskColour(Color.parseColor("#E6335075"))
+                    .setDismissText(getResources().getString(R.string.got_it))
+                    .setContentText(getResources().getString(R.string.first_start_info))
+                    .setDelay(500)
+                    .singleUse(Constants.FIRST_STARTUP)
+                    .show();
+        }
     }
 
     @Override
@@ -96,11 +117,10 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
     public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
 
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final String selected = preferences.getString(Constants.PREF_FLOATING_VIEWS, "");
+        mainSwitch = menu.findItem(R.id.myswitch).getActionView().findViewById(R.id.switchForActionBar);
 
         final Switch mainSwitch = menu.findItem(R.id.myswitch).getActionView().findViewById(R.id.switchForActionBar);
-
         mainSwitch.setChecked(Utils.isMyServiceRunning(getActivity(), FloatingViewService.class));
         mainSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

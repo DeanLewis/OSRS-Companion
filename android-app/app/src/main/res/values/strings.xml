@@ -167,7 +167,9 @@
     <string name="lib_observeable_webview">Android-ObservableScrollView</string>
     <string name="lib_subsampling_scale_image_view_author">David Morrissey</string>
     <string name="lib_subsampling_scale_image_view">Subsampling Scale Image View</string>
-    
+    <string name="material_showcase_view">MaterialShowcaseView</string>
+    <string name="material_showcase_view_author">Dean Wild</string>
+
     <string name="failed_payment_verification">Payment succeeded, but could not verify purchase</string>
     <string name="hiscores_sdmm">SDMM</string>
     <string name="refresh">Refresh</string>
@@ -314,6 +316,8 @@
     <string name="bonus_not_applied">Bonus is not applied for this action</string>
     <string name="back">Back</string>
     <string name="actions">Actions</string>
+    <string name="first_start_info">Select your floating views in the settings and activate here</string>
+    <string name="got_it">GOT IT</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>
