@@ -2,10 +2,12 @@
 <changelog>
 
     <changelogversion versionName="1.9-beta1">
-        <changelognew>Added this awesome changelog</changelognew>
-        <changelognew>The changelog is also available from the settings</changelognew>
+        <changelogimportant>The floating view service will now display a persistent notification so your device is less likely to randomly kill the app. You can turn the notification off in your device settings but the timer notifications also won't show anymore</changelogimportant>
+        <changelognew>Added this awesome changelog, which is also available from the settings</changelognew>
         <changelognew>Added small tutorial for first time users</changelognew>
         <changelognew>Improved skill calculator layout and use separate view for the actions</changelognew>
+        <changelognew>Use separate view for experience table</changelognew>
+        <changelognew>Added button in the settings to go directly to the system settings of the app</changelognew>
         <changelogtext>Added missing clue</changelogtext>
         <changelogtext>Use new data structure for skill calculator</changelogtext>
     </changelogversion>
