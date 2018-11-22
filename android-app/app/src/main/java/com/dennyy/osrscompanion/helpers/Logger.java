@@ -1,5 +1,9 @@
 package com.dennyy.osrscompanion.helpers;
 
+import android.util.Log;
+
+import com.dennyy.osrscompanion.AppController;
+
 public class Logger {
 
     public static void log(String message, Exception exception) {
