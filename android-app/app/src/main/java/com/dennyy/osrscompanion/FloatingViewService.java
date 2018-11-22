@@ -1,12 +1,15 @@
 package com.dennyy.osrscompanion;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +55,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class FloatingViewService extends Service implements WindowManagerContainer.ArrangementChangeListener {
+    private final static int NOTIFICATION_ID = 1337;
     private final static String calcHeadName = CalculatorViewHandler.class.getSimpleName();
     private final static String geHeadName = GrandExchangeViewHandler.class.getSimpleName();
     private final static String trackerHeadName = TrackerViewHandler.class.getSimpleName();
@@ -240,6 +244,21 @@ public class FloatingViewService extends Service implements WindowManagerContain
                 }
             }
         });
+
+        runAsForeground();
+    }
+
+    private void runAsForeground() {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, BuildConfig.APPLICATION_ID)
+                .setSmallIcon(R.drawable.persistent_notification_icon)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.osrscompanion4))
+                .setContentTitle(getResources().getString(R.string.app_name))
+                .setContentText(getResources().getString(R.string.floating_view_service_running))
+                .setContentIntent(pendingIntent);
+
+        startForeground(NOTIFICATION_ID, builder.build());
     }
 
     @Subscribe
@@ -264,9 +283,15 @@ public class FloatingViewService extends Service implements WindowManagerContain
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
+
+    @Override
     public void onDestroy() {
         unregisterReceiver(windowManagerContainer.getReceiver());
         windowManagerContainer.destroy();
+        stopForeground(true);
         stopSelf();
         EventBus.getDefault().unregister(this);
         super.onDestroy();

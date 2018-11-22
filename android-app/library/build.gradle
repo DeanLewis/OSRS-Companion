@@ -7,7 +7,7 @@ android {
     resourcePrefix "chatheads_"
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 26
     }
     buildTypes {

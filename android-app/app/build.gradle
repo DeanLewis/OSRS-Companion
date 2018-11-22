@@ -7,8 +7,8 @@ android {
         applicationId "com.dennyy.osrscompanion"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 19
-        versionName "1.1.3"
+        versionCode 64
+        versionName "1.8.3"
         vectorDrawables.useSupportLibrary = true
     }
 

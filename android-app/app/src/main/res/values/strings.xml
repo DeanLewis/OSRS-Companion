@@ -279,7 +279,7 @@
     <string name="timer_delete">Delete</string>
     <string name="timer_repeated">Repeated every %1$s</string>
     <string name="timer_once">Once after %1$s</string>
-    <string name="channel_description">OSRS Companion timers</string>
+    <string name="channel_description">OSRS Companion notifications</string>
     <string name="timer_stop">Stop</string>
     <string name="timer_edit_active">The timer is currently active, restart the timer for the changes to take effect</string>
     <string name="timer_restart">Restart</string>
@@ -324,6 +324,7 @@
     <string name="changelog_bugfix">Bugfix</string>
     <string name="changelog_new">New</string>
     <string name="version_info">Tap to view changelog</string>
+    <string name="floating_view_service_running">Floating view service is currently running</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>
