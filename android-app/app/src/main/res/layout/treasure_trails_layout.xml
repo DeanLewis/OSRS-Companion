@@ -7,9 +7,9 @@
 
     <RelativeLayout
         android:id="@+id/tt_navbar"
-        android:background="@color/background_dark"
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:background="@color/background_dark"
         android:visibility="gone">
 
         <LinearLayout
@@ -54,7 +54,6 @@
         android:background="@color/background"
         android:orientation="vertical">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -79,7 +78,7 @@
             <LinearLayout
                 android:id="@+id/treasure_trail_data"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingEnd="10dp"
                 android:paddingStart="10dp"
@@ -92,29 +91,22 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/input_background"
                     android:gravity="center_horizontal"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/clue"
+                        android:textColor="@color/text"
+                        android:textStyle="bold"/>
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:text="@string/clue"
-                            android:textColor="@color/text"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:id="@+id/treasure_trail_clue"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:textColor="@color/text"/>
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/treasure_trail_clue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/text"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -124,29 +116,22 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/input_background"
                     android:gravity="center_horizontal"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/treasure_trail_type"
+                        android:textColor="@color/text"
+                        android:textStyle="bold"/>
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:text="@string/treasure_trail_type"
-                            android:textColor="@color/text"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:id="@+id/treasure_trail_type"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:textColor="@color/text"/>
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/treasure_trail_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/text"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -157,29 +142,22 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/input_background"
                     android:gravity="center_horizontal"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/treasure_trail_answer"
+                        android:textColor="@color/text"
+                        android:textStyle="bold"/>
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:text="@string/treasure_trail_answer"
-                            android:textColor="@color/text"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:id="@+id/treasure_trail_answer"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:textColor="@color/text"/>
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/treasure_trail_answer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/text"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -190,29 +168,22 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/input_background"
                     android:gravity="center_horizontal"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/treasure_trail_npc"
+                        android:textColor="@color/text"
+                        android:textStyle="bold"/>
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:text="@string/treasure_trail_npc"
-                            android:textColor="@color/text"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:id="@+id/treasure_trail_npc"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:textColor="@color/text"/>
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/treasure_trail_npc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/text"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -223,29 +194,22 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/input_background"
                     android:gravity="center_horizontal"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/treasure_trail_location"
+                        android:textColor="@color/text"
+                        android:textStyle="bold"/>
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:text="@string/treasure_trail_location"
-                            android:textColor="@color/text"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:id="@+id/treasure_trail_location"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:textColor="@color/text"/>
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/treasure_trail_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/text"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -256,54 +220,45 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/input_background"
                     android:gravity="center_horizontal"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/treasure_trail_location_img"
+                        android:textColor="@color/text"
+                        android:textStyle="bold"/>
 
-                        <TextView
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+
+                        <android.support.v4.view.ViewPager
+                            android:id="@+id/viewPager"
+                            android:layout_width="match_parent"
+                            android:layout_height="250dp"
+                            android:layout_alignParentTop="true"/>
+
+                        <com.viewpagerindicator.CirclePageIndicator
+                            android:id="@+id/indicator"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:text="@string/treasure_trail_location_img"
-                            android:textColor="@color/text"
-                            android:textStyle="bold"/>
+                            android:layout_alignParentBottom="true"
+                            android:layout_centerHorizontal="true"
+                            android:gravity="bottom"
+                            android:padding="10dip"
+                            app:centered="true"
+                            app:fillColor="@color/colorPrimary"
+                            app:pageColor="@color/textSecondary"
+                            app:snap="false"/>
 
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp">
-
-                            <android.support.v4.view.ViewPager
-                                android:id="@+id/viewPager"
-                                android:layout_width="match_parent"
-                                android:layout_height="250dp"
-                                android:layout_alignParentTop="true"/>
-
-                            <com.viewpagerindicator.CirclePageIndicator
-                                android:id="@+id/indicator"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:layout_centerHorizontal="true"
-                                android:gravity="bottom"
-                                android:padding="10dip"
-                                app:centered="true"
-                                app:fillColor="@color/colorPrimary"
-                                app:pageColor="@color/textSecondary"
-                                app:snap="false"/>
-
-                        </RelativeLayout>
-                    </LinearLayout>
+                    </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
-
     </LinearLayout>
-
 
     <ListView
         android:id="@+id/tt_maps_listview"
@@ -312,7 +267,6 @@
         android:layout_below="@+id/tt_navbar"
         android:nestedScrollingEnabled="true"
         android:visibility="gone">
-
     </ListView>
 
     <ScrollView

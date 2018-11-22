@@ -42,7 +42,6 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
 
     private static final String HISCORES_REQUEST_TAG = "hiscoresrequest";
     private EditText rsnEditText;
-    private NestedScrollView scrollView;
     private TableLayout hiscoresTable;
     private TableLayout hiscoresMinigameTable;
     private SwipeRefreshLayout refreshLayout;
@@ -57,7 +56,6 @@ public class HiscoresLookupViewHandler extends BaseViewHandler implements View.O
 
         rowParams = new TableRow.LayoutParams(0, (int) Utils.convertDpToPixel(35, context), 1f);
         hiscoreTypeSelectorLayout = view.findViewById(R.id.hiscore_type_selector);
-        scrollView = view.findViewById(R.id.hiscores_scrollview);
         rsnEditText = ((ClearableEditText) view.findViewById(R.id.hiscores_rsn_input)).getEditText();
         hiscoresTable = view.findViewById(R.id.hiscores_table);
         hiscoresMinigameTable = view.findViewById(R.id.hiscores_minigame_table);

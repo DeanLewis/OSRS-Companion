@@ -141,7 +141,7 @@ public class OSRSNewsParser {
 
     private String readEnclosureImage(XmlPullParser parser)
             throws IOException, XmlPullParserException {
-        String link = null;
+        String link;
         parser.require(XmlPullParser.START_TAG, ns, "enclosure");
         link = parser.getAttributeValue(null, "url");
         if (!TextUtils.isEmpty(link)) {

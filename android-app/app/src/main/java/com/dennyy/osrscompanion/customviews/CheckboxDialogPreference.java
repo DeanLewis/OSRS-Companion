@@ -16,7 +16,6 @@ import java.util.List;
 
 public class CheckboxDialogPreference extends ListPreference {
 
-    private Context context;
     private String separator;
     public static final String DEFAULT_SEPARATOR = "~";
     private boolean[] entryChecked;
@@ -24,7 +23,6 @@ public class CheckboxDialogPreference extends ListPreference {
 
     public CheckboxDialogPreference(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.context = context;
         entryChecked = new boolean[getEntries().length];
         separator = DEFAULT_SEPARATOR;
     }

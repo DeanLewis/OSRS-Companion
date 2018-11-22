@@ -227,7 +227,6 @@
     <string name="rotate_to_take_effect">Rotate the device for the changes to take effect</string>
     <string name="quest_guide">Quest Guides</string>
     <string name="failed_to_load_quests">Failed to load quests: %1$s</string>
-    <string name="select_a_quest">Select a quest…</string>
     <string name="external_navigation_prohibited">Navigation to urls other than %1$s is prohibited</string>
     <string name="select_a_skill">Select a skill…</string>
     <string name="fairy_rings">Fairy Rings</string>
@@ -260,7 +259,6 @@
     <string name="ge_items_source">Included items</string>
     <string name="ge_items_source_info">Select the type of items included in the search. Most convenient for f2p players that only search for f2p items</string>
     <string name="timers">Timers</string>
-    <string name="set_timer">Set timer</string>
     <string name="save">Save</string>
     <string name="title">Title</string>
     <string name="description_optional">Description (optional)</string>
@@ -284,7 +282,6 @@
     <string name="timer_edit_active">The timer is currently active, restart the timer for the changes to take effect</string>
     <string name="timer_restart">Restart</string>
     <string name="timer_disable">Disable</string>
-    <string name="timer_run_immediately">Run timer once when starting</string>
     <string name="tt_view_maps">Maps</string>
     <string name="puzzles">Puzzles</string>
     <string name="worldmap">Worldmap</string>
@@ -318,15 +315,12 @@
     <string name="actions">Actions</string>
     <string name="first_start_info">Select your floating views in the settings and activate here</string>
     <string name="got_it">GOT IT</string>
-    <string name="title_changelog">Change log</string>
-    <string name="changelog_close">Close</string>
     <string name="whats_new">What\'s new?</string>
     <string name="changelog_bugfix">Bugfix</string>
     <string name="changelog_new">New</string>
     <string name="changelog_important">Important</string>
     <string name="version_info">Tap to view changelog</string>
     <string name="floating_view_service_running">Floating view service is currently running</string>
-    <string name="go_to_app_settings">Go directly to the app settings on your device</string>
     <string name="system_settings">System settings</string>
 
     <string-array name="view_names">

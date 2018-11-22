@@ -55,7 +55,6 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
     private AutoCompleteTextView autoCompleteTextView;
     private TreasureTrails allItems = new TreasureTrails();
     private ViewPager viewPager;
-    private ListView mapsListView;
     private View dimView;
     private ImageView expandedImageView;
     private TreasureTrailsLoadedListener treasureTrailsLoadedListener;
@@ -107,7 +106,7 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
 
     @SuppressLint("ClickableViewAccessibility")
     private void updateView() {
-        mapsListView = view.findViewById(R.id.tt_maps_listview);
+        ListView mapsListView = view.findViewById(R.id.tt_maps_listview);
         expandedImageView = view.findViewById(R.id.expanded_image);
         dimView = view.findViewById(R.id.dim_img_view);
         autoCompleteTextView = ((ClearableAutoCompleteTextView) view.findViewById(R.id.clue_search_input)).getAutoCompleteTextView();

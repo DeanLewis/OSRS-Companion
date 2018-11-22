@@ -43,7 +43,6 @@ public class TrackerViewHandler extends BaseViewHandler implements View.OnClickL
     private TableLayout trackerTable;
     private SwipeRefreshLayout refreshLayout;
     private TableRow.LayoutParams rowParams;
-    private NestedScrollView scrollView;
     private long lastRefreshTimeMs;
     private HashMap<TrackDurationType, Integer> indicators;
     private boolean lastLoadedFromCache;
@@ -65,7 +64,6 @@ public class TrackerViewHandler extends BaseViewHandler implements View.OnClickL
         });
         view.findViewById(R.id.tracker_lookup_button).setOnClickListener(this);
         trackerTable = view.findViewById(R.id.tracker_table);
-        scrollView = view.findViewById(R.id.tracker_scrollview);
         refreshLayout = view.findViewById(R.id.tracker_refresh_layout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

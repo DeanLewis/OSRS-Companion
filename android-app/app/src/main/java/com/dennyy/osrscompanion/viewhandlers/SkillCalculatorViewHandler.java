@@ -71,7 +71,6 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
     private SkillSelectorSpinnerAdapter skillSelectorSpinnerAdapter;
     private SkillBonusSpinnerAdapter bonusAdapter;
     private ActionsAdapter adapter;
-    private SkillCalculatorTypes skillCalculatorTypes;
     private LinearLayout listViewContainer;
     private RelativeLayout navbar;
     private ListView actionsListView;
@@ -89,7 +88,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
 
         skillSelectorSpinner = view.findViewById(R.id.skill_selector_spinner);
         bonusSpinner = view.findViewById(R.id.bonus_selector_spinner);
-        skillCalculatorTypes = new SkillCalculatorTypes();
+        SkillCalculatorTypes skillCalculatorTypes = new SkillCalculatorTypes();
         skillSelectorSpinnerAdapter = new SkillSelectorSpinnerAdapter(context, skillCalculatorTypes);
         nothingSelectedSpinnerAdapter = new NothingSelectedSpinnerAdapter(skillSelectorSpinnerAdapter, getString(R.string.select_a_skill), context);
         skillSelectorSpinner.setAdapter(nothingSelectedSpinnerAdapter);
