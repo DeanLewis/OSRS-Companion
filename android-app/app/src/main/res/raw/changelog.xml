@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <changelogversion versionName="1.9-beta1">
+    <changelogversion versionName="1.9">
         <changelogimportant>The floating view service will now display a persistent notification so your device is less likely to randomly kill the app. You can turn the notification off in your device settings but the timer notifications also won't show anymore</changelogimportant>
         <changelognew>Added this awesome changelog, which is also available from the settings</changelognew>
         <changelognew>Added small tutorial for first time users</changelognew>
