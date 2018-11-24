@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
+    <changelogversion versionName="1.9.1">
+        <changelogtext>Performance improvements for notes</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="1.9">
         <changelogimportant>The floating view service will now display a persistent notification so your device is less likely to randomly kill the app. You can turn the notification off in your device settings but the timer notifications also won't show anymore</changelogimportant>
         <changelognew>Added this awesome changelog, which is also available from the settings</changelognew>
@@ -8,7 +12,7 @@
         <changelognew>Improved skill calculator layout and use separate view for the actions</changelognew>
         <changelognew>Use separate view for experience table</changelognew>
         <changelognew>Added button in the settings to go directly to the system settings of the app</changelognew>
-        <changelognew>Allow more zoom in worldmap</changelognew>
+        <changelogtext>Allow more zoom in worldmap</changelogtext>
         <changelogtext>Added missing clue</changelogtext>
         <changelogtext>Use new data structure for skill calculator</changelogtext>
     </changelogversion>

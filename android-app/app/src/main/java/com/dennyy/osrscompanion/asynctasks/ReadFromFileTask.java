@@ -8,26 +8,29 @@ import com.dennyy.osrscompanion.interfaces.ContentLoadedListener;
 
 import java.lang.ref.WeakReference;
 
-public class ReadFromFileTask extends AsyncTask<Void, Void, Void> {
-    private WeakReference<Context> context;
+public class ReadFromFileTask extends AsyncTask<Void, Void, String> {
+    private WeakReference<Context> weakContext;
     private ContentLoadedListener callback;
-    private String content;
     private String fileName;
 
     public ReadFromFileTask(final Context context, String fileName, final ContentLoadedListener callback) {
-        this.context = new WeakReference<>(context);
+        this.weakContext = new WeakReference<>(context);
         this.callback = callback;
         this.fileName = fileName;
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
-        content = Utils.readFromFile(context.get(), fileName);
-        return null;
+    protected String doInBackground(Void... voids) {
+        String content = "";
+        Context context = weakContext.get();
+        if (context != null) {
+            content = Utils.readFromFile(context, fileName);
+        }
+        return content;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(String content) {
         callback.onContentLoaded(content);
     }
 }

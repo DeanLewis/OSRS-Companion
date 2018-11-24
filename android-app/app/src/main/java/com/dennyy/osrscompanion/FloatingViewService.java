@@ -135,7 +135,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     }
                     else if (key.equals(notesHeadName)) {
                         cachedView = inflater.inflate(R.layout.notes_layout, parent, false);
-                        notesViewHandler = new NotesViewHandler(FloatingViewService.this, cachedView);
+                        notesViewHandler = new NotesViewHandler(FloatingViewService.this, cachedView, true);
                     }
                     else if (key.equals(combatCalculatorHeadName)) {
                         cachedView = inflater.inflate(R.layout.combat_calculator_layout, parent, false);
@@ -263,7 +263,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
 
     @Subscribe
     public void onNoteChangeEvent(NoteChangeEvent event) {
-        if (notesViewHandler != null) {
+        if (notesViewHandler != null && !event.isFloatingView) {
             notesViewHandler.setNote(event.note);
         }
     }

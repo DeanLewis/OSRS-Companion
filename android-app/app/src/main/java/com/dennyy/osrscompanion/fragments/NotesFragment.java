@@ -37,7 +37,7 @@ public class NotesFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.notes));
 
-        notesViewHandler = new NotesViewHandler(getActivity(), view);
+        notesViewHandler = new NotesViewHandler(getActivity(), view, false);
         if (savedInstanceState != null) {
             notesViewHandler.setNote(savedInstanceState.getString(NOTE_KEY));
         }
@@ -45,7 +45,7 @@ public class NotesFragment extends BaseFragment {
 
     @Subscribe
     public void onNoteChangeEvent(NoteChangeEvent event) {
-        if (notesViewHandler != null) {
+        if (notesViewHandler != null && event.isFloatingView) {
             notesViewHandler.setNote(event.note);
         }
     }
