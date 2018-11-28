@@ -172,7 +172,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
         }
 
         String dataFile = (String) nothingSelectedSpinnerAdapter.getItem(skillSelectorSpinner.getSelectedItemPosition());
-        if (dataFile == null) {
+        if (dataFile == null || adapter.getCount() < 1) {
             return;
         }
         SkillDataAction action = adapter.getItem(selectedSkillId);
