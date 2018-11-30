@@ -45,7 +45,7 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
     private static final int minimumDpi = 50;
 
     public WorldmapViewHandler(Context context, View view, boolean isFloatingView) {
-        super(context, view);
+        super(context, view, isFloatingView);
         worldmapView = view.findViewById(R.id.worldmap_view);
         worldmapInfo = view.findViewById(R.id.worldmap_floating_view_info);
         progressBar = view.findViewById(R.id.progressBar);
