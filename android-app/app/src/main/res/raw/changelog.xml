@@ -3,6 +3,7 @@
 
     <changelogversion versionName="1.9.1">
         <changelogtext>Performance improvements for notes</changelogtext>
+        <changelogtext>Fix for skill calculator crash</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="1.9">
