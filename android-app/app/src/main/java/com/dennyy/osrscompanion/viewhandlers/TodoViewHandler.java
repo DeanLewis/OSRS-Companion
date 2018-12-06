@@ -145,6 +145,7 @@ public class TodoViewHandler extends BaseViewHandler implements View.OnClickList
     public void openAddTodoView() {
         todoEditor.show();
         todoListView.setVisibility(View.GONE);
+        showKeyboard(todoEditor.getInputView());
     }
 
     public boolean isEditorOpen() {

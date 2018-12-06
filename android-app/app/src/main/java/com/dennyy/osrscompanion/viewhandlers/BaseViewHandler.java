@@ -65,6 +65,18 @@ public abstract class BaseViewHandler {
         keyBoardHandler.removeCallbacks(keyBoardRunnable);
     }
 
+    protected void showKeyboard(final View view) {
+        cancelHideKeyboard();
+        view.requestFocus();
+        keyBoardRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Utils.showKeyboard(context, view);
+            }
+        };
+        keyBoardHandler.postDelayed(keyBoardRunnable, 500);
+    }
+
     /**
      * Try to get text from edittext as rsn else it uses the defaultRsn that the user set in the settings
      * Check the result of this method also for null or empty and handle accordingly

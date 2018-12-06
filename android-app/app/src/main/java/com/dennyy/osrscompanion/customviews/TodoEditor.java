@@ -90,4 +90,8 @@ public class TodoEditor extends ScrollView implements View.OnClickListener {
     public boolean isHidden() {
         return getVisibility() != VISIBLE;
     }
+
+    public EditText getInputView() {
+        return todoInput;
+    }
 }
