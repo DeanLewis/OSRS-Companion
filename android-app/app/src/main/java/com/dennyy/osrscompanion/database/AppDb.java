@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.enums.TrackDurationType;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeData;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeGraphData;
 import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeUpdateData;
@@ -15,6 +16,8 @@ import com.dennyy.osrscompanion.models.Hiscores.UserStats;
 import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryDTO;
 import com.dennyy.osrscompanion.models.OSRSNews.OSRSNewsDTO;
 import com.dennyy.osrscompanion.models.Timers.Timer;
+import com.dennyy.osrscompanion.models.TodoList.TodoList;
+import com.dennyy.osrscompanion.models.TodoList.TodoListEntry;
 import com.dennyy.osrscompanion.models.Tracker.TrackData;
 
 import java.util.ArrayList;
@@ -76,6 +79,12 @@ public class AppDb extends SQLiteOpenHelper {
                 DB.Timers.interval + " INTEGER NOT NULL, " +
                 DB.Timers.dateModified + " INTEGER NOT NULL);";
 
+        String createTodoListTable = "CREATE TABLE " + DB.Todo.tableName + " (" +
+                DB.Todo.id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                DB.Todo.sortOrder + " INTEGER NOT NULL, " +
+                DB.Todo.content + " TEXT, " +
+                DB.Todo.done + " INTEGER DEFAULT 0)";
+
         db.execSQL(createUserStatsTable);
         db.execSQL(createTrackTable);
         db.execSQL(createGrandExchangeTable);
@@ -84,6 +93,7 @@ public class AppDb extends SQLiteOpenHelper {
         db.execSQL(createOSBuddyExchangeSummaryTable);
         db.execSQL(createOSRSNewsTable);
         db.execSQL(createTimersTable);
+        db.execSQL(createTodoListTable);
     }
 
     @Override
@@ -131,6 +141,14 @@ public class AppDb extends SQLiteOpenHelper {
                     DB.Timers.interval + " INTEGER NOT NULL, " +
                     DB.Timers.dateModified + " INTEGER NOT NULL);";
             db.execSQL(createTimersTable);
+        }
+        if (oldVersion < 12) {
+            String createTodoListTable = "CREATE TABLE IF NOT EXISTS " + DB.Todo.tableName + " (" +
+                    DB.Todo.id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    DB.Todo.sortOrder + " INTEGER NOT NULL, " +
+                    DB.Todo.content + " TEXT, " +
+                    DB.Todo.done + " INTEGER DEFAULT 0);";
+            db.execSQL(createTodoListTable);
         }
     }
 
@@ -422,9 +440,70 @@ public class AppDb extends SQLiteOpenHelper {
         getReadableDatabase().delete(DB.Timers.tableName, DB.Timers.id + " = ?", new String[]{ String.valueOf(timerId) });
     }
 
+    public void insertOrUpdateTodo(TodoListEntry entry) {
+        String id = String.valueOf(entry.id);
+        String query = "SELECT * FROM " + DB.Todo.tableName + " WHERE " + DB.Todo.id + " = ?";
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ id });
+        ContentValues cv = new ContentValues();
+        cv.put(DB.Todo.content, entry.content);
+        cv.put(DB.Todo.sortOrder, entry.sortOrder);
+        cv.put(DB.Todo.done, entry.done);
+        if (cursor.moveToFirst()) {
+            getWritableDatabase().update(DB.Todo.tableName, cv, DB.Todo.id + " = ?", new String[]{ id });
+            cursor.close();
+        }
+        else {
+            getWritableDatabase().insert(DB.Todo.tableName, null, cv);
+            cursor.close();
+        }
+    }
+
+    public TodoList getTodoList() {
+        String query = "SELECT * FROM " + DB.Todo.tableName + " ORDER BY " + DB.Todo.sortOrder + " DESC";
+        Cursor cursor = getReadableDatabase().rawQuery(query, null);
+        TodoList todoList = new TodoList();
+
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(DB.Todo.id));
+            String content = cursor.getString(cursor.getColumnIndex(DB.Todo.content));
+            int sortOrder = cursor.getInt(cursor.getColumnIndex(DB.Todo.sortOrder));
+            boolean done = cursor.getInt(cursor.getColumnIndex(DB.Todo.done)) == 1;
+            TodoListEntry todoListEntry = new TodoListEntry(id, sortOrder, content, done);
+            todoList.add(todoListEntry);
+        }
+        cursor.close();
+        return todoList;
+    }
+
+    public void deleteTodo(int todoId) {
+        getReadableDatabase().delete(DB.Todo.tableName, DB.Todo.id + " = ?", new String[]{ String.valueOf(todoId) });
+    }
+
+    public void updateTodoListOrder(TodoList todoList) {
+        String where = DB.Todo.id + " = ?";
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            int index = todoList.size();
+            for (TodoListEntry entry : todoList) {
+                ContentValues cv = new ContentValues();
+                cv.put(DB.Todo.sortOrder, index);
+                db.update(DB.Todo.tableName, cv, where, new String[]{ String.valueOf(entry.id) });
+                index--;
+            }
+            db.setTransactionSuccessful();
+        }
+        catch (Exception e) {
+            Logger.log("error updating sortorder", e);
+        }
+        finally {
+            db.endTransaction();
+        }
+    }
+
     private static class DB {
         private static final String name = "osrscompanion.db";
-        private static final int version = 10;
+        private static final int version = 11;
 
         private static class UserStats {
             private static final String tableName = "UserStats";
@@ -499,6 +578,15 @@ public class AppDb extends SQLiteOpenHelper {
             private static final String repeat = "repeat";
             private static final String interval = "interval";
             private static final String dateModified = "dateModified";
+        }
+
+        private static class Todo {
+            private static final String tableName = "TodoList";
+
+            private static final String id = "id";
+            private static final String sortOrder = "sortOrder";
+            private static final String content = "content";
+            private static final String done = "done";
         }
     }
 }

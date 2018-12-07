@@ -21,6 +21,7 @@ import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.Notes.NoteChangeEvent;
 import com.dennyy.osrscompanion.models.Timers.ReloadTimersEvent;
+import com.dennyy.osrscompanion.models.TodoList.ReloadTodoListEvent;
 import com.dennyy.osrscompanion.models.Worldmap.WorldmapDownloadedEvent;
 import com.dennyy.osrscompanion.viewhandlers.CalculatorViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.CombatCalculatorViewHandler;
@@ -36,6 +37,7 @@ import com.dennyy.osrscompanion.viewhandlers.QuestViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.RSWikiViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.SkillCalculatorViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.TimersViewHandler;
+import com.dennyy.osrscompanion.viewhandlers.TodoViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.TrackerViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.TreasureTrailViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.WorldmapViewHandler;
@@ -73,6 +75,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
     private final static String rsnewsHeadName = OSRSNewsViewHandler.class.getSimpleName();
     private final static String timersHeadName = TimersViewHandler.class.getSimpleName();
     private final static String worldmapHeadName = WorldmapViewHandler.class.getSimpleName();
+    private final static String todoHeadName = TodoViewHandler.class.getSimpleName();
 
     private DefaultChatHeadManager chatHeadManager;
     private WindowManagerContainer windowManagerContainer;
@@ -83,6 +86,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
     private NotesViewHandler notesViewHandler;
     private TimersViewHandler timersViewHandler;
     private WorldmapViewHandler worldmapViewHandler;
+    private TodoViewHandler todoViewHandler;
 
     public FloatingViewService() {
 
@@ -176,6 +180,10 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     else if (key.equals(worldmapHeadName)) {
                         cachedView = inflater.inflate(R.layout.worldmap_layout, parent, false);
                         worldmapViewHandler = new WorldmapViewHandler(FloatingViewService.this, cachedView, true);
+                    }
+                    else if (key.equals(todoHeadName)) {
+                        cachedView = inflater.inflate(R.layout.todo_layout, parent, false);
+                        todoViewHandler = new TodoViewHandler(FloatingViewService.this, cachedView, true);
                     }
                     viewCache.put(key, cachedView);
                 }
@@ -282,6 +290,13 @@ public class FloatingViewService extends Service implements WindowManagerContain
         }
     }
 
+    @Subscribe
+    public void reloadTodoList(ReloadTodoListEvent event) {
+        if (todoViewHandler != null && (!event.isFloatingView || event.forceReload)) {
+            todoViewHandler.reloadTodoList();
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
@@ -331,6 +346,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
         iconsMap.put(rsnewsHeadName, R.drawable.rsnews_floating_view);
         iconsMap.put(timersHeadName, R.drawable.timers_floating_view);
         iconsMap.put(worldmapHeadName, R.drawable.worldmap_floating_view);
+        iconsMap.put(todoHeadName, R.drawable.todo_floating_view);
     }
 
     private void initNamesMap() {
@@ -351,6 +367,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
         namesMap.put("osrs_news", rsnewsHeadName);
         namesMap.put("timers", timersHeadName);
         namesMap.put("worldmap", worldmapHeadName);
+        namesMap.put("todo_list", todoHeadName);
     }
 
     @Override

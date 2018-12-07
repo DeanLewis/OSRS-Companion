@@ -6,6 +6,11 @@
         <changelogtext>Reverted change forcing the rswiki search button to be visible, apparently they fixed it</changelogtext>
     </changelogversion>
 
+
+    <changelogversion versionName="1.9.2">
+        <changelogtext>No changes, just to see if a new release fixes the update loop</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="1.9.1">
         <changelogtext>Performance improvements for notes</changelogtext>
         <changelogtext>Fix for skill calculator crash</changelogtext>

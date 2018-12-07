@@ -7,8 +7,8 @@ android {
         applicationId "com.dennyy.osrscompanion"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 64
-        versionName "1.8.3"
+        versionCode 72
+        versionName "1.10"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -26,8 +26,11 @@ android {
 }
 
 dependencies {
+    configurations {
+        all*.exclude group: 'com.android.support', module: 'support-v13'
+    }
     implementation 'com.android.support:appcompat-v7:24.2.0'
-    implementation 'com.android.support:design:24.2.0'
+    implementation 'com.android.support:design:27.1.0'
     implementation 'com.android.support:support-vector-drawable:24.2.0'
     implementation 'com.android.support:support-compat:24.2.0'
     implementation 'com.android.support:support-v13:24.2.0'
@@ -48,4 +51,5 @@ dependencies {
     implementation project(':library')
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
+    implementation 'com.github.woxthebox:draglistview:1.6.3'
 }

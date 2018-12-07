@@ -169,6 +169,8 @@
     <string name="lib_subsampling_scale_image_view">Subsampling Scale Image View</string>
     <string name="material_showcase_view">MaterialShowcaseView</string>
     <string name="material_showcase_view_author">Dean Wild</string>
+    <string name="draglistview_author">Magnus Woxblom</string>
+    <string name="draglistview">DragListView</string>
 
     <string name="failed_payment_verification">Payment succeeded, but could not verify purchase</string>
     <string name="hiscores_sdmm">SDMM</string>
@@ -324,6 +326,15 @@
     <string name="floating_view_service_running">Floating view service is currently running</string>
     <string name="system_settings">System settings</string>
     <string name="view_exp_table">View exp table</string>
+    <string name="add_todo_item">Add todo item</string>
+    <string name="todo_list">To-do list</string>
+    <string name="todo_done">Done</string>
+    <string name="todo_undo">Undo</string>
+    <string name="todo_empty_text">Enter something to do</string>
+    <string name="todo_edit_mode">Edit mode</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="edit_todo_item">Edit todo item</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>
@@ -343,6 +354,7 @@
         <item>OSRS News</item>
         <item>Timers</item>
         <item>Worldmap</item>
+        <item>To-do list</item>
     </string-array>
     <string-array name="view_name_value">
         <item>ge</item>
@@ -362,6 +374,7 @@
         <item>osrs_news</item>
         <item>timers</item>
         <item>worldmap</item>
+        <item>todo_list</item>
     </string-array>
     <string-array name="default_floating_views_selection">
     </string-array>

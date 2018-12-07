@@ -80,7 +80,7 @@ public class TimersViewHandler extends BaseViewHandler implements TimerEditorLis
 
     @Override
     public void onTimersLoadFailed() {
-        showToast(getString(R.string.error_please_try_again), Toast.LENGTH_LONG);
+        showToast(getString(R.string.unexpected_error_try_reopen), Toast.LENGTH_LONG);
     }
 
     @Override

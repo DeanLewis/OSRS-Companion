@@ -14,4 +14,8 @@
     <dimen name="quest_list_font_size">16sp</dimen>
     <dimen name="changelog_header_size">18sp</dimen>
     <dimen name="changelog_text_size">16sp</dimen>
+    <dimen name="floating_view_toolbar_icon_height">35dp</dimen>
+    <dimen name="floating_view_toolbar_height">40dp</dimen>
+    <dimen name="add_todo_title">20sp</dimen>
+    <dimen name="todo_button_height">40dp</dimen>
 </resources>

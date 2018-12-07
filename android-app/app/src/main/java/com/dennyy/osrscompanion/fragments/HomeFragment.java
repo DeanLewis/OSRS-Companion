@@ -120,6 +120,7 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
             tiles.add(new TileData(getString(R.string.rsnews), getDrawable(R.drawable.newspaper)));
             tiles.add(new TileData(getString(R.string.timers), getDrawable(R.drawable.stopwatch)));
             tiles.add(new TileData(getString(R.string.worldmap), getDrawable(R.drawable.worldmap)));
+            tiles.add(new TileData(getString(R.string.todo_list), getDrawable(R.drawable.todo)));
             tiles.add(new TileData(getString(R.string.settings), getDrawable(R.drawable.settings)));
         }
 
@@ -259,6 +260,9 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
         }
         else if (tileData.text.equals(getString(R.string.worldmap))) {
             fragment = new WorldmapFragment();
+        }
+        else if (tileData.text.equals(getString(R.string.todo_list))) {
+            fragment = new TodoFragment();
         }
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment, tag);
