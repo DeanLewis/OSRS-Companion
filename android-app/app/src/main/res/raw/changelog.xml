@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
+    <changelogversion versionName="1.10">
+        <changelognew>Added a todo list (wasn't able to implement it in the notes)</changelognew>
+        <changelogtext>Reverted change forcing the rswiki search button to be visible, apparently they fixed it</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="1.9.1">
         <changelogtext>Performance improvements for notes</changelogtext>
         <changelogtext>Fix for skill calculator crash</changelogtext>

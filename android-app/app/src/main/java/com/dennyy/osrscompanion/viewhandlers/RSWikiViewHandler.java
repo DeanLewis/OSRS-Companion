@@ -116,9 +116,6 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
     }
 
     private void handlePageTimerFinished() {
-        Utils.executeJavaScript(webView, "document.styleSheets[0].insertRule('.header-container .search-box { display: table-cell !important }',0);");
-        Utils.executeJavaScript(webView, "document.styleSheets[0].insertRule('.header-container .header > .overlay-title { display: table-cell !important }', 0);");
-        Utils.executeJavaScript(webView, "document.styleSheets[0].insertRule('#searchIcon { display: none !important }', 0);");
         wasRequesting = false;
         progressBar.setProgress(progressBar.getMax());
         webView.setVisibility(View.VISIBLE);
