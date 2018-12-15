@@ -13,15 +13,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ExpandableListView;
-import android.widget.PopupMenu;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.QuestListAdapter;
 import com.dennyy.osrscompanion.adapters.QuestSourceSpinnerAdapter;
@@ -37,11 +29,10 @@ import com.dennyy.osrscompanion.interfaces.ObservableScrollViewCallbacks;
 import com.dennyy.osrscompanion.interfaces.QuestAdapterClickListener;
 import com.dennyy.osrscompanion.interfaces.QuestsLoadedListener;
 import com.dennyy.osrscompanion.models.General.Quest;
+import im.delight.android.webview.AdvancedWebView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import im.delight.android.webview.AdvancedWebView;
 
 public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, AdapterView.OnItemSelectedListener, View.OnClickListener, QuestsLoadedListener, ObservableScrollViewCallbacks, QuestAdapterClickListener {
 
@@ -60,9 +51,11 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     private ExpandableListView questListView;
     private QuestListAdapter adapter;
     private Quest currentQuest;
+    private ImageButton scrollToTopButton;
+    private Button sortButton;
 
     public QuestViewHandler(final Context context, View view, boolean isFloatingView, QuestsLoadedListener questsLoadedListener) {
-        super(context, view);
+        super(context, view, isFloatingView);
 
         selectedQuestSource = QuestSource.fromName(PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.PREF_QUEST_SOURCE, QuestSource.RSWIKI.getName()));
         webView = view.findViewById(R.id.webview);
@@ -70,11 +63,14 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         questSelectorContainer = view.findViewById(R.id.quest_selector_container);
         progressBar = view.findViewById(R.id.progressBar);
         questListView = view.findViewById(R.id.expandable_quest_listview);
-        view.findViewById(R.id.sort_button).setOnClickListener(this);
+        scrollToTopButton = view.findViewById(R.id.webview_navbar_to_top);
+        sortButton = view.findViewById(R.id.sort_button);
+        sortButton.setOnClickListener(this);
         if (isFloatingView) {
             Button backButton = view.findViewById(R.id.navigate_back_button);
             backButton.setVisibility(View.VISIBLE);
             backButton.setOnClickListener(this);
+            scrollToTopButton.setOnClickListener(this);
         }
         this.questsLoadedListener = questsLoadedListener;
         new QuestLoadTask(context, this).execute();
@@ -133,6 +129,11 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         showToast(getString(R.string.failed_to_load_quests), Toast.LENGTH_SHORT);
     }
 
+    public void scrollToTop() {
+        if (webView == null) return;
+        webView.scrollVerticallyTo(0);
+    }
+
     @Override
     public void onClick(View view) {
         int id = view.getId();
@@ -143,6 +144,9 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
             else if (isWebViewVisible()) {
                 hideWebView();
             }
+        }
+        else if (id == R.id.webview_navbar_to_top) {
+            scrollToTop();
         }
         else if (id == R.id.sort_button) {
             if (adapter == null) {
@@ -285,6 +289,10 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     }
 
     private void loadQuestUrl(String url) {
+        sortButton.setVisibility(View.GONE);
+        if (isFloatingView) {
+            scrollToTopButton.setVisibility(View.VISIBLE);
+        }
         webView.setVisibility(View.VISIBLE);
         webView.loadUrl(url);
         questListView.setVisibility(View.GONE);
@@ -292,6 +300,10 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
 
 
     public void hideWebView() {
+        sortButton.setVisibility(View.VISIBLE);
+        if (isFloatingView) {
+            scrollToTopButton.setVisibility(View.GONE);
+        }
         webView.setVisibility(View.GONE);
         progressBar.setVisibility(View.GONE);
         questListView.setVisibility(View.VISIBLE);

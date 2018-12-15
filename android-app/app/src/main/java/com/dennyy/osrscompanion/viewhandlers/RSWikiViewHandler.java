@@ -1,5 +1,6 @@
 package com.dennyy.osrscompanion.viewhandlers;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,20 +12,13 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.customviews.ObservableWebView;
 import com.dennyy.osrscompanion.enums.ScrollState;
 import com.dennyy.osrscompanion.helpers.AdBlocker;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.ObservableScrollViewCallbacks;
-
 import im.delight.android.webview.AdvancedWebView;
 
 public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebView.Listener, View.OnClickListener, ObservableScrollViewCallbacks {
@@ -51,6 +45,8 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
         ImageButton navBarRight = view.findViewById(R.id.webview_navbar_right);
         if (isFloatingView) {
             webView.addScrollViewCallbacks(this);
+            navBar.findViewById(R.id.webview_navbar_title).setOnClickListener(this);
+            navBar.findViewById(R.id.webview_navbar_to_top).setOnClickListener(this);
             navBarLeft.setOnClickListener(this);
             navBarRight.setOnClickListener(this);
             navBar.setVisibility(View.VISIBLE);
@@ -59,6 +55,7 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initWebView() {
         webView.setThirdPartyCookiesEnabled(false);
         webView.setMixedContentAllowed(false);
@@ -93,7 +90,16 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
                     webView.goForward();
                 }
                 break;
+            case R.id.webview_navbar_title:
+            case R.id.webview_navbar_to_top:
+                scrollToTop();
+                break;
         }
+    }
+
+    public void scrollToTop() {
+        if (webView == null) return;
+        webView.scrollVerticallyTo(0);
     }
 
     @Override
@@ -119,6 +125,7 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
         wasRequesting = false;
         progressBar.setProgress(progressBar.getMax());
         webView.setVisibility(View.VISIBLE);
+        navBar.setVisibility(View.GONE);
         if (clearHistory) {
             clearHistory = false;
             webView.clearHistory();

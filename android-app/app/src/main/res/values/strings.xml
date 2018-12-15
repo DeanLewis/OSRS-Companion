@@ -337,10 +337,8 @@
     <string name="edit_todo_item">Edit todo item</string>
     <string name="bestiary">Npc lookup</string>
     <string name="search_npc">Search for a npc</string>
-    <string name="npc_name">Name</string>
     <string name="npc_hp">Hipoints</string>
     <string name="npc_members">Members</string>
-    <string name="npc_examine">Examine</string>
     <string name="npc_aggressive">Aggressive</string>
     <string name="npc_poisonous">Poisonous</string>
     <string name="npc_attack_style">Attack styles</string>
@@ -359,6 +357,7 @@
     <string name="npc_no_results">No npcs found matching your search criteria, try using a different term</string>
     <string name="npc_cached_data">Currently using cached data, press the refresh button to update the information</string>
     <string name="npc_data_updated">Npc data updated</string>
+    <string name="scroll_to_top">Scroll to top</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

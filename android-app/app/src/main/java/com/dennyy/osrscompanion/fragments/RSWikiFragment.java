@@ -31,7 +31,7 @@ public class RSWikiFragment extends BaseFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_refresh_only, menu);
+        inflater.inflate(R.menu.menu_rswiki, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -41,6 +41,9 @@ public class RSWikiFragment extends BaseFragment {
             case R.id.action_refresh:
                 rsWikiViewHandler.cleanup();
                 rsWikiViewHandler.webView.loadUrl(rsWikiViewHandler.webView.getUrl());
+                return true;
+            case R.id.action_scroll_to_top:
+                rsWikiViewHandler.scrollToTop();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

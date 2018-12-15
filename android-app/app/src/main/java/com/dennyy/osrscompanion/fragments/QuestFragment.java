@@ -36,7 +36,7 @@ public class QuestFragment extends BaseFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_refresh_only, menu);
+        inflater.inflate(R.menu.menu_quests, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -46,6 +46,9 @@ public class QuestFragment extends BaseFragment {
             case R.id.action_refresh:
                 questViewHandler.clearHistory();
                 questViewHandler.webView.loadUrl(questViewHandler.webView.getUrl());
+                return true;
+            case R.id.action_scroll_to_top:
+                questViewHandler.scrollToTop();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
