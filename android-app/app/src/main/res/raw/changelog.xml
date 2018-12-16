@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
+    <changelogversion versionName="1.11-beta1">
+        <changelognew>Added a npc lookup which uses data from the osrs wiki. If a specific npc lookup doesn't work correctly, please contact me through mail</changelognew>
+        <changelogtext>Improvements to rswiki/quest guides header to automatically hide when scrolling stops</changelogtext>
+        <changelogtext>Added a scroll to top button for rswiki/quest guide pages</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="1.10">
         <changelognew>Added a todo list (wasn't able to implement it in the notes)</changelognew>
         <changelogtext>Reverted change forcing the rswiki search button to be visible, apparently they fixed it</changelogtext>

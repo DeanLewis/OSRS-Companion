@@ -6,7 +6,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -25,13 +24,15 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
 
     public ObservableWebView webView;
 
+    private RelativeLayout navBarContainer;
     private ProgressBar progressBar;
     private boolean clearHistory;
     private TextView navBarTitle;
     private final Handler handler = new Handler();
     private Runnable runnable;
-    private LinearLayout navBar;
-    private LinearLayout webviewContainer;
+
+    private final Handler navBarHandler = new Handler();
+    private Runnable navBarRunnable;
 
     public RSWikiViewHandler(final Context context, View view, boolean isFloatingView) {
         super(context, view, isFloatingView);
@@ -39,8 +40,8 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
         webView = view.findViewById(R.id.webview);
         progressBar = view.findViewById(R.id.progressBar);
         navBarTitle = view.findViewById(R.id.webview_navbar_title);
-        navBar = view.findViewById(R.id.webview_navbar);
-        webviewContainer = view.findViewById(R.id.webview_container);
+        LinearLayout navBar = view.findViewById(R.id.webview_navbar);
+        navBarContainer = view.findViewById(R.id.navbar_container);
         ImageButton navBarLeft = view.findViewById(R.id.webview_navbar_left);
         ImageButton navBarRight = view.findViewById(R.id.webview_navbar_right);
         if (isFloatingView) {
@@ -49,7 +50,7 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
             navBar.findViewById(R.id.webview_navbar_to_top).setOnClickListener(this);
             navBarLeft.setOnClickListener(this);
             navBarRight.setOnClickListener(this);
-            navBar.setVisibility(View.VISIBLE);
+            navBarContainer.setVisibility(View.VISIBLE);
         }
         initWebView();
     }
@@ -83,11 +84,13 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
             case R.id.webview_navbar_left:
                 if (webView.canGoBack()) {
                     webView.goBack();
+                    startHideNavBar();
                 }
                 break;
             case R.id.webview_navbar_right:
                 if (webView.canGoForward()) {
                     webView.goForward();
+                    startHideNavBar();
                 }
                 break;
             case R.id.webview_navbar_title:
@@ -125,18 +128,12 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
         wasRequesting = false;
         progressBar.setProgress(progressBar.getMax());
         webView.setVisibility(View.VISIBLE);
-        navBar.setVisibility(View.GONE);
         if (clearHistory) {
             clearHistory = false;
             webView.clearHistory();
         }
-
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setVisibility(View.GONE);
-            }
-        }, 250);
+        startHideNavBar(250);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -174,12 +171,6 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
         clearHistory = true;
     }
 
-
-    private void pushWebViewDown() {
-        int height = navBar.getHeight();
-        webviewContainer.animate().translationY(height).setInterpolator(new AccelerateInterpolator(2));
-    }
-
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
 
@@ -192,18 +183,35 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        if (scrollState == ScrollState.UP && navBar.isShown()) {
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) navBar.getLayoutParams();
-            int height = navBar.getHeight() + params.bottomMargin + params.topMargin;
-            navBar.animate().translationY(-height).setInterpolator(new AccelerateInterpolator(2));
-            webviewContainer.animate().translationY(0).setInterpolator(new AccelerateInterpolator(2));
-            navBar.setVisibility(View.GONE);
+        if (scrollState == ScrollState.UP) {
+            startHideNavBar(0);
         }
+        else if (scrollState == ScrollState.DOWN) {
+            showNavBar();
+            startHideNavBar();
+        }
+    }
 
-        else if (scrollState == ScrollState.DOWN && !navBar.isShown()) {
-            navBar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-            navBar.setVisibility(View.VISIBLE);
-            pushWebViewDown();
-        }
+    private void showNavBar() {
+        navBarHandler.removeCallbacks(navBarRunnable);
+        navBarContainer.setVisibility(View.VISIBLE);
+        navBarContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+    }
+
+    private void startHideNavBar() {
+        startHideNavBar(2000);
+    }
+
+    private void startHideNavBar(int delay) {
+        navBarHandler.removeCallbacks(navBarRunnable);
+        navBarRunnable = new Runnable() {
+            @Override
+            public void run() {
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) navBarContainer.getLayoutParams();
+                int height = navBarContainer.getHeight() + params.bottomMargin + params.topMargin;
+                navBarContainer.animate().translationY(-height).setInterpolator(new AccelerateInterpolator(2));
+            }
+        };
+        navBarHandler.postDelayed(navBarRunnable, delay);
     }
 }

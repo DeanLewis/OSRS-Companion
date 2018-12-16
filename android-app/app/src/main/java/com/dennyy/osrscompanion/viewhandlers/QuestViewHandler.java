@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +41,6 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     private ProgressBar progressBar;
     private ArrayList<Quest> quests;
     private ArrayList<QuestSource> questSources;
-    private ArrayList<QuestSortType> questSortTypes;
     private boolean clearHistory;
     private final Handler handler = new Handler();
     private Runnable runnable;
@@ -53,6 +51,9 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     private Quest currentQuest;
     private ImageButton scrollToTopButton;
     private Button sortButton;
+
+    private final Handler navBarHandler = new Handler();
+    private Runnable navBarRunnable;
 
     public QuestViewHandler(final Context context, View view, boolean isFloatingView, QuestsLoadedListener questsLoadedListener) {
         super(context, view, isFloatingView);
@@ -140,6 +141,7 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         if (id == R.id.navigate_back_button) {
             if (webView.canGoBack()) {
                 webView.goBack();
+                startHideQuestSelector();
             }
             else if (isWebViewVisible()) {
                 hideWebView();
@@ -184,7 +186,6 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
         progressBar.setVisibility(View.VISIBLE);
-        pushWebViewDown();
     }
 
     @Override
@@ -206,13 +207,8 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
 
     private void handlePageTimerFinished() {
         progressBar.setProgress(progressBar.getMax());
-
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setVisibility(View.GONE);
-            }
-        }, 250);
+        startHideQuestSelector(250);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -286,6 +282,8 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
                 break;
         }
         wasRequesting = true;
+        showQuestSelector();
+        startHideQuestSelector();
     }
 
     private void loadQuestUrl(String url) {
@@ -300,6 +298,7 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
 
 
     public void hideWebView() {
+        showQuestSelector();
         sortButton.setVisibility(View.VISIBLE);
         if (isFloatingView) {
             scrollToTopButton.setVisibility(View.GONE);
@@ -308,7 +307,6 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         progressBar.setVisibility(View.GONE);
         questListView.setVisibility(View.VISIBLE);
         clearHistory();
-        questSelectorContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
         questSelectorContainer.setVisibility(View.VISIBLE);
     }
 
@@ -326,11 +324,6 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         clearHistory = true;
     }
 
-    private void pushWebViewDown() {
-        int height = questSelectorContainer.getHeight();
-        view.findViewById(R.id.webview_container).animate().translationY(height).setInterpolator(new AccelerateInterpolator(2));
-    }
-
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
 
@@ -343,18 +336,37 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        if (scrollState == ScrollState.UP && questSelectorContainer.isShown()) {
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) questSelectorContainer.getLayoutParams();
-            int height = questSelectorContainer.getHeight() + params.bottomMargin + params.topMargin;
-            questSelectorContainer.animate().translationY(-height).setInterpolator(new AccelerateInterpolator(2));
-            view.findViewById(R.id.webview_container).animate().translationY(0).setInterpolator(new AccelerateInterpolator(2));
-            questSelectorContainer.setVisibility(View.GONE);
+        if (scrollState == ScrollState.UP) {
+            startHideQuestSelector(0);
         }
 
-        else if (scrollState == ScrollState.DOWN && !questSelectorContainer.isShown()) {
-            questSelectorContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-            questSelectorContainer.setVisibility(View.VISIBLE);
-            pushWebViewDown();
+        else if (scrollState == ScrollState.DOWN) {
+            showQuestSelector();
+            startHideQuestSelector();
         }
+    }
+
+    private void showQuestSelector() {
+        navBarHandler.removeCallbacks(navBarRunnable);
+        questSelectorContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        questSelectorContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void startHideQuestSelector() {
+        startHideQuestSelector(2000);
+    }
+
+    private void startHideQuestSelector(int delay) {
+        navBarHandler.removeCallbacks(navBarRunnable);
+        navBarRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (webView.getVisibility() != View.VISIBLE) return;
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) questSelectorContainer.getLayoutParams();
+                int height = questSelectorContainer.getHeight() + params.bottomMargin + params.topMargin;
+                questSelectorContainer.animate().translationY(-height).setInterpolator(new AccelerateInterpolator(2));
+            }
+        };
+        navBarHandler.postDelayed(navBarRunnable, delay);
     }
 }
