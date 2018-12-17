@@ -16,6 +16,8 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class GetActionsTask extends AsyncTask<Void, Void, SkillData> {
     private WeakReference<Context> weakContext;
@@ -61,11 +63,35 @@ public class GetActionsTask extends AsyncTask<Void, Void, SkillData> {
                 actions.add(new SkillDataAction(skillType, name, level, exp, ignoreBonus));
 
             }
+
+            final boolean isCombat = SkillType.isCombat(skillType, SkillType.PRAYER);
+            Collections.sort(actions, new Comparator<SkillDataAction>() {
+                @Override
+                public int compare(SkillDataAction o1, SkillDataAction o2) {
+                    int lvlCompare = Integer.compare(o1.level, o2.level);
+                    if (lvlCompare != 0) {
+                        return lvlCompare;
+                    }
+                    else if (isCombat) {
+                        return o1.name.compareToIgnoreCase(o2.name);
+                    }
+                    else {
+                        int expCompare = Double.compare(o1.exp, o2.exp);
+                        if (expCompare != 0) {
+                            return expCompare;
+                        }
+                        else {
+                            return o1.name.compareToIgnoreCase(o2.name);
+                        }
+                    }
+                }
+            });
         }
         catch (Exception ex) {
             Logger.log(ex);
             return null;
         }
+
         SkillData skillData = new SkillData(bonuses, actions);
         return skillData;
     }

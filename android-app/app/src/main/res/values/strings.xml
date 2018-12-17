@@ -358,6 +358,8 @@
     <string name="npc_cached_data">Currently using cached data, press the refresh button to update the information</string>
     <string name="npc_data_updated">Npc data updated</string>
     <string name="scroll_to_top">Scroll to top</string>
+    <string name="custom_exp">Custom exp</string>
+    <string name="custom_exp_optional">Custom exp (optional)</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

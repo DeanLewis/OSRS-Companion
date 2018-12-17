@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.dennyy.osrscompanion.R;
+import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.SkillCalculator.SkillDataAction;
@@ -68,24 +69,15 @@ public class ActionsAdapter extends BaseAdapter {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+
         SkillDataAction skillDataAction = skillDataActions.get(i);
         viewHolder.lvl.setText(String.valueOf(skillDataAction.level));
-        if (targetLvl > 0 || currentLvl > 0) {
-            if (skillDataAction.level <= currentLvl) {
-                viewHolder.lvl.setTextColor(context.getResources().getColor(R.color.green));
-            }
-            else if (skillDataAction.level <= targetLvl) {
-                viewHolder.lvl.setTextColor(context.getResources().getColor(R.color.orange));
-            }
-            else if (skillDataAction.level > currentLvl) {
-                viewHolder.lvl.setTextColor(context.getResources().getColor(R.color.red));
-            }
-        }
-
-        double exp = skillDataAction.exp + (!skillDataAction.ignoreBonus && skillDataBonus != null ? skillDataBonus.value * skillDataAction.exp : 0);
-        viewHolder.action.setText(skillDataAction.name);
-        viewHolder.exp.setText(decimalFormat.format(exp));
-        viewHolder.amount.setText(expDifference == -1 ? "N/A" : String.valueOf(Utils.formatNumber((int) Math.ceil(expDifference / exp))));
+        viewHolder.lvl.setTextColor(getColorResource(skillDataAction));
+        double bonusExp = !skillDataAction.ignoreBonus && skillDataBonus != null ? skillDataBonus.value * skillDataAction.exp : 0;
+        double exp = skillDataAction.exp + bonusExp;
+        viewHolder.action.setText(skillDataAction.getFormattedName());
+        viewHolder.exp.setText(getExpText(skillDataAction, exp));
+        viewHolder.amount.setText(getAmountText(expDifference, exp, skillDataAction));
         if (skillDataBonus != null && !skillDataBonus.isEmpty() && skillDataAction.ignoreBonus) {
             convertView.setAlpha(0.3f);
         }
@@ -95,8 +87,54 @@ public class ActionsAdapter extends BaseAdapter {
         return convertView;
     }
 
+    private int getColorResource(SkillDataAction action) {
+        int color = R.color.text;
+        if (targetLvl > 0 || currentLvl > 0) {
+            if (action.level <= currentLvl) {
+                color = R.color.green;
+            }
+            else if (action.level <= targetLvl) {
+                color = R.color.orange;
+            }
+            else {
+                color = R.color.red;
+            }
+        }
+        return context.getResources().getColor(color);
+    }
+
+    private double getCombatFactor(SkillDataAction action) {
+        double combatFactor = 1;
+        if (SkillType.isCombat(action.skillType, SkillType.PRAYER, SkillType.HITPOINTS)) {
+            combatFactor = 4;
+        }
+        else if (action.skillType == SkillType.HITPOINTS) {
+            combatFactor = 1.33;
+        }
+        return combatFactor;
+    }
+
+    private String getExpText(SkillDataAction action, double exp) {
+        if (SkillType.isCombat(action.skillType, SkillType.PRAYER)) {
+            return String.format("%s (%shp)", decimalFormat.format(exp * getCombatFactor(action)), (int) exp);
+        }
+        else {
+            return decimalFormat.format(exp);
+        }
+    }
+
+    private String getAmountText(int expDifference, double exp, SkillDataAction action) {
+        if (expDifference == -1) {
+            return "N/A";
+        }
+        int result = (int) Math.ceil(expDifference / (exp * getCombatFactor(action)));
+        return String.valueOf(Utils.formatNumber(result));
+    }
+
+
     public void updateList(ArrayList<SkillDataAction> skillDataActions) {
         this.skillDataActions.clear();
+        this.skillDataActions.trimToSize();
         this.skillDataActions.addAll(skillDataActions);
         notifyDataSetChanged();
     }
@@ -111,6 +149,16 @@ public class ActionsAdapter extends BaseAdapter {
     public void updateBonus(SkillDataBonus bonus) {
         skillDataBonus = bonus;
         notifyDataSetChanged();
+    }
+
+    public void updateCustomExp(int exp) {
+        if (this.skillDataActions.isEmpty() || exp < 1)
+            return; // already added so don't continue
+        if (this.skillDataActions.get(0).skillType == SkillType.OVERALL) {
+            skillDataActions.remove(0);
+        }
+        this.skillDataActions.add(0, new SkillDataAction(SkillType.OVERALL, context.getResources().getString(R.string.custom_exp), 1, exp, true));
+        this.notifyDataSetChanged();
     }
 
     private static class ViewHolder {

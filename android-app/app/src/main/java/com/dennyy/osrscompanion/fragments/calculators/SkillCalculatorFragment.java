@@ -19,6 +19,7 @@ public class SkillCalculatorFragment extends BaseFragment {
     private static final String TO_LEVEL_KEY = "to_level_key";
     private static final String FROM_EXP_KEY = "from_exp_key";
     private static final String TO_EXP_KEY = "to_exp_key";
+    private static final String CUSTOM_EXP_KEY = "custom_exp_key";
     private static final String WAS_REQUESTING_KEY = "was_requesting_key";
 
     private SkillCalculatorViewHandler skillCalculatorViewHandler;
@@ -47,10 +48,12 @@ public class SkillCalculatorFragment extends BaseFragment {
             skillCalculatorViewHandler.toLvl = savedInstanceState.getInt(TO_LEVEL_KEY);
             skillCalculatorViewHandler.fromExp = savedInstanceState.getInt(FROM_EXP_KEY);
             skillCalculatorViewHandler.toExp = savedInstanceState.getInt(TO_EXP_KEY);
+            skillCalculatorViewHandler.customExp = savedInstanceState.getInt(CUSTOM_EXP_KEY);
             skillCalculatorViewHandler.setValueToEditText(R.id.current_lvl, skillCalculatorViewHandler.fromLvl);
             skillCalculatorViewHandler.setValueToEditText(R.id.target_lvl, skillCalculatorViewHandler.toLvl);
             skillCalculatorViewHandler.setValueToEditText(R.id.current_exp, skillCalculatorViewHandler.fromExp);
             skillCalculatorViewHandler.setValueToEditText(R.id.target_exp, skillCalculatorViewHandler.toExp);
+            skillCalculatorViewHandler.setValueToEditText(R.id.custom_exp, skillCalculatorViewHandler.customExp);
             skillCalculatorViewHandler.updateIndicators();
             if (savedInstanceState.getBoolean(WAS_REQUESTING_KEY)) {
                 skillCalculatorViewHandler.updateUser();
@@ -71,6 +74,7 @@ public class SkillCalculatorFragment extends BaseFragment {
         outState.putInt(TO_LEVEL_KEY, skillCalculatorViewHandler.toLvl);
         outState.putInt(FROM_EXP_KEY, skillCalculatorViewHandler.fromExp);
         outState.putInt(TO_EXP_KEY, skillCalculatorViewHandler.toExp);
+        outState.putInt(CUSTOM_EXP_KEY, skillCalculatorViewHandler.customExp);
     }
 
     @Override

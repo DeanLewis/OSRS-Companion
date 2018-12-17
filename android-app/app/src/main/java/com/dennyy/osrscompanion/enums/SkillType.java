@@ -50,7 +50,9 @@ public enum SkillType {
         this.name = name;
     }
 
-    public boolean isMinigame() { return id >= Constants.REQUIRED_STATS_LENGTH;}
+    public boolean isMinigame() {
+        return id >= Constants.REQUIRED_STATS_LENGTH;
+    }
 
     public static SkillType fromId(int id) {
         for (SkillType skillType : SkillType.values()) {
@@ -60,5 +62,15 @@ public enum SkillType {
         }
         Logger.log(String.valueOf(id), new IndexOutOfBoundsException("unknown skill id"));
         throw new IndexOutOfBoundsException(String.format("Unknown skill id: %d", id));
+    }
+
+    public static boolean isCombat(SkillType type, SkillType... exclusions) {
+        boolean excluded = false;
+        for (SkillType exclusion : exclusions) {
+            excluded = type == exclusion;
+        }
+        return !excluded && (type == SkillType.ATTACK || type == SkillType.STRENGTH || type == SkillType.DEFENCE || type == SkillType.HITPOINTS ||
+                type == SkillType.RANGED || type == SkillType.MAGIC || type == SkillType.PRAYER);
+
     }
 }

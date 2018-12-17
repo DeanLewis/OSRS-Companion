@@ -16,4 +16,14 @@ public class SkillDataAction {
         this.exp = exp;
         this.ignoreBonus = ignoreBonus;
     }
+
+    public String getFormattedName() {
+        if (SkillType.isCombat(skillType, SkillType.PRAYER)) {
+            String[] split = name.split("_");
+            if (split.length > 1) {
+                return String.format("%s (%s)", split[0], split[1]);
+            }
+        }
+        return name;
+    }
 }

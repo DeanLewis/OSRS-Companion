@@ -1,23 +1,13 @@
 package com.dennyy.osrscompanion.viewhandlers;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.android.volley.NoConnectionError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
@@ -58,6 +48,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
     public int toLvl;
     public int fromExp;
     public int toExp;
+    public int customExp;
 
     private static final String HISCORES_REQUEST_TAG = "skill_calc_hiscores_request";
     private HiscoreTypeSelectorLayout hiscoreTypeSelectorLayout;
@@ -88,8 +79,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
 
         skillSelectorSpinner = view.findViewById(R.id.skill_selector_spinner);
         bonusSpinner = view.findViewById(R.id.bonus_selector_spinner);
-        SkillCalculatorTypes skillCalculatorTypes = new SkillCalculatorTypes();
-        skillSelectorSpinnerAdapter = new SkillSelectorSpinnerAdapter(context, skillCalculatorTypes);
+        skillSelectorSpinnerAdapter = new SkillSelectorSpinnerAdapter(context, SkillCalculatorTypes.get());
         nothingSelectedSpinnerAdapter = new NothingSelectedSpinnerAdapter(skillSelectorSpinnerAdapter, getString(R.string.select_a_skill), context);
         skillSelectorSpinner.setAdapter(nothingSelectedSpinnerAdapter);
 
@@ -102,13 +92,8 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
         }
         initializeListeners();
         initializeCachedUser();
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Utils.hideKeyboard(context, SkillCalculatorViewHandler.super.view);
-            }
-        }, 500);
+
+        hideKeyboard();
     }
 
     private void initializeCachedUser() {
@@ -153,6 +138,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
         ((EditText) view.findViewById(R.id.target_lvl)).addTextChangedListener(this);
         ((EditText) view.findViewById(R.id.current_exp)).addTextChangedListener(this);
         ((EditText) view.findViewById(R.id.target_exp)).addTextChangedListener(this);
+        ((EditText) view.findViewById(R.id.custom_exp)).addTextChangedListener(this);
         bonusSpinner.setOnItemSelectedListener(this);
         actionsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -290,6 +276,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
     }
 
     public void toggleInputContainer(boolean visible) {
+        actionsListView.setSelectionAfterHeaderView();
         refreshLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
         listViewContainer.setVisibility(visible ? View.GONE : View.VISIBLE);
         ((Button) navbar.findViewById(R.id.navbar_back)).setText(visible ? R.string.actions : R.string.back);
@@ -323,6 +310,7 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
         setValueToEditText(R.id.current_lvl, RsUtils.lvl(fromExp, false));
         setValueToEditText(R.id.target_lvl, RsUtils.lvl(toExp, false));
         adapter.updateListFromExp(fromExp, toExp);
+        adapter.updateCustomExp(customExp);
         Utils.hideKeyboard(context, this.view);
         toggleInputContainer(false);
     }
@@ -459,6 +447,9 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
             toExp = getValueFromEditText(R.id.target_exp, 0, Constants.MAX_EXP, 0);
             setValueToEditText(R.id.target_exp, toExp);
             setValueToEditText(R.id.target_lvl, RsUtils.lvl(toExp, false));
+        }
+        else if (editable == ((EditText) view.findViewById(R.id.custom_exp)).getEditableText()) {
+            customExp = getValueFromEditText(R.id.custom_exp, 0, Constants.MAX_EXP, 0);
         }
     }
 }
