@@ -3,7 +3,6 @@ package com.dennyy.osrscompanion.asynctasks;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-
 import com.dennyy.osrscompanion.enums.GeItemsSource;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
@@ -11,21 +10,19 @@ import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.JsonItemsLoadedListener;
 import com.dennyy.osrscompanion.models.GrandExchange.JsonItem;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class LoadGeItemsTask extends AsyncTask<String, Void, ArrayList<JsonItem>> {
+public class LoadGeItemsTask extends AsyncTask<String, Void, HashMap<String, JsonItem>> {
     private WeakReference<Context> weakContext;
     private JsonItemsLoadedListener jsonItemsLoadedListener;
-    private ArrayList<JsonItem> allItems = new ArrayList<>();
     private HashMap<String, Integer> itemLimits = new HashMap<>();
+
 
     public LoadGeItemsTask(Context context, JsonItemsLoadedListener jsonItemsLoadedListener) {
         this.weakContext = new WeakReference<>(context);
@@ -33,7 +30,8 @@ public class LoadGeItemsTask extends AsyncTask<String, Void, ArrayList<JsonItem>
     }
 
     @Override
-    protected ArrayList<JsonItem> doInBackground(String... params) {
+    protected HashMap<String, JsonItem> doInBackground(String... params) {
+        HashMap<String, JsonItem> allItems = new HashMap<>();
         Context context = weakContext.get();
         if (context == null) {
             return allItems;
@@ -69,7 +67,7 @@ public class LoadGeItemsTask extends AsyncTask<String, Void, ArrayList<JsonItem>
                 if (geItemsSource == GeItemsSource.BOTH
                         || geItemsSource == GeItemsSource.F2P && !isMembers
                         || geItemsSource == GeItemsSource.P2P && isMembers) {
-                    allItems.add(getJsonItemFromJson(id, isMembers, result));
+                    allItems.put(id, getJsonItemFromJson(id, isMembers, result));
                 }
             }
         }
@@ -90,7 +88,7 @@ public class LoadGeItemsTask extends AsyncTask<String, Void, ArrayList<JsonItem>
     }
 
     @Override
-    protected void onPostExecute(ArrayList<JsonItem> items) {
+    protected void onPostExecute(HashMap<String, JsonItem> items) {
         if (items.size() > 0) {
             jsonItemsLoadedListener.onJsonItemsLoaded(items);
         }

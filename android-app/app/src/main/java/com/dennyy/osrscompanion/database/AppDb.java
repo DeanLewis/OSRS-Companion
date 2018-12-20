@@ -5,15 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import com.dennyy.osrscompanion.enums.HiscoreType;
 import com.dennyy.osrscompanion.enums.TrackDurationType;
 import com.dennyy.osrscompanion.helpers.Logger;
-import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeData;
-import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeGraphData;
-import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeUpdateData;
+import com.dennyy.osrscompanion.models.GrandExchange.*;
 import com.dennyy.osrscompanion.models.Hiscores.UserStats;
-import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryDTO;
+import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummary;
 import com.dennyy.osrscompanion.models.OSRSNews.OSRSNewsDTO;
 import com.dennyy.osrscompanion.models.Timers.Timer;
 import com.dennyy.osrscompanion.models.TodoList.TodoList;
@@ -45,32 +42,39 @@ public class AppDb extends SQLiteOpenHelper {
                 DB.UserStats.stats + " TEXT, " +
                 DB.UserStats.hiscoreType + " INTEGER NOT NULL, " +
                 DB.UserStats.dateModified + " INTEGER NOT NULL);";
+
         String createTrackTable = "CREATE TABLE " + DB.Track.tableName + " (" +
                 DB.Track.id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 DB.Track.rsn + " TEXT NOT NULL COLLATE NOCASE, " +
                 DB.Track.data + " TEXT, " +
                 DB.Track.durationType + " INTEGER NOT NULL, " +
                 DB.Track.dateModified + " INTEGER NOT NULL);";
+
         String createGrandExchangeTable = "CREATE TABLE " + DB.GrandExchange.tableName + " (" +
                 DB.GrandExchange.itemId + " INTEGER PRIMARY KEY, " +
                 DB.GrandExchange.data + " TEXT, " +
                 DB.GrandExchange.dateModified + " INTEGER NOT NULL);";
+
         String createGrandExchangeUpdateTable = "CREATE TABLE " + DB.GrandExchangeUpdate.tableName + " (" +
                 DB.GrandExchangeUpdate.id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 DB.GrandExchangeUpdate.data + " TEXT NOT NULL, " +
                 DB.GrandExchangeUpdate.dateModified + " INTEGER NOT NULL);";
+
         String createGrandExchangeGraphTable = "CREATE TABLE " + DB.GrandExchangeGraph.tableName + " (" +
                 DB.GrandExchangeGraph.itemId + " INTEGER PRIMARY KEY, " +
                 DB.GrandExchangeGraph.data + " TEXT NOT NULL, " +
                 DB.GrandExchangeGraph.dateModified + " INTEGER NOT NULL);";
+
         String createOSBuddyExchangeSummaryTable = "CREATE TABLE " + DB.OSBuddyExchangeSummary.tableName + " (" +
                 DB.OSBuddyExchangeSummary.id + " INTEGER PRIMARY KEY, " +
                 DB.OSBuddyExchangeSummary.data + " TEXT, " +
                 DB.OSBuddyExchangeSummary.dateModified + " INTEGER NOT NULL);";
+
         String createOSRSNewsTable = "CREATE TABLE " + DB.OSRSNews.tableName + " (" +
                 DB.OSRSNews.id + " INTEGER PRIMARY KEY, " +
                 DB.OSRSNews.data + " TEXT, " +
                 DB.OSRSNews.dateModified + " INTEGER NOT NULL);";
+
         String createTimersTable = "CREATE TABLE " + DB.Timers.tableName + " (" +
                 DB.Timers.id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 DB.Timers.title + " TEXT, " +
@@ -89,6 +93,12 @@ public class AppDb extends SQLiteOpenHelper {
                 DB.Npc.name + " TEXT UNIQUE, " +
                 DB.Npc.data + " TEXT)";
 
+        String createGeHistoryTable = "CREATE TABLE " + DB.GeHistory.tableName + " (" +
+                DB.GeHistory.itemId + " INTEGER PRIMARY KEY, " +
+                DB.GeHistory.name + " TEXT, " +
+                DB.GeHistory.isFavorite + " INTEGER DEFAULT 0, " +
+                DB.GeHistory.dateModified + " INTEGER NOT NULL)";
+
         db.execSQL(createUserStatsTable);
         db.execSQL(createTrackTable);
         db.execSQL(createGrandExchangeTable);
@@ -99,6 +109,7 @@ public class AppDb extends SQLiteOpenHelper {
         db.execSQL(createTimersTable);
         db.execSQL(createTodoListTable);
         db.execSQL(createNpcTable);
+        db.execSQL(createGeHistoryTable);
     }
 
     @Override
@@ -160,6 +171,15 @@ public class AppDb extends SQLiteOpenHelper {
                     DB.Npc.name + " TEXT UNIQUE, " +
                     DB.Npc.data + " TEXT)";
             db.execSQL(createNpcTable);
+        }
+        if (oldVersion < 14) {
+            String createGeHistoryTable = "CREATE TABLE IF NOT EXISTS " + DB.GeHistory.tableName + " (" +
+                    DB.GeHistory.itemId + " INTEGER PRIMARY KEY, " +
+                    DB.GeHistory.name + " TEXT, " +
+                    DB.GeHistory.isFavorite + " INTEGER DEFAULT 0, " +
+                    DB.GeHistory.dateModified + " INTEGER NOT NULL)";
+
+            db.execSQL(createGeHistoryTable);
         }
     }
 
@@ -278,12 +298,12 @@ public class AppDb extends SQLiteOpenHelper {
         }
     }
 
-    public OSBuddySummaryDTO getOSBuddyExchangeSummary() {
+    public OSBuddySummary getOSBuddyExchangeSummary() {
         String query = "SELECT * FROM " + DB.OSBuddyExchangeSummary.tableName + " WHERE " + DB.OSBuddyExchangeSummary.id + " = 1";
         Cursor cursor = getReadableDatabase().rawQuery(query, null);
-        OSBuddySummaryDTO osBuddyExchangeData = null;
+        OSBuddySummary osBuddyExchangeData = null;
         if (cursor.moveToFirst()) {
-            osBuddyExchangeData = new OSBuddySummaryDTO();
+            osBuddyExchangeData = new OSBuddySummary();
             osBuddyExchangeData.id = 1;
             osBuddyExchangeData.data = cursor.getString(cursor.getColumnIndex(DB.OSBuddyExchangeSummary.data));
             osBuddyExchangeData.dateModified = cursor.getLong(cursor.getColumnIndex(DB.OSBuddyExchangeSummary.dateModified));
@@ -539,99 +559,43 @@ public class AppDb extends SQLiteOpenHelper {
         }
     }
 
-    private static class DB {
-        private static final String name = "osrscompanion.db";
-        private static final int version = 12;
-
-        private static class UserStats {
-            private static final String tableName = "UserStats";
-
-            private static final String id = "id";
-            private static final String rsn = "rsn";
-            private static final String stats = "stats";
-            private static final String hiscoreType = "hiscoreType";
-            private static final String dateModified = "dateModified";
+    public void insertOrUpdateGeHistory(String itemId, String itemName, boolean isFavorite) {
+        String id = String.valueOf(itemId);
+        String query = "SELECT * FROM " + DB.GeHistory.tableName + " WHERE " + DB.GeHistory.itemId + " = ?";
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ id });
+        ContentValues cv = new ContentValues();
+        cv.put(DB.GeHistory.isFavorite, isFavorite);
+        cv.put(DB.GeHistory.name, itemName);
+        cv.put(DB.GeHistory.dateModified, System.currentTimeMillis());
+        if (cursor.moveToFirst()) {
+            getReadableDatabase().update(DB.GeHistory.tableName, cv, DB.GeHistory.itemId + " = ?", new String[]{ id });
         }
-
-        private static class Track {
-            private static final String tableName = "Tracker";
-
-            private static final String id = "id";
-            private static final String rsn = "rsn";
-            private static final String durationType = "durationType";
-            private static final String data = "data";
-            private static final String dateModified = "dateModified";
+        else {
+            cv.put(DB.GeHistory.itemId, id);
+            getWritableDatabase().insert(DB.GeHistory.tableName, null, cv);
         }
+        cursor.close();
+    }
 
-        private static class GrandExchange {
-            private static final String tableName = "GrandExchange";
+    public GeHistory getGeHistory() {
+        return getGeHistory(false);
+    }
 
-            private static final String itemId = "itemId";
-            private static final String data = "data";
-            private static final String dateModified = "dateModified";
+    public GeHistory getGeHistory(boolean clearHistory) {
+        if (clearHistory) {
+            getReadableDatabase().delete(DB.GeHistory.tableName, DB.GeHistory.isFavorite + " = ?", new String[]{ String.valueOf(0) });
         }
+        String query = "SELECT * FROM " + DB.GeHistory.tableName + " ORDER BY " + DB.GeHistory.isFavorite + " DESC, " + DB.GeHistory.dateModified + " DESC";
+        Cursor cursor = getReadableDatabase().rawQuery(query, null);
+        GeHistory geHistory = new GeHistory();
 
-        private static class GrandExchangeUpdate {
-            private static final String tableName = "GrandExchangeUpdate";
-
-            private static final String id = "id";
-            private static final String data = "data";
-            private static final String dateModified = "dateModified";
+        while (cursor.moveToNext()) {
+            String itemId = cursor.getString(cursor.getColumnIndex(DB.GeHistory.itemId));
+            String itemName = cursor.getString(cursor.getColumnIndex(DB.GeHistory.name));
+            boolean isFavorite = cursor.getInt(cursor.getColumnIndex(DB.GeHistory.isFavorite)) == 1;
+            geHistory.add(new GeHistoryEntry(itemId, itemName, isFavorite));
         }
-
-        private static class GrandExchangeGraph {
-            private static final String tableName = "GrandExchangeGraph";
-
-            private static final String itemId = "itemId";
-            private static final String data = "data";
-            private static final String dateModified = "dateModified";
-        }
-
-        private static class OSBuddyExchange {
-            private static final String tableName = "OSBuddyExchange";
-        }
-
-        private static class OSBuddyExchangeSummary {
-            private static final String tableName = "OSBuddyExchangeSummary";
-
-            private static final String id = "id";
-            private static final String data = "data";
-            private static final String dateModified = "dateModified";
-        }
-
-        private static class OSRSNews {
-            private static final String tableName = "OSRSNews";
-
-            private static final String id = "id";
-            private static final String data = "data";
-            private static final String dateModified = "dateModified";
-        }
-
-        private static class Timers {
-            private static final String tableName = "Timers";
-
-            private static final String id = "id";
-            private static final String title = "title";
-            private static final String description = "description";
-            private static final String repeat = "repeat";
-            private static final String interval = "interval";
-            private static final String dateModified = "dateModified";
-        }
-
-        private static class Todo {
-            private static final String tableName = "TodoList";
-
-            private static final String id = "id";
-            private static final String sortOrder = "sortOrder";
-            private static final String content = "content";
-            private static final String done = "done";
-        }
-
-        private static class Npc {
-            private static final String tableName = "Npc";
-
-            private static final String name = "name";
-            private static final String data = "data";
-        }
+        cursor.close();
+        return geHistory;
     }
 }

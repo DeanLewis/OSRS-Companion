@@ -7,7 +7,7 @@ import com.dennyy.osrscompanion.database.AppDb;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.interfaces.OSBuddySummaryLoadedListener;
-import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryDTO;
+import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummary;
 import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryItem;
 import com.dennyy.osrscompanion.viewhandlers.GrandExchangeViewHandler;
 
@@ -17,26 +17,30 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
 public class GetOSBuddyExchangeSummaryTask extends AsyncTask<Void, Void, HashMap<String, OSBuddySummaryItem>> {
-    private WeakReference<Context> context;
+    private WeakReference<Context> weakContext;
     private OSBuddySummaryLoadedListener callback;
     private long dateModified;
 
     public GetOSBuddyExchangeSummaryTask(final Context context, final OSBuddySummaryLoadedListener callback) {
-        this.context = new WeakReference<>(context);
+        this.weakContext = new WeakReference<>(context);
         this.callback = callback;
     }
 
     @Override
     protected HashMap<String, OSBuddySummaryItem> doInBackground(Void... voids) {
         HashMap<String, OSBuddySummaryItem> content = new HashMap<>();
-        OSBuddySummaryDTO summaryDTO = AppDb.getInstance(context.get()).getOSBuddyExchangeSummary();
-        if (summaryDTO != null) {
-            dateModified = summaryDTO.dateModified;
+        Context context = weakContext.get();
+        if (context == null){
+            return content;
+        }
+        OSBuddySummary summary = AppDb.getInstance(context).getOSBuddyExchangeSummary();
+        if (summary != null) {
+            dateModified = summary.dateModified;
             try {
-                content = GrandExchangeViewHandler.parseOSBuddySummary(summaryDTO.data);
+                content = GrandExchangeViewHandler.parseOSBuddySummary(summary.data);
             }
             catch (JSONException ex) {
-                Logger.log(summaryDTO.data, ex);
+                Logger.log(summary.data, ex);
                 return null;
             }
         }

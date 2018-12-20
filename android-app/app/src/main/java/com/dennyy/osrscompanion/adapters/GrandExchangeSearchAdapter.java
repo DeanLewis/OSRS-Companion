@@ -5,35 +5,30 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.bumptech.glide.Glide;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.GrandExchange.JsonItem;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implements Filterable, View.OnTouchListener {
+
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<JsonItem> grandExchangeItems;
     private ArrayList<JsonItem> originalGrandExchangeItems;
     private ItemFilter mFilter = new ItemFilter();
 
-    public GrandExchangeSearchAdapter(Context context, LayoutInflater inflater, ArrayList<JsonItem> grandExchangeItems) {
-        super(context, 0, grandExchangeItems);
+    public GrandExchangeSearchAdapter(Context context, Collection<JsonItem> grandExchangeItems) {
+        super(context, 0, new ArrayList<>(grandExchangeItems));
         this.context = context;
-        this.inflater = inflater;
+        this.inflater = LayoutInflater.from(context);
         this.grandExchangeItems = new ArrayList<>(grandExchangeItems);
         this.originalGrandExchangeItems = new ArrayList<>(grandExchangeItems);
     }
@@ -60,14 +55,6 @@ public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implement
         return convertView;
     }
 
-    public ArrayList<String> getItemIds() {
-        ArrayList<String> ids = new ArrayList<>();
-        for (JsonItem jsonItem : grandExchangeItems) {
-            ids.add(jsonItem.id);
-        }
-        return ids;
-    }
-
     @Override
     public JsonItem getItem(int position) {
         return grandExchangeItems.get(position);
@@ -76,13 +63,6 @@ public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implement
     @Override
     public int getCount() {
         return grandExchangeItems != null ? grandExchangeItems.size() : 0;
-    }
-
-    public void resetItems() {
-        grandExchangeItems.clear();
-        grandExchangeItems.trimToSize();
-        grandExchangeItems.addAll(originalGrandExchangeItems);
-        this.notifyDataSetChanged();
     }
 
     @Override
@@ -96,37 +76,9 @@ public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implement
         super.notifyDataSetChanged();
     }
 
-    public void updateItems(ArrayList<String> newList) {
-        grandExchangeItems.clear();
-        grandExchangeItems.trimToSize();
-        grandExchangeItems.addAll(getItemsFromIds(newList));
-        this.notifyDataSetChanged();
-    }
-
     @Override
     public Filter getFilter() {
         return mFilter;
-    }
-
-    public ArrayList<JsonItem> getItemsFromIds(ArrayList<String> ids) {
-        ArrayList<JsonItem> jsonItems = new ArrayList<>();
-        for (String id : ids) {
-            JsonItem item = getItemById(id);
-            if (item == null) {
-                continue;
-            }
-            jsonItems.add(item);
-        }
-        return jsonItems;
-    }
-
-    private JsonItem getItemById(String id) {
-        for (JsonItem jsonItem : originalGrandExchangeItems) {
-            if (jsonItem.id.equals(id)) {
-                return jsonItem;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -176,6 +128,5 @@ public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implement
             grandExchangeItems = (ArrayList<JsonItem>) results.values;
             notifyDataSetChanged();
         }
-
     }
 }

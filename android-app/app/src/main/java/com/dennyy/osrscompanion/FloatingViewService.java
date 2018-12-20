@@ -121,7 +121,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     }
                     else if (key.equals(geHeadName)) {
                         cachedView = inflater.inflate(R.layout.grand_exchange_layout, parent, false);
-                        new GrandExchangeViewHandler(FloatingViewService.this, cachedView, null);
+                        new GrandExchangeViewHandler(FloatingViewService.this, cachedView, true, null);
                     }
                     else if (key.equals(hiscoreLookupHeadName)) {
                         cachedView = inflater.inflate(R.layout.hiscores_lookup_layout, parent, false);

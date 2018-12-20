@@ -2,10 +2,10 @@ package com.dennyy.osrscompanion.interfaces;
 
 import com.dennyy.osrscompanion.models.GrandExchange.JsonItem;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface JsonItemsLoadedListener {
-    void onJsonItemsLoaded(ArrayList<JsonItem> items);
+    void onJsonItemsLoaded(HashMap<String,JsonItem> items);
 
     void onJsonItemsLoadError();
 }

@@ -4,24 +4,21 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.android.volley.NoConnectionError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
+import com.dennyy.osrscompanion.adapters.GeHistoryAdapter;
 import com.dennyy.osrscompanion.adapters.GrandExchangeSearchAdapter;
+import com.dennyy.osrscompanion.asynctasks.GeAsyncTasks;
 import com.dennyy.osrscompanion.asynctasks.GetOSBuddyExchangeSummaryTask;
 import com.dennyy.osrscompanion.asynctasks.LoadGeItemsTask;
 import com.dennyy.osrscompanion.asynctasks.WriteOSBuddyExchangeSummaryTask;
@@ -34,14 +31,11 @@ import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.RsUtils;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.AdapterGeHistoryClickListener;
+import com.dennyy.osrscompanion.interfaces.GeListeners;
 import com.dennyy.osrscompanion.interfaces.JsonItemsLoadedListener;
 import com.dennyy.osrscompanion.interfaces.OSBuddySummaryLoadedListener;
-import com.dennyy.osrscompanion.models.GrandExchange.CustomLineDataSet;
-import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeData;
-import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeGraphData;
-import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeItem;
-import com.dennyy.osrscompanion.models.GrandExchange.GrandExchangeUpdateData;
-import com.dennyy.osrscompanion.models.GrandExchange.JsonItem;
+import com.dennyy.osrscompanion.models.GrandExchange.*;
 import com.dennyy.osrscompanion.models.OSBuddy.OSBuddySummaryItem;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -50,32 +44,22 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class GrandExchangeViewHandler extends BaseViewHandler implements View.OnClickListener, JsonItemsLoadedListener {
-    public JsonItem jsonItem;
-    public String geItemData;
-    public String geupdateData;
-    public String geGraphData;
-    public GeGraphDays currentSelectedDays = GeGraphDays.ALL;
-    public boolean wasRequestingGe;
-    public boolean wasRequestingGeupdate;
-    public boolean wasRequestingGegraph;
-    public boolean wasRequestingOsBuddy;
+public class GrandExchangeViewHandler extends BaseViewHandler implements View.OnClickListener, JsonItemsLoadedListener, GeListeners.GeHistoryLoadedListener, AdapterGeHistoryClickListener {
+
+    private JsonItem jsonItem;
+    private GeGraphDays currentSelectedDays = GeGraphDays.MONTH;
+    private boolean wasRequestingGe;
+    private boolean wasRequestingGeupdate;
+    private boolean wasRequestingGegraph;
+    private boolean wasRequestingOsBuddy;
 
     private static final String GE_REQUEST_TAG = "grandexchangerequest";
     private static final String GEUPDATE_REQUEST_TAG = "grandexchangeupdaterequest";
@@ -84,33 +68,79 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
     private DelayedAutoCompleteTextView autoCompleteTextView;
     private SwipeRefreshLayout refreshLayout;
-    private ArrayList<JsonItem> allItems = new ArrayList<>();
-    private GrandExchangeSearchAdapter adapter;
+    private HashMap<String, JsonItem> allItems = new HashMap<>();
+    private ListView geHistoryListView;
+    private GeHistoryAdapter geHistoryAdapter;
+    private LinearLayout geHistoryContainer;
+    private GeHistory geHistory = new GeHistory();
 
-    private HashMap<GeGraphDays, Integer> indicators;
+    private ImageButton favoriteIcon;
+    private HashMap<GeGraphDays, Integer> indicators = new HashMap<>();
     private long lastRefreshTimeMs;
     private JsonItemsLoadedListener jsonItemsLoadedListener;
     private HashMap<String, OSBuddySummaryItem> summaryItems = new HashMap<>();
     private long summaryItemsDateModified;
 
-    public GrandExchangeViewHandler(final Context context, final View view, final JsonItemsLoadedListener jsonItemsLoadedListener) {
-        super(context, view);
+    public GrandExchangeViewHandler(Context context, View view, boolean isFloatingView, JsonItemsLoadedListener listener) {
+        super(context, view, isFloatingView);
 
-        indicators = new HashMap<>();
-        indicators.put(GeGraphDays.ALL, R.id.ge_graph_show_all);
-        indicators.put(GeGraphDays.QUARTER, R.id.ge_graph_show_quarter);
-        indicators.put(GeGraphDays.MONTH, R.id.ge_graph_show_month);
-        indicators.put(GeGraphDays.WEEK, R.id.ge_graph_show_week);
-        this.jsonItemsLoadedListener = jsonItemsLoadedListener;
+        initIndicators();
+        initChartSettings();
+        autoCompleteTextView = ((ClearableAutoCompleteTextView) view.findViewById(R.id.ge_search_input)).getAutoCompleteTextView();
+        jsonItemsLoadedListener = listener;
         refreshLayout = view.findViewById(R.id.ge_refresh_layout);
+        favoriteIcon = view.findViewById(R.id.ge_favorite_icon);
+        favoriteIcon.setOnClickListener(this);
+        geHistoryContainer = view.findViewById(R.id.ge_history_container);
+        geHistoryListView = geHistoryContainer.findViewById(R.id.ge_history_listview);
+        geHistoryContainer.findViewById(R.id.ge_history_clear).setOnClickListener(this);
         new LoadGeItemsTask(context, this).execute();
         new GetOSBuddyExchangeSummaryTask(context, loadSummaryDataCallback()).execute();
+        if (isFloatingView) {
+            ImageButton historyIcon = view.findViewById(R.id.ge_history_icon);
+            historyIcon.setVisibility(View.VISIBLE);
+            historyIcon.setOnClickListener(this);
+        }
     }
 
     @Override
-    public void onJsonItemsLoaded(ArrayList<JsonItem> items) {
-        allItems = new ArrayList<>(items);
-        updateView();
+    public void onJsonItemsLoaded(HashMap<String, JsonItem> items) {
+        allItems = new HashMap<>(items);
+        GrandExchangeSearchAdapter searchAdapter = new GrandExchangeSearchAdapter(context, allItems.values());
+        autoCompleteTextView.setAdapter(searchAdapter);
+        new GeAsyncTasks.GetHistory(context, false, this).execute();
+        initListeners();
+    }
+
+    private void initListeners() {
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (allowUpdateItem()) {
+                    updateItem(jsonItem);
+                }
+            }
+        });
+
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
+                Utils.hideKeyboard(context, autoCompleteTextView);
+                autoCompleteTextView.forceDismissDropdown();
+                jsonItem = (JsonItem) adapterView.getItemAtPosition(position);
+                boolean isFavorite = geHistory.isFavorite(jsonItem.id);
+                new GeAsyncTasks.InsertOrUpdateGeHistory(context, jsonItem.id, jsonItem.name, isFavorite, GrandExchangeViewHandler.this).execute();
+                if (allowUpdateItem()) {
+                    updateItem(jsonItem);
+                }
+            }
+        });
+
+        autoCompleteTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                return false;
+            }
+        });
         if (jsonItemsLoadedListener != null) {
             jsonItemsLoadedListener.onJsonItemsLoaded(null);
         }
@@ -121,46 +151,32 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         showToast(getResources().getString(R.string.exception_occurred, "exception", "loading items from file"), Toast.LENGTH_LONG);
     }
 
-    private void updateView() {
-        initChartSettings(view);
-        autoCompleteTextView = ((ClearableAutoCompleteTextView) view.findViewById(R.id.ge_search_input)).getAutoCompleteTextView();
-        if (jsonItem != null)
-            autoCompleteTextView.setText(jsonItem.name);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (allowUpdateItem()) {
-                    updateItem(jsonItem.id);
-                }
+    @Override
+    public void onGeHistoryLoaded(GeHistory geHistory) {
+        this.geHistory = new GeHistory(geHistory);
+        if (geHistoryAdapter == null) {
+            geHistoryAdapter = new GeHistoryAdapter(context, geHistory, this);
+            geHistoryListView.setAdapter(geHistoryAdapter);
+            if (!geHistory.isEmpty()) {
+                toggleGeData(false);
             }
-        });
-        for (Map.Entry<GeGraphDays, Integer> entry : indicators.entrySet()) {
-            view.findViewById(entry.getValue()).setOnClickListener(this);
         }
-        if (adapter == null) {
-            adapter = new GrandExchangeSearchAdapter(context, (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE), allItems);
+        else {
+            geHistoryAdapter.updateList(geHistory);
         }
-        autoCompleteTextView.setAdapter(adapter);
-        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
-                Utils.hideKeyboard(context, autoCompleteTextView);
-                autoCompleteTextView.forceDismissDropdown();
-                jsonItem = (JsonItem) adapterView.getItemAtPosition(position);
-                if (allowUpdateItem()) {
-                    updateItem(jsonItem.id);
-                }
-            }
-        });
-
-        autoCompleteTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                return false;
-            }
-        });
     }
 
-    private void initChartSettings(View view) {
+    @Override
+    public void onClickGeHistory(String itemId) {
+        updateItem(itemId, false);
+    }
+
+    @Override
+    public void onClickRemoveFavorite(String itemId, String itemName) {
+        new GeAsyncTasks.InsertOrUpdateGeHistory(context, itemId, itemName, false, this).execute();
+    }
+
+    private void initChartSettings() {
         LineChart chart = view.findViewById(R.id.ge_item_graph);
         int white = getResources().getColor(R.color.text);
         chart.getDescription().setEnabled(false);
@@ -169,6 +185,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         chart.setMaxVisibleValueCount(10);
         chart.setDrawBorders(true);
         chart.setBorderColor(white);
+        chart.getAxisLeft().setGranularity(1);
         chart.getLegend().setTextColor(white);
         chart.getAxisLeft().setTextColor(white);
         chart.getXAxis().setTextColor(white);
@@ -177,12 +194,46 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         paint.setColor(getResources().getColor(R.color.text));
     }
 
-    public void updateItem(String id) {
-        setJsonItem(id);
+    public void updateItem(final String id, boolean fromDb) {
+        jsonItem = allItems.get(id);
         if (jsonItem == null) {
             showToast(getString(R.string.unexpected_error_try_reopen), Toast.LENGTH_SHORT);
+            Logger.log(id, new NullPointerException("jsonitem not found"));
             return;
         }
+        autoCompleteTextView.setText(jsonItem.name);
+        autoCompleteTextView.forceDismissDropdown();
+        if (fromDb) {
+            new GeAsyncTasks.GetItemData(context, Integer.parseInt(jsonItem.id), new GeListeners.ItemDataLoadedListener() {
+                @Override
+                public void onItemDataLoaded(ItemData itemData) {
+                    if (itemData.geData != null) {
+                        handleGeData(itemData.geData.data);
+                        toggleGeData(true);
+                    }
+                    if (itemData.graphData != null) {
+                        handleGeGraphData(itemData.graphData.data);
+                    }
+                    if (itemData.geUpdate != null) {
+                        handleGeUpdateData(itemData.geUpdate.data);
+                    }
+                    summaryItems = itemData.osbSummary;
+                    handleOSBuddyData();
+                }
+
+                @Override
+                public void onItemDataLoadFailed() {
+                    Logger.log(id, new RuntimeException("failed to restore item from savedinstancestate"));
+                    showToast(getString(R.string.unexpected_error_try_reopen), Toast.LENGTH_SHORT);
+                }
+            }).execute();
+        }
+        else {
+            updateItem(jsonItem);
+        }
+    }
+
+    private void updateItem(final JsonItem jsonItem) {
         activateRefreshCooldown();
         refreshLayout.setRefreshing(true);
         wasRequestingGe = true;
@@ -191,14 +242,13 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         Utils.getString(Constants.GE_ITEM_URL + jsonItem.id, GE_REQUEST_TAG, false, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                geItemData = result;
                 cacheInfoLinearLayout.setVisibility(View.GONE);
-                view.findViewById(R.id.ge_data).setVisibility(View.VISIBLE);
-                AppDb.getInstance(context).insertOrUpdateGrandExchangeData(jsonItem.id, result);
+                toggleGeData(true);
+                new GeAsyncTasks.InsertOrUpdateGeData(context, jsonItem.id, result).execute();
                 loadGraph();
-                loadGeupdate();
+                loadGeUpdate();
                 loadOSBuddyExchange();
-                handleGeData();
+                handleGeData(result);
             }
 
             @Override
@@ -209,15 +259,14 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                         showToast(getResources().getString(R.string.failed_to_obtain_data, "GE item data", getResources().getString(R.string.network_error)), Toast.LENGTH_LONG);
                         return;
                     }
-                    geItemData = cachedData.data;
                     String cacheText = getResources().getString(R.string.using_cached_data, Utils.convertTime(cachedData.dateModified));
                     cacheInfoTextView.setText(cacheText);
                     cacheInfoLinearLayout.setVisibility(View.VISIBLE);
-                    view.findViewById(R.id.ge_data).setVisibility(View.VISIBLE);
+                    toggleGeData(true);
                     loadGraph();
-                    loadGeupdate();
+                    loadGeUpdate();
                     loadOSBuddyExchange();
-                    handleGeData();
+                    handleGeData(cachedData.data);
                 }
                 else {
                     showToast(getResources().getString(R.string.failed_to_obtain_data, "ge item data", error.getMessage()), Toast.LENGTH_LONG);
@@ -232,26 +281,20 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         });
     }
 
-    private void setJsonItem(String id) {
-        if (jsonItem != null) {
-            return;
-        }
-        for (JsonItem item : allItems) {
-            if (item.id.equals(id)) {
-                jsonItem = item;
-                break;
-            }
-        }
+    private void toggleFavoriteItem(String itemId) {
+        boolean isFavorite = geHistory.isFavorite(itemId);
+        favoriteIcon.setBackground(ContextCompat.getDrawable(context, isFavorite ? R.drawable.baseline_star_white_24 : R.drawable.baseline_star_border_white_24));
+        favoriteIcon.setVisibility(View.VISIBLE);
     }
 
-    private void handleGeData() {
+    private void handleGeData(String geItemData) {
         try {
             JSONObject obj = new JSONObject(geItemData);
             JSONObject jItem = obj.getJSONObject("item");
             GrandExchangeItem item = getItemFromJson(jsonItem.id, jsonItem.limit, jItem);
             int red = getResources().getColor(R.color.red);
             int green = getResources().getColor(R.color.green);
-
+            toggleFavoriteItem(item.id);
             if (Utils.isValidContextForGlide(context)) {
                 Glide.with(context).load(Constants.GE_IMG_LARGE_URL + item.id).into((ImageView) view.findViewById(R.id.ge_item_icon));
             }
@@ -353,31 +396,41 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         return true;
     }
 
-    private void loadGeupdate() {
+    private void loadGeUpdate() {
         wasRequestingGeupdate = true;
+        new GeAsyncTasks.GetGeUpdate(context, new GeListeners.GeUpdateLoadedListener() {
+            @Override
+            public void onGeUpdateLoaded(boolean cacheExpired, GrandExchangeUpdateData grandExchangeUpdateData) {
+                if (!cacheExpired) {
+                    handleGeUpdateData(grandExchangeUpdateData.data);
+                    return;
+                }
+                fetchGeUpdateData(grandExchangeUpdateData.data);
+            }
+
+            @Override
+            public void onGeUpdateLoadFailed() {
+                fetchGeUpdateData(null);
+            }
+        }).execute();
+    }
+
+    private void fetchGeUpdateData(final String cachedData) {
         Utils.getString(Constants.GE_UPDATE_URL, GEUPDATE_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                AppDb.getInstance(context).updateGrandExchangeUpdateData(result);
-                geupdateData = result;
-                handleGeUpdateData();
+                new GeAsyncTasks.InsertGeUpdate(context, result).execute();
+                handleGeUpdateData(result);
             }
 
             @Override
             public void onError(VolleyError error) {
-                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    GrandExchangeUpdateData cachedData = AppDb.getInstance(context).getGrandExchangeUpdateData();
-
-                    if (cachedData == null) {
-                        showToast(getResources().getString(R.string.failed_to_obtain_data, "ge update data", getResources().getString(R.string.network_error)), Toast.LENGTH_LONG);
-                        return;
-                    }
-                    geupdateData = cachedData.data;
-                    handleGeUpdateData();
+                if (Utils.isNullOrEmpty(cachedData)) {
+                    TextView geupdateTextView = view.findViewById(R.id.geupdate);
+                    geupdateTextView.setText(getString(R.string.failed_to_obtain_data, "ge update data", error.getClass().getSimpleName()));
+                    return;
                 }
-                else {
-                    showToast(getResources().getString(R.string.failed_to_obtain_data, "geupdate data", error.getClass().getSimpleName()), Toast.LENGTH_LONG);
-                }
+                handleGeUpdateData(cachedData);
             }
 
             @Override
@@ -387,23 +440,27 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         });
     }
 
-    private void handleGeUpdateData() {
+    private void handleGeUpdateData(String geupdateData) {
+        TextView geupdateTextView = view.findViewById(R.id.geupdate);
         try {
             JSONObject obj = new JSONObject(geupdateData);
-            TextView geupdateTextView = view.findViewById(R.id.geupdate);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            format.setTimeZone(TimeZone.getTimeZone("UTC"));
+
             Date date = format.parse(obj.getString("datetime"));
-            geupdateTextView.setText(String.format(getResources().getString(R.string.time_utc), DateFormat.getDateTimeInstance().format(date)));
+
+            SimpleDateFormat displayFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
+            displayFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            geupdateTextView.setText(String.format(getResources().getString(R.string.time_utc), displayFormat.format(date)));
 
             TextView geupdateTimeAgoTextView = view.findViewById(R.id.geupdate_time_ago);
             long millisAgo = new Date().getTime() - date.getTime();
             String timeAgo = getResources().getString(R.string.geupdate_time_ago, TimeUnit.MILLISECONDS.toHours(millisAgo), TimeUnit.MILLISECONDS.toMinutes(millisAgo) % TimeUnit.HOURS.toMinutes(1));
             geupdateTimeAgoTextView.setText(timeAgo);
-
         }
         catch (JSONException | ParseException ex) {
             Logger.log(geupdateData, ex);
-            showToast(getResources().getString(R.string.exception_occurred, ex.getClass().getCanonicalName(), "parsing geupdate data"), Toast.LENGTH_LONG);
+            geupdateTextView.setText(getResources().getString(R.string.exception_occurred, ex.getClass().getCanonicalName(), "getting geupdate data"));
         }
     }
 
@@ -414,8 +471,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
             @Override
             public void onSuccess(String result) {
                 AppDb.getInstance(context).insertOrUpdateGrandExchangeGraphData(id, result);
-                geGraphData = result;
-                handleGeGraphData();
+                handleGeGraphData(result);
             }
 
             @Override
@@ -426,8 +482,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                         showToast(getResources().getString(R.string.failed_to_obtain_data, "ge data", getResources().getString(R.string.network_error)), Toast.LENGTH_LONG);
                         return;
                     }
-                    geGraphData = cachedData.data;
-                    handleGeGraphData();
+                    handleGeGraphData(cachedData.data);
 
                 }
                 else {
@@ -442,7 +497,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         });
     }
 
-    private void handleGeGraphData() {
+    private void handleGeGraphData(String geGraphData) {
         try {
             LineChart chart = view.findViewById(R.id.ge_item_graph);
             JSONObject dailyGraphData = new JSONObject(geGraphData).getJSONObject("daily");
@@ -564,7 +619,6 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                             catch (JSONException ex) {
                                 Logger.log(ex);
                                 setOSBuddyText(getResources().getString(R.string.osb_parse_error), true);
-                                showToast(getResources().getString(R.string.exception_occurred, ex.getClass().getCanonicalName(), "parsing osbuddy data"), Toast.LENGTH_LONG);
                             }
                         }
 
@@ -594,7 +648,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
             @Override
             public void onContentLoadError() {
-                showToast(getResources().getString(R.string.exception_occurred, "exception", "loading osbuddy prices"), Toast.LENGTH_LONG);
+                showToast(getResources().getString(R.string.exception_occurred, "error", "loading osbuddy prices"), Toast.LENGTH_LONG);
             }
         };
     }
@@ -617,23 +671,38 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
     @Override
     public void onClick(View v) {
-        GeGraphDays days;
-        switch (v.getId()) {
-            case R.id.ge_graph_show_quarter:
-                days = GeGraphDays.QUARTER;
-                break;
-            case R.id.ge_graph_show_month:
-                days = GeGraphDays.MONTH;
-                break;
-            case R.id.ge_graph_show_week:
-                days = GeGraphDays.WEEK;
-                break;
-            default:
-                days = GeGraphDays.ALL;
+        int id = v.getId();
+        if (id == R.id.ge_favorite_icon && jsonItem != null) {
+            boolean isFavorite = geHistory.isFavorite(jsonItem.id);
+            geHistory.toggleFavorite(jsonItem.id, !isFavorite);
+            new GeAsyncTasks.InsertOrUpdateGeHistory(context, jsonItem.id, jsonItem.name, !isFavorite, this).execute();
+            toggleFavoriteItem(jsonItem.id);
         }
-        if (currentSelectedDays != days) {
-            currentSelectedDays = days;
-            zoomGraphToDays(days);
+        else if (id == R.id.ge_history_clear) {
+            new GeAsyncTasks.GetHistory(context, true, this).execute();
+        }
+        else if (id == R.id.ge_history_icon) {
+            toggleGeData();
+        }
+        else {
+            GeGraphDays days;
+            switch (id) {
+                case R.id.ge_graph_show_quarter:
+                    days = GeGraphDays.QUARTER;
+                    break;
+                case R.id.ge_graph_show_month:
+                    days = GeGraphDays.MONTH;
+                    break;
+                case R.id.ge_graph_show_week:
+                    days = GeGraphDays.WEEK;
+                    break;
+                default:
+                    days = GeGraphDays.ALL;
+            }
+            if (currentSelectedDays != days) {
+                currentSelectedDays = days;
+                zoomGraphToDays(days);
+            }
         }
     }
 
@@ -658,34 +727,41 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         return wasRequestingGe || wasRequestingGegraph || wasRequestingGeupdate || wasRequestingOsBuddy;
     }
 
-    public void restorePageFromSavedState() {
-        if (wasRequestingGe) {
-            updateItem(jsonItem.id);
-        }
-        else if (!Utils.isNullOrEmpty(geItemData)) {
-            view.findViewById(R.id.ge_data).setVisibility(View.VISIBLE);
-            handleGeData();
-        }
+    @Override
+    public void onGeHistoryLoadFailed() {
 
-        if (wasRequestingGeupdate) {
-            loadGeupdate();
-        }
-        else if (!Utils.isNullOrEmpty(geupdateData)) {
-            handleGeUpdateData();
-        }
+    }
 
-        if (wasRequestingGegraph) {
-            loadGraph();
+    private void initIndicators() {
+        indicators.put(GeGraphDays.ALL, R.id.ge_graph_show_all);
+        indicators.put(GeGraphDays.QUARTER, R.id.ge_graph_show_quarter);
+        indicators.put(GeGraphDays.MONTH, R.id.ge_graph_show_month);
+        indicators.put(GeGraphDays.WEEK, R.id.ge_graph_show_week);
+        for (Map.Entry<GeGraphDays, Integer> entry : indicators.entrySet()) {
+            view.findViewById(entry.getValue()).setOnClickListener(this);
         }
-        else if (!Utils.isNullOrEmpty(geGraphData)) {
-            handleGeGraphData();
-        }
+    }
 
-        if (wasRequestingOsBuddy) {
-            loadOSBuddyExchange();
+    public String getItemId() {
+        return jsonItem != null ? jsonItem.id : null;
+    }
+
+    public void toggleGeData() {
+        if (jsonItem == null) {
+            toggleGeData(false);
         }
-        else if (!summaryItems.isEmpty()) {
-            handleOSBuddyData();
+        else {
+            toggleGeData(!isGeDataVisible());
         }
+    }
+
+    public void toggleGeData(boolean visible) {
+        view.findViewById(R.id.ge_data).setVisibility(visible ? View.VISIBLE : View.GONE);
+        favoriteIcon.setVisibility(visible ? View.VISIBLE : View.GONE);
+        geHistoryContainer.setVisibility(visible ? View.GONE : View.VISIBLE);
+    }
+
+    private boolean isGeDataVisible() {
+        return view.findViewById(R.id.ge_data).getVisibility() == View.VISIBLE;
     }
 }

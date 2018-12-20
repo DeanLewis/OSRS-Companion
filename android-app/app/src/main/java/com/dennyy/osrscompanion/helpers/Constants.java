@@ -1,7 +1,5 @@
 package com.dennyy.osrscompanion.helpers;
 
-import android.os.Environment;
-
 import com.dennyy.osrscompanion.BuildConfig;
 
 import java.io.UnsupportedEncodingException;
@@ -25,6 +23,7 @@ public class Constants {
     public static String ITEMIDLIST_URL = "https://www.dennyy.com/osrs/ge/json";
     public static String OSBUDDY_EXCHANGE_SUMMARY_URL = "https://storage.googleapis.com/osbuddy-exchange/summary.json";
     public static final int OSBUDDY_SUMMARY_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+    public static final int GE_UPDATE_CACHE_DURATION = 3 * 60 * 1000; // 5 minutes
 
     public static final String RS_HISCORES_URL = "https://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=";
     public static final String RS_HISCORES_IRONMAN_URL = "https://services.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=";

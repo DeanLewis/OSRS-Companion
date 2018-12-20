@@ -7,11 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.models.SkillCalculator.SkillCalculatorTypes;
-import com.dennyy.osrscompanion.models.SkillCalculator.SkillDataBonus;
 
 public class SkillSelectorSpinnerAdapter extends BaseAdapter {
     private SkillCalculatorTypes skillCalculatorTypes;
@@ -21,7 +19,7 @@ public class SkillSelectorSpinnerAdapter extends BaseAdapter {
     public SkillSelectorSpinnerAdapter(Context context, SkillCalculatorTypes skillCalculatorTypes) {
         this.context = context;
         this.skillCalculatorTypes = skillCalculatorTypes;
-        this.keys = skillCalculatorTypes.keySet().toArray(new SkillType[skillCalculatorTypes.size()]);
+        this.keys = skillCalculatorTypes.keySet().toArray(new SkillType[0]);
     }
 
     @Override

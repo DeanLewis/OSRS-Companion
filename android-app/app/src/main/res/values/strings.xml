@@ -360,6 +360,8 @@
     <string name="scroll_to_top">Scroll to top</string>
     <string name="custom_exp">Custom exp</string>
     <string name="custom_exp_optional">Custom exp (optional)</string>
+    <string name="ge_history_clear">Clear history</string>
+    <string name="ge_favorites_history">Favorites &amp; History</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>
