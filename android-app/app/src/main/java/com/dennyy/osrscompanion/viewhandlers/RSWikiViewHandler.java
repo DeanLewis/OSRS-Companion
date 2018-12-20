@@ -178,7 +178,6 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
 
     @Override
     public void onDownMotionEvent() {
-
     }
 
     @Override
@@ -187,6 +186,10 @@ public class RSWikiViewHandler extends BaseViewHandler implements AdvancedWebVie
             startHideNavBar(0);
         }
         else if (scrollState == ScrollState.DOWN) {
+            showNavBar();
+            startHideNavBar();
+        }
+        else if ((scrollState == ScrollState.STOP || scrollState == null) && webView.getCurrentScrollY() == 0) {
             showNavBar();
             startHideNavBar();
         }

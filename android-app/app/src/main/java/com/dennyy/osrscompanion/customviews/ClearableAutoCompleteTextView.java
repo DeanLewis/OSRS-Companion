@@ -50,7 +50,7 @@ public class ClearableAutoCompleteTextView extends RelativeLayout implements Tex
         textView.setHint(hint);
         textView.addTextChangedListener(this);
         textView.setOverrideDismiss(overrrideDismiss);
-        textView.setOnTouchListener(new View.OnTouchListener() {
+        setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 textView.setThreshold(threshold);

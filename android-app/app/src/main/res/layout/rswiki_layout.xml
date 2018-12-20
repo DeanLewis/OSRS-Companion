@@ -12,20 +12,18 @@
         android:layout_height="match_parent"
         android:visibility="gone" />
 
-
     <RelativeLayout
         android:id="@+id/navbar_container"
         android:layout_width="wrap_content"
-        android:visibility="gone"
         android:layout_height="wrap_content"
-        android:background="@color/background">
+        android:background="@color/background"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/webview_navbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/floating_view_toolbar_height"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/webview_navbar_left"
