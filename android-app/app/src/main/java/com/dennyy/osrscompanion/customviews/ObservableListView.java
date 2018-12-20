@@ -1,4 +1,5 @@
 package com.dennyy.osrscompanion.customviews;
+
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,8 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
-
 import com.dennyy.osrscompanion.enums.ScrollState;
+import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.ObservableScrollViewCallbacks;
 import com.dennyy.osrscompanion.interfaces.Scrollable;
 
@@ -39,6 +41,10 @@ public class ObservableListView extends ListView implements Scrollable {
     private boolean mIntercepted;
     private MotionEvent mPrevMoveEvent;
     private ViewGroup mTouchInterceptionViewGroup;
+
+    private long clickMs;
+    private float initialTouchX;
+    private float initialTouchY;
 
     private OnScrollListener mOriginalScrollListener;
     private OnScrollListener mScrollListener = new OnScrollListener() {
@@ -127,11 +133,23 @@ public class ObservableListView extends ListView implements Scrollable {
             return super.onTouchEvent(ev);
         }
         switch (ev.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                initialTouchX = ev.getRawX();
+                initialTouchY = ev.getRawY();
+                clickMs = System.currentTimeMillis();
+                break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 mIntercepted = false;
                 mDragging = false;
-                dispatchOnUpOrCancelMotionEvent(mScrollState);
+                float distance = Utils.getDistance(initialTouchX, ev.getRawX(), initialTouchY, ev.getRawY());
+                if ((distance < Constants.CLICK_DISTANCE_THRESHOLD && System.currentTimeMillis() - clickMs < Constants.CLICK_DURATION_THRESHOLD)
+                        || distance < Constants.CLICK_DISTANCE_THRESHOLD) {
+                    // this is considered a click
+                }
+                else {
+                    dispatchOnUpOrCancelMotionEvent(mScrollState);
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mPrevMoveEvent == null) {
@@ -151,7 +169,8 @@ public class ObservableListView extends ListView implements Scrollable {
                     final ViewGroup parent;
                     if (mTouchInterceptionViewGroup == null) {
                         parent = (ViewGroup) getParent();
-                    } else {
+                    }
+                    else {
                         parent = mTouchInterceptionViewGroup;
                     }
 
@@ -164,7 +183,8 @@ public class ObservableListView extends ListView implements Scrollable {
                         offsetY += v.getTop() - v.getScrollY();
                         try {
                             v = (View) v.getParent();
-                        } catch (ClassCastException ex) {
+                        }
+                        catch (ClassCastException ex) {
                             break;
                         }
                     }
@@ -274,7 +294,8 @@ public class ObservableListView extends ListView implements Scrollable {
                         for (int i = firstVisiblePosition - 1; i > mPrevFirstVisiblePosition; i--) {
                             if (0 < mChildrenHeights.indexOfKey(i)) {
                                 skippedChildrenHeight += mChildrenHeights.get(i);
-                            } else {
+                            }
+                            else {
                                 // Approximate each item's height to the first visible child.
                                 // It may be incorrect, but without this, scrollY will be broken
                                 // when scrolling from the bottom.
@@ -284,14 +305,16 @@ public class ObservableListView extends ListView implements Scrollable {
                     }
                     mPrevScrolledChildrenHeight += mPrevFirstVisibleChildHeight + skippedChildrenHeight;
                     mPrevFirstVisibleChildHeight = firstVisibleChild.getHeight();
-                } else if (firstVisiblePosition < mPrevFirstVisiblePosition) {
+                }
+                else if (firstVisiblePosition < mPrevFirstVisiblePosition) {
                     // scroll up
                     int skippedChildrenHeight = 0;
                     if (mPrevFirstVisiblePosition - firstVisiblePosition != 1) {
                         for (int i = mPrevFirstVisiblePosition - 1; i > firstVisiblePosition; i--) {
                             if (0 < mChildrenHeights.indexOfKey(i)) {
                                 skippedChildrenHeight += mChildrenHeights.get(i);
-                            } else {
+                            }
+                            else {
                                 // Approximate each item's height to the first visible child.
                                 // It may be incorrect, but without this, scrollY will be broken
                                 // when scrolling from the bottom.
@@ -301,7 +324,8 @@ public class ObservableListView extends ListView implements Scrollable {
                     }
                     mPrevScrolledChildrenHeight -= firstVisibleChild.getHeight() + skippedChildrenHeight;
                     mPrevFirstVisibleChildHeight = firstVisibleChild.getHeight();
-                } else if (firstVisiblePosition == 0) {
+                }
+                else if (firstVisiblePosition == 0) {
                     mPrevFirstVisibleChildHeight = firstVisibleChild.getHeight();
                     mPrevScrolledChildrenHeight = 0;
                 }
@@ -319,9 +343,11 @@ public class ObservableListView extends ListView implements Scrollable {
 
                 if (mPrevScrollY < mScrollY) {
                     mScrollState = ScrollState.UP;
-                } else if (mScrollY < mPrevScrollY) {
+                }
+                else if (mScrollY < mPrevScrollY) {
                     mScrollState = ScrollState.DOWN;
-                } else {
+                }
+                else {
                     mScrollState = ScrollState.STOP;
                 }
                 mPrevScrollY = mScrollY;

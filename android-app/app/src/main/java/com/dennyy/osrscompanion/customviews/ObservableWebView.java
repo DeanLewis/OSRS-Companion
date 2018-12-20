@@ -7,15 +7,15 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.dennyy.osrscompanion.enums.ScrollState;
+import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.ObservableScrollViewCallbacks;
 import com.dennyy.osrscompanion.interfaces.Scrollable;
+import im.delight.android.webview.AdvancedWebView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import im.delight.android.webview.AdvancedWebView;
 
 /**
  * WebView that its scroll position can be observed.
@@ -34,6 +34,10 @@ public class ObservableWebView extends AdvancedWebView implements Scrollable {
     private boolean mIntercepted;
     private MotionEvent mPrevMoveEvent;
     private ViewGroup mTouchInterceptionViewGroup;
+
+    private long clickMs;
+    private float initialTouchX;
+    private float initialTouchY;
 
     public ObservableWebView(Context context) {
         super(context);
@@ -116,12 +120,22 @@ public class ObservableWebView extends AdvancedWebView implements Scrollable {
         }
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                initialTouchX = ev.getRawX();
+                initialTouchY = ev.getRawY();
+                clickMs = System.currentTimeMillis();
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 mIntercepted = false;
                 mDragging = false;
-                dispatchOnUpOrCancelMotionEvent(mScrollState);
+                float distance = Utils.getDistance(initialTouchX, ev.getRawX(), initialTouchY, ev.getRawY());
+                if ((distance < Constants.CLICK_DISTANCE_THRESHOLD && System.currentTimeMillis() - clickMs < Constants.CLICK_DURATION_THRESHOLD)
+                        || distance < Constants.CLICK_DISTANCE_THRESHOLD) {
+                    // this is considered a click
+                }
+                else {
+                    dispatchOnUpOrCancelMotionEvent(mScrollState);
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mPrevMoveEvent == null) {
