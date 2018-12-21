@@ -161,8 +161,8 @@ public class SkillCalculatorViewHandler extends BaseViewHandler implements Hisco
         if (dataFile == null || adapter.getCount() < 1) {
             return;
         }
-        SkillDataAction action = adapter.getItem(selectedSkillId);
-        Skill skill = playerStats.getSkill(action.skillType);
+        SkillType skillType = skillSelectorSpinnerAdapter.getSelectedSkillType(selectedSkillId);
+        Skill skill = playerStats.getSkill(skillType);
         int lvl = RsUtils.lvl(skill.getExp(), false);
         setValueToEditText(R.id.current_lvl, lvl);
         setValueToEditText(R.id.target_lvl, Math.min(126, lvl + 1));
