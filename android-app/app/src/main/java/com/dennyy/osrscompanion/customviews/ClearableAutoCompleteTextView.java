@@ -27,7 +27,7 @@ public class ClearableAutoCompleteTextView extends RelativeLayout implements Tex
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.ClearableAutoCompleteTextView, 0, 0);
         try {
             hint = ta.getString(R.styleable.ClearableAutoCompleteTextView_hint);
-            threshold = ta.getInt(R.styleable.ClearableAutoCompleteTextView_treshold, 3);
+            threshold = ta.getInt(R.styleable.ClearableAutoCompleteTextView_threshold, 3);
             overrrideDismiss = ta.getBoolean(R.styleable.ClearableAutoCompleteTextView_overrideDismiss, false);
             autoCompleteDelay = ta.getInt(R.styleable.ClearableAutoCompleteTextView_clearableAutoCompleteDelay, DelayedAutoCompleteTextView.DEFAULT_DELAY);
         }
