@@ -4,37 +4,17 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
-
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.General.Experience;
 
 import java.util.ArrayList;
 
-public class ExperienceAdapter extends BaseAdapter {
-    private Context context;
-    private ArrayList<Experience> experiences;
+public class ExperienceAdapter extends GenericAdapter<Experience> {
 
     public ExperienceAdapter(Context context, ArrayList<Experience> experiences) {
-        this.context = context;
-        this.experiences = experiences;
-    }
-
-    @Override
-    public int getCount() {
-        return experiences.size();
-    }
-
-    @Override
-    public Experience getItem(int i) {
-        return experiences.get(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return 0;
+        super(context, experiences);
     }
 
     @Override
@@ -53,7 +33,7 @@ public class ExperienceAdapter extends BaseAdapter {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        Experience experience = experiences.get(i);
+        Experience experience = getItem(i);
         viewHolder.lvl.setText(String.valueOf(experience.level));
         viewHolder.exp.setText(Utils.formatNumber(experience.experience));
         viewHolder.diff.setText(Utils.formatNumber(experience.difference));

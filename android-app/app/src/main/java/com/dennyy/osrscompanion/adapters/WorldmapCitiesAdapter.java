@@ -2,12 +2,9 @@ package com.dennyy.osrscompanion.adapters;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.interfaces.WorldmapCityClickListener;
 import com.dennyy.osrscompanion.models.Worldmap.City;
@@ -17,15 +14,11 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
-public class WorldmapCitiesAdapter extends ArrayAdapter<City> {
-    private LayoutInflater inflater;
-    private ArrayList<City> cities;
+public class WorldmapCitiesAdapter extends GenericAdapter<City> {
     private WorldmapCityClickListener listener;
 
     public WorldmapCitiesAdapter(Context context, WorldmapCityClickListener listener) {
-        super(context, 0);
-        this.inflater = LayoutInflater.from(context);
-        this.cities = getCities();
+        super(context, getCities());
         this.listener = listener;
     }
 
@@ -43,7 +36,7 @@ public class WorldmapCitiesAdapter extends ArrayAdapter<City> {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        final City city = cities.get(position);
+        final City city = getItem(position);
         viewHolder.name.setText(city.name);
         viewHolder.name.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,17 +47,6 @@ public class WorldmapCitiesAdapter extends ArrayAdapter<City> {
             }
         });
         return convertView;
-    }
-
-
-    @Override
-    public City getItem(int position) {
-        return cities.get(position);
-    }
-
-    @Override
-    public int getCount() {
-        return cities != null ? cities.size() : 0;
     }
 
     private static class ViewHolder {
@@ -136,11 +118,11 @@ public class WorldmapCitiesAdapter extends ArrayAdapter<City> {
         cities.add(new City("LLetya", new Point(3580, 2795)));
         cities.add(new City("Zul-Andra", new Point(3161, 3139)));
         cities.add(new City("Isafdar", new Point(3292, 2752)));
-        cities.add(new City("Prifddinas", new Point(3282,2383)));
-        cities.add(new City("Castle Wars", new Point(3859,2977)));
-        cities.add(new City("West Ardougne", new Point(4151,2386)));
-        cities.add(new City("Barrows", new Point(7266,2439)));
-        cities.add(new City("Duel Arena", new Point(6650,2610)));
+        cities.add(new City("Prifddinas", new Point(3282, 2383)));
+        cities.add(new City("Castle Wars", new Point(3859, 2977)));
+        cities.add(new City("West Ardougne", new Point(4151, 2386)));
+        cities.add(new City("Barrows", new Point(7266, 2439)));
+        cities.add(new City("Duel Arena", new Point(6650, 2610)));
 
         Collections.sort(cities, new Comparator<City>() {
             @Override

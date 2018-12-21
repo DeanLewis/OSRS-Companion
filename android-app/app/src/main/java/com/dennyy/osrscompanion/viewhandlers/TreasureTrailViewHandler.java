@@ -5,18 +5,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.ImageSliderAdapter;
@@ -33,7 +24,6 @@ import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrail;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrailMap;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrails;
 import com.viewpagerindicator.CirclePageIndicator;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -114,7 +104,7 @@ public class TreasureTrailViewHandler extends BaseViewHandler implements View.On
             autoCompleteTextView.setText(treasureTrail.text);
 
         if (adapter == null) {
-            adapter = new TreasureTrailSearchAdapter(context, (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE), allItems.treasureTrails);
+            adapter = new TreasureTrailSearchAdapter(context, allItems.treasureTrails);
         }
         if (treasureTrailMapAdapter == null) {
             treasureTrailMapAdapter = new TreasureTrailMapAdapter(context, allItems.treasureTrailMaps, this);

@@ -1,49 +1,25 @@
 package com.dennyy.osrscompanion.adapters;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.helpers.RsUtils;
-import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.models.Bestiary.NpcDrop;
-import com.dennyy.osrscompanion.models.SkillCalculator.SkillDataAction;
-import com.dennyy.osrscompanion.models.SkillCalculator.SkillDataBonus;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class NpcDropsAdapter extends ArrayAdapter<NpcDrop> {
-    private Context context;
-    private ArrayList<NpcDrop> drops;
+public class NpcDropsAdapter extends GenericAdapter<NpcDrop> {
 
     public NpcDropsAdapter(Context context, ArrayList<NpcDrop> drops) {
-        super(context, 0, drops);
-        this.context = context;
-        this.drops = new ArrayList<>(drops);
-    }
-
-    @Override
-    public int getCount() {
-       return this.drops.size();
-    }
-
-    @Override
-    public NpcDrop getItem(int position) {
-        return this.drops.get(position);
+        super(context, drops);
     }
 
     @Override
     public View getView(int i, View convertView, ViewGroup viewGroup) {
         ViewHolder viewHolder;
         if (convertView == null) {
-            final LayoutInflater layoutInflater = LayoutInflater.from(context);
-            convertView = layoutInflater.inflate(R.layout.npc_drop_row, null);
+            convertView = inflater.inflate(R.layout.npc_drop_row, null);
             viewHolder = new ViewHolder();
             viewHolder.drop = convertView.findViewById(R.id.npc_drop_name);
             viewHolder.quantity = convertView.findViewById(R.id.npc_drop_quantity);
@@ -55,12 +31,13 @@ public class NpcDropsAdapter extends ArrayAdapter<NpcDrop> {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        NpcDrop drop = drops.get(i);
+
+        NpcDrop drop = getItem(i);
 
         viewHolder.drop.setText(drop.name);
         viewHolder.quantity.setText(drop.quantity);
-        int color = R.color.npc_drop_very_rare;
-        switch (drop.rarity){
+        int color;
+        switch (drop.rarity) {
             case ALWAYS:
                 color = R.color.npc_drop_always;
                 break;
@@ -73,7 +50,7 @@ public class NpcDropsAdapter extends ArrayAdapter<NpcDrop> {
             case RARE:
                 color = R.color.npc_drop_rare;
                 break;
-            case VERY_RARE:
+            default:
                 color = R.color.npc_drop_very_rare;
                 break;
         }
@@ -87,15 +64,6 @@ public class NpcDropsAdapter extends ArrayAdapter<NpcDrop> {
 
         return convertView;
     }
-
-
-    public void updateList(ArrayList<NpcDrop> drops) {
-        this.drops.clear();
-        this.drops.trimToSize();
-        this.drops.addAll(drops);
-        notifyDataSetChanged();
-    }
-
 
     private static class ViewHolder {
         public TextView drop;

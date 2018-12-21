@@ -4,34 +4,15 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.dennyy.osrscompanion.R;
 
 import java.util.ArrayList;
 
-public class NpcVersionsAdapter extends BaseAdapter {
-    private Context context;
-    private ArrayList<String> versions;
+public class NpcVersionsAdapter extends GenericAdapter<String> {
 
     public NpcVersionsAdapter(Context context, ArrayList<String> versions) {
-        this.context = context;
-        this.versions = new ArrayList<>(versions);
-    }
-
-    @Override
-    public int getCount() {
-        return  versions.size();
-    }
-
-    @Override
-    public String getItem(int position) {
-        return versions.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return 0;
+        super(context, versions);
     }
 
     @Override
@@ -48,7 +29,7 @@ public class NpcVersionsAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        String version = versions.get(i);
+        String version = getItem(i);
         viewHolder.version.setText(version);
         return convertView;
     }
@@ -66,18 +47,11 @@ public class NpcVersionsAdapter extends BaseAdapter {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        String version = versions.get(position);
+        String version = getItem(position);
 
         viewHolder.version.setText(version);
 
         return convertView;
-    }
-
-    public void updateList(ArrayList<String> drops) {
-        this.versions.clear();
-        this.versions.trimToSize();
-        this.versions.addAll(drops);
-        notifyDataSetChanged();
     }
 
     private static class ViewHolder {

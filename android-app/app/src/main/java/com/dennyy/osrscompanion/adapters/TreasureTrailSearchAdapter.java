@@ -1,38 +1,26 @@
 package com.dennyy.osrscompanion.adapters;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.TreasureTrailType;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.models.TreasureTrails.TreasureTrail;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-
-public class TreasureTrailSearchAdapter extends ArrayAdapter<TreasureTrail> implements Filterable {
-    private Context context;
-    private LayoutInflater inflater;
-    private ArrayList<TreasureTrail> treasureTrails;
-    private ArrayList<TreasureTrail> originalTreasureTrails;
+public class TreasureTrailSearchAdapter extends GenericAdapter<TreasureTrail> implements Filterable {
     private ItemFilter mFilter = new ItemFilter();
 
-    public TreasureTrailSearchAdapter(Context context, LayoutInflater inflater, ArrayList<TreasureTrail> treasureTrails) {
-        super(context, 0, treasureTrails);
-        this.context = context;
-        this.inflater = inflater;
-        this.treasureTrails = new ArrayList<>(treasureTrails);
-        this.originalTreasureTrails = new ArrayList<>(treasureTrails);
+    public TreasureTrailSearchAdapter(Context context, ArrayList<TreasureTrail> treasureTrails) {
+        super(context, treasureTrails);
     }
 
     @Override
@@ -52,7 +40,7 @@ public class TreasureTrailSearchAdapter extends ArrayAdapter<TreasureTrail> impl
             convertView.setBackgroundColor(context.getResources().getColor(R.color.alternate_row_color));
         else
             convertView.setBackgroundColor(context.getResources().getColor(R.color.input_background_color));
-        TreasureTrail treasureTrail = treasureTrails.get(position);
+        TreasureTrail treasureTrail = getItem(position);
         if (treasureTrail.type == TreasureTrailType.COORDINATES) {
             viewHolder.text.setText(treasureTrail.getCoordinatesFormatted());
         }
@@ -62,43 +50,14 @@ public class TreasureTrailSearchAdapter extends ArrayAdapter<TreasureTrail> impl
         return convertView;
     }
 
-    public ArrayList<TreasureTrail> getItems() {
-        return treasureTrails;
-    }
-
-    @Override
-    public TreasureTrail getItem(int position) {
-        return treasureTrails.get(position);
-    }
-
-    @Override
-    public int getCount() {
-        return treasureTrails != null ? treasureTrails.size() : 0;
-    }
-
-    public void resetItems() {
-        treasureTrails.clear();
-        treasureTrails.trimToSize();
-        treasureTrails.addAll(originalTreasureTrails);
-        this.notifyDataSetChanged();
-    }
-
-    public void updateItems(List<TreasureTrail> newList) {
-        treasureTrails.clear();
-        treasureTrails.trimToSize();
-        treasureTrails.addAll(newList);
-        this.notifyDataSetChanged();
-    }
-
     @Override
     public void notifyDataSetChanged() {
-        if (treasureTrails.size() < 1) {
+        if (collection.size() < 1) {
             TreasureTrail treasureTrail = new TreasureTrail();
             treasureTrail.text = context.getString(R.string.clue_not_found);
-            treasureTrails.add(treasureTrail);
+            collection.add(treasureTrail);
         }
         super.notifyDataSetChanged();
-
     }
 
     @Override
@@ -116,12 +75,12 @@ public class TreasureTrailSearchAdapter extends ArrayAdapter<TreasureTrail> impl
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
             if (constraint == null || constraint.length() == 0) {
-                results.values = treasureTrails;
-                results.count = treasureTrails.size();
+                results.values = collection;
+                results.count = collection.size();
             }
             else {
                 final List<TreasureTrail> nlist = new ArrayList<>();
-                for (TreasureTrail treasureTrail : originalTreasureTrails) {
+                for (TreasureTrail treasureTrail : originalCollection) {
                     String search = constraint.toString().toLowerCase();
                     if (treasureTrail.text.toLowerCase().contains(search)) {
                         nlist.add(treasureTrail);
@@ -142,8 +101,7 @@ public class TreasureTrailSearchAdapter extends ArrayAdapter<TreasureTrail> impl
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            treasureTrails = (ArrayList<TreasureTrail>) results.values;
-            notifyDataSetChanged();
+            updateList((ArrayList<TreasureTrail>) results.values);
         }
     }
 }

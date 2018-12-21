@@ -1,53 +1,24 @@
 package com.dennyy.osrscompanion.adapters;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.interfaces.AdapterTimerClickListener;
 import com.dennyy.osrscompanion.models.Timers.Timer;
 
 import java.util.ArrayList;
 
-public class TimersAdapter extends BaseAdapter {
-    private ArrayList<Timer> timers;
-    private Context context;
-    private LayoutInflater inflater;
+public class TimersAdapter extends GenericAdapter<Timer> {
+
     private AdapterTimerClickListener listener;
 
     public TimersAdapter(Context context, ArrayList<Timer> timers, AdapterTimerClickListener listener) {
-        this.context = context;
-        this.timers = new ArrayList<>(timers);
-        this.inflater = LayoutInflater.from(context);
+        super(context, timers);
         this.listener = listener;
-    }
-
-    public void updateList(ArrayList<Timer> newtimers) {
-        timers.clear();
-        timers.trimToSize();
-        timers.addAll(newtimers);
-        this.notifyDataSetChanged();
-    }
-
-    @Override
-    public int getCount() {
-        return timers.size();
-    }
-
-    @Override
-    public Timer getItem(int i) {
-        return timers.get(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return 0;
     }
 
     @Override
@@ -71,7 +42,7 @@ public class TimersAdapter extends BaseAdapter {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        final Timer timer = timers.get(i);
+        final Timer timer = getItem(i);
         viewHolder.title.setText(timer.title);
         viewHolder.description.setText(timer.description);
         viewHolder.duration.setText(context.getString((timer.isRepeating ? R.string.timer_repeated : R.string.timer_once), formatSeconds(timer.interval)));

@@ -1,11 +1,13 @@
 package com.dennyy.osrscompanion.adapters;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Filter;
+import android.widget.Filterable;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.helpers.Constants;
@@ -17,20 +19,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implements Filterable, View.OnTouchListener {
+public class GrandExchangeSearchAdapter extends GenericAdapter<JsonItem> implements Filterable, View.OnTouchListener {
 
-    private Context context;
-    private LayoutInflater inflater;
-    private ArrayList<JsonItem> grandExchangeItems;
-    private ArrayList<JsonItem> originalGrandExchangeItems;
     private ItemFilter mFilter = new ItemFilter();
 
     public GrandExchangeSearchAdapter(Context context, Collection<JsonItem> grandExchangeItems) {
-        super(context, 0, new ArrayList<>(grandExchangeItems));
-        this.context = context;
-        this.inflater = LayoutInflater.from(context);
-        this.grandExchangeItems = new ArrayList<>(grandExchangeItems);
-        this.originalGrandExchangeItems = new ArrayList<>(grandExchangeItems);
+        super(context, new ArrayList<>(grandExchangeItems));
     }
 
     @Override
@@ -49,29 +43,19 @@ public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implement
             viewHolder = (ViewHolder) convertView.getTag();
         }
         convertView.setOnTouchListener(this);
-        JsonItem search = grandExchangeItems.get(position);
+        JsonItem search = getItem(position);
         viewHolder.name.setText(search.name);
         Glide.with(context).load(Constants.GE_IMG_SMALL_URL + search.id).into(viewHolder.icon);
         return convertView;
     }
 
     @Override
-    public JsonItem getItem(int position) {
-        return grandExchangeItems.get(position);
-    }
-
-    @Override
-    public int getCount() {
-        return grandExchangeItems != null ? grandExchangeItems.size() : 0;
-    }
-
-    @Override
     public void notifyDataSetChanged() {
-        if (grandExchangeItems.size() < 1) {
+        if (collection.size() < 1) {
             JsonItem item = new JsonItem();
             item.id = "-1";
             item.name = context.getString(R.string.ge_item_not_found);
-            grandExchangeItems.add(item);
+            collection.add(item);
         }
         super.notifyDataSetChanged();
     }
@@ -100,13 +84,13 @@ public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implement
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
             if (constraint == null || constraint.length() == 0) {
-                results.values = grandExchangeItems;
-                results.count = grandExchangeItems.size();
+                results.values = collection;
+                results.count = collection.size();
             }
             else {
                 final List<JsonItem> nlist = new ArrayList<>();
                 final List<JsonItem> fuzzyList = new ArrayList<>();
-                for (JsonItem grandExchangeItem : originalGrandExchangeItems) {
+                for (JsonItem grandExchangeItem : originalCollection) {
                     if (grandExchangeItem.name.toLowerCase().contains(constraint.toString().toLowerCase())) {
                         nlist.add(grandExchangeItem);
                     }
@@ -125,8 +109,7 @@ public class GrandExchangeSearchAdapter extends ArrayAdapter<JsonItem> implement
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            grandExchangeItems = (ArrayList<JsonItem>) results.values;
-            notifyDataSetChanged();
+            updateList((ArrayList<JsonItem>) results.values);
         }
     }
 }

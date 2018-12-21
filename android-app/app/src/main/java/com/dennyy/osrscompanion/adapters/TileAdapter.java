@@ -4,37 +4,17 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.models.General.TileData;
 
 import java.util.ArrayList;
 
-public class TileAdapter extends BaseAdapter {
-    private ArrayList<TileData> tiles;
-    private Context context;
+public class TileAdapter extends GenericAdapter<TileData> {
 
     public TileAdapter(Context context, ArrayList<TileData> tiles) {
-        this.tiles = tiles;
-        this.context = context;
-    }
-
-    @Override
-    public int getCount() {
-        return tiles.size();
-    }
-
-    @Override
-    public TileData getItem(int i) {
-        return tiles.get(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return 0;
+        super(context, tiles);
     }
 
     @Override
@@ -52,7 +32,7 @@ public class TileAdapter extends BaseAdapter {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        TileData tileData = this.tiles.get(i);
+        TileData tileData = getItem(i);
         viewHolder.text.setText(tileData.text);
         viewHolder.drawable.setBackground(tileData.drawable);
         return convertView;

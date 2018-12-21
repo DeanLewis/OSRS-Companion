@@ -15,40 +15,17 @@ import org.json.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class BestiaryAdapter extends ArrayAdapter<String> implements Filterable {
+public class BestiaryAdapter extends GenericAdapter<String> implements Filterable {
 
     public static final String WIKI_SEARCH_TAG = "wikisearchtag";
     private static final int REQUEST_TIMEOUT = 30;
     public boolean wasRequesting;
 
-    private final ArrayList<String> allNpcs;
-    private ArrayList<String> npcs;
-    private LayoutInflater inflater;
     private NpcWikiRequestListener listener;
 
     public BestiaryAdapter(Context context, ArrayList<String> npcs, NpcWikiRequestListener listener) {
-        super(context, 0);
-        this.inflater = LayoutInflater.from(context);
-        this.allNpcs = new ArrayList<>(npcs);
-        this.npcs = new ArrayList<>(npcs);
+        super(context, npcs);
         this.listener = listener;
-    }
-
-    public void updateList(ArrayList<String> newNpcs) {
-        npcs.clear();
-        npcs.trimToSize();
-        npcs.addAll(newNpcs);
-        this.notifyDataSetChanged();
-    }
-
-    @Override
-    public int getCount() {
-        return npcs.size();
-    }
-
-    @Override
-    public String getItem(int index) {
-        return npcs.get(index);
     }
 
     @Override
@@ -85,7 +62,7 @@ public class BestiaryAdapter extends ArrayAdapter<String> implements Filterable 
                 }
                 List<String> nlist = new ArrayList<>();
                 List<String> fuzzyList = new ArrayList<>();
-                for (String npc : allNpcs) {
+                for (String npc : originalCollection) {
                     if (npc.toLowerCase().contains(constraint.toString().toLowerCase())) {
                         nlist.add(npc);
                     }
@@ -124,8 +101,7 @@ public class BestiaryAdapter extends ArrayAdapter<String> implements Filterable 
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 wasRequesting = false;
                 if (results != null && results.count > 0) {
-                    npcs = (ArrayList<String>) results.values;
-                    notifyDataSetChanged();
+                    updateList((ArrayList<String>) results.values);
                 }
                 else {
                     notifyDataSetInvalidated();

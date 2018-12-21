@@ -10,12 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.android.volley.NoConnectionError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
@@ -24,18 +19,13 @@ import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.OSRSNewsAdapter;
 import com.dennyy.osrscompanion.asynctasks.OSRSNewsTask;
 import com.dennyy.osrscompanion.database.AppDb;
-import com.dennyy.osrscompanion.helpers.AdBlocker;
-import com.dennyy.osrscompanion.helpers.Constants;
-import com.dennyy.osrscompanion.helpers.Logger;
-import com.dennyy.osrscompanion.helpers.OSRSNewsParser;
-import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.helpers.*;
 import com.dennyy.osrscompanion.interfaces.OSRSNewsLoadedListener;
 import com.dennyy.osrscompanion.models.OSRSNews.OSRSNews;
 import com.dennyy.osrscompanion.models.OSRSNews.OSRSNewsDTO;
+import im.delight.android.webview.AdvancedWebView;
 
 import java.util.ArrayList;
-
-import im.delight.android.webview.AdvancedWebView;
 
 public class OSRSNewsViewHandler extends BaseViewHandler implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, AdvancedWebView.Listener, View.OnClickListener {
 
@@ -43,7 +33,6 @@ public class OSRSNewsViewHandler extends BaseViewHandler implements SwipeRefresh
 
     private static final String OSRS_NEWS_REQUEST_TAG = "OSRS_NEWS_REQUEST_TAG";
     private OSRSNewsAdapter listViewAdapter;
-    private ArrayList<OSRSNews> osrsNewsList;
     private SwipeRefreshLayout refreshLayout;
     private long lastRefreshTimeMs;
     private ProgressBar progressBar;
@@ -53,14 +42,13 @@ public class OSRSNewsViewHandler extends BaseViewHandler implements SwipeRefresh
 
     public OSRSNewsViewHandler(Context context, final View view, boolean isFloatingView) {
         super(context, view);
-        osrsNewsList = new ArrayList<>();
         webView = view.findViewById(R.id.webview);
         progressBar = view.findViewById(R.id.progressBar);
         webViewContainer = view.findViewById(R.id.rsnews_webview_container);
         refreshLayout = view.findViewById(R.id.rsnews_refresh_layout);
         refreshLayout.setOnRefreshListener(this);
         ListView listView = view.findViewById(R.id.rsnews_listview);
-        listViewAdapter = new OSRSNewsAdapter(context, osrsNewsList);
+        listViewAdapter = new OSRSNewsAdapter(context, new ArrayList<OSRSNews>());
         listView.setAdapter(listViewAdapter);
         listView.setOnItemClickListener(this);
         if (isFloatingView) {
@@ -144,7 +132,7 @@ public class OSRSNewsViewHandler extends BaseViewHandler implements SwipeRefresh
         OSRSNewsParser parser = new OSRSNewsParser();
         try {
             ArrayList<OSRSNews> news = parser.parse(result);
-            listViewAdapter.updateItems(news);
+            listViewAdapter.updateList(news);
         }
         catch (Exception ex) {
             Logger.log(result, ex);
@@ -191,7 +179,7 @@ public class OSRSNewsViewHandler extends BaseViewHandler implements SwipeRefresh
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-        OSRSNews osrsNews = osrsNewsList.get(pos);
+        OSRSNews osrsNews = listViewAdapter.getItem(pos);
         webView.loadUrl(osrsNews.url);
         wasRequesting = true;
         toggleWebView(true);

@@ -4,9 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
-
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.SkillType;
 import com.dennyy.osrscompanion.helpers.RsUtils;
@@ -18,9 +16,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class ActionsAdapter extends BaseAdapter {
-    private Context context;
-    private ArrayList<SkillDataAction> skillDataActions;
+public class ActionsAdapter extends GenericAdapter<SkillDataAction> {
     private int expDifference;
     private int currentLvl;
     private int targetLvl;
@@ -28,28 +24,12 @@ public class ActionsAdapter extends BaseAdapter {
     private DecimalFormat decimalFormat;
 
     public ActionsAdapter(Context context, ArrayList<SkillDataAction> skillDataActions) {
-        this.context = context;
-        this.skillDataActions = skillDataActions;
+        super(context, skillDataActions);
         this.expDifference = -1;
         this.currentLvl = -1;
         this.targetLvl = -1;
         this.decimalFormat = new DecimalFormat("#.#");
         this.decimalFormat.setRoundingMode(RoundingMode.FLOOR);
-    }
-
-    @Override
-    public int getCount() {
-        return skillDataActions.size();
-    }
-
-    @Override
-    public SkillDataAction getItem(int i) {
-        return skillDataActions.get(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return 0;
     }
 
     @Override
@@ -70,7 +50,7 @@ public class ActionsAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        SkillDataAction skillDataAction = skillDataActions.get(i);
+        SkillDataAction skillDataAction = getItem(i);
         viewHolder.lvl.setText(String.valueOf(skillDataAction.level));
         viewHolder.lvl.setTextColor(getColorResource(skillDataAction));
         double bonusExp = !skillDataAction.ignoreBonus && skillDataBonus != null ? skillDataBonus.value * skillDataAction.exp : 0;
@@ -131,14 +111,6 @@ public class ActionsAdapter extends BaseAdapter {
         return String.valueOf(Utils.formatNumber(result));
     }
 
-
-    public void updateList(ArrayList<SkillDataAction> skillDataActions) {
-        this.skillDataActions.clear();
-        this.skillDataActions.trimToSize();
-        this.skillDataActions.addAll(skillDataActions);
-        notifyDataSetChanged();
-    }
-
     public void updateListFromExp(int currentExp, int targetExp) {
         expDifference = targetExp - currentExp;
         this.currentLvl = RsUtils.lvl(currentExp, true);
@@ -152,12 +124,12 @@ public class ActionsAdapter extends BaseAdapter {
     }
 
     public void updateCustomExp(int exp) {
-        if (this.skillDataActions.isEmpty() || exp < 1)
+        if (this.originalCollection.isEmpty() || exp < 1)
             return; // already added so don't continue
-        if (this.skillDataActions.get(0).skillType == SkillType.OVERALL) {
-            skillDataActions.remove(0);
+        if (this.originalCollection.get(0).skillType == SkillType.OVERALL) {
+            originalCollection.remove(0);
         }
-        this.skillDataActions.add(0, new SkillDataAction(SkillType.OVERALL, context.getResources().getString(R.string.custom_exp), 1, exp, true));
+        this.originalCollection.add(0, new SkillDataAction(SkillType.OVERALL, context.getResources().getString(R.string.custom_exp), 1, exp, true));
         this.notifyDataSetChanged();
     }
 

@@ -22,7 +22,6 @@ import com.dennyy.osrscompanion.customviews.ClearableAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.DelayedAutoCompleteTextView;
 import com.dennyy.osrscompanion.customviews.ObservableListView;
 import com.dennyy.osrscompanion.enums.ScrollState;
-import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.FairyRingsLoadedListener;
 import com.dennyy.osrscompanion.interfaces.ObservableScrollViewCallbacks;

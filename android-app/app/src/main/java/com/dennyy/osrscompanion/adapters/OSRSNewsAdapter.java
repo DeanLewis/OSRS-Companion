@@ -1,13 +1,10 @@
 package com.dennyy.osrscompanion.adapters;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.models.OSRSNews.OSRSNews;
@@ -18,39 +15,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class OSRSNewsAdapter extends BaseAdapter {
-    private ArrayList<OSRSNews> osrsNewsList;
-    private Context context;
-    private LayoutInflater inflater;
+public class OSRSNewsAdapter extends GenericAdapter<OSRSNews> {
     private DateFormat dateFormat;
 
     public OSRSNewsAdapter(Context context, ArrayList<OSRSNews> osrsNewsList) {
-        this.context = context;
-        this.osrsNewsList = osrsNewsList;
-        this.inflater = LayoutInflater.from(context);
+        super(context, osrsNewsList);
         dateFormat = new SimpleDateFormat("c, dd MMM yyyy", Locale.getDefault());
-    }
-
-    @Override
-    public int getCount() {
-        return osrsNewsList.size();
-    }
-
-    @Override
-    public OSRSNews getItem(int i) {
-        return osrsNewsList.get(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return 0;
-    }
-
-    public void updateItems(ArrayList<OSRSNews> newList) {
-        osrsNewsList.clear();
-        osrsNewsList.trimToSize();
-        osrsNewsList.addAll(newList);
-        this.notifyDataSetChanged();
     }
 
     @Override
@@ -70,7 +40,7 @@ public class OSRSNewsAdapter extends BaseAdapter {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        OSRSNews osrsNews = osrsNewsList.get(i);
+        OSRSNews osrsNews = getItem(i);
         Glide.with(context).load(osrsNews.imageUrl).into(viewHolder.image);
         viewHolder.title.setText(osrsNews.title);
         viewHolder.category.setText(osrsNews.category);

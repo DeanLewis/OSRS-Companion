@@ -2,10 +2,8 @@ package com.dennyy.osrscompanion.adapters;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
@@ -15,32 +13,12 @@ import com.dennyy.osrscompanion.interfaces.AdapterGeHistoryClickListener;
 import com.dennyy.osrscompanion.models.GrandExchange.GeHistory;
 import com.dennyy.osrscompanion.models.GrandExchange.GeHistoryEntry;
 
-public class GeHistoryAdapter extends BaseAdapter {
-    private GeHistory geHistory;
-    private Context context;
-    private LayoutInflater inflater;
+public class GeHistoryAdapter extends GenericAdapter<GeHistoryEntry> {
     private AdapterGeHistoryClickListener callback;
 
     public GeHistoryAdapter(Context context, GeHistory geHistory, AdapterGeHistoryClickListener callback) {
-        this.context = context;
-        this.geHistory = new GeHistory(geHistory);
-        this.inflater = LayoutInflater.from(context);
+        super(context, geHistory);
         this.callback = callback;
-    }
-
-    @Override
-    public int getCount() {
-        return geHistory.size();
-    }
-
-    @Override
-    public GeHistoryEntry getItem(int i) {
-        return geHistory.get(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return 0;
     }
 
     @Override
@@ -58,7 +36,7 @@ public class GeHistoryAdapter extends BaseAdapter {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        final GeHistoryEntry entry = geHistory.get(i);
+        final GeHistoryEntry entry = getItem(i);
         Glide.with(context).load(Constants.GE_IMG_SMALL_URL + entry.itemId).into(viewHolder.itemImage);
         viewHolder.itemName.setText(entry.itemName);
         if (entry.isFavorite()) {
@@ -87,13 +65,6 @@ public class GeHistoryAdapter extends BaseAdapter {
             }
         });
         return convertView;
-    }
-
-    public void updateList(GeHistory geHistory) {
-        this.geHistory.clear();
-        this.geHistory.trimToSize();
-        this.geHistory.addAll(geHistory);
-        this.notifyDataSetChanged();
     }
 
     private static class ViewHolder {

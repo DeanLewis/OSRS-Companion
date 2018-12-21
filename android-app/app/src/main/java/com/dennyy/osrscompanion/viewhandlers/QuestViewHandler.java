@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -85,6 +86,13 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         questSources = new ArrayList<>(Arrays.asList(QuestSource.values()));
         questSourceSpinner.setAdapter(new QuestSourceSpinnerAdapter(context, questSources));
         questSourceSpinner.setSelection(questSources.indexOf(selectedQuestSource));
+        questSourceSpinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                showQuestSelector();
+                return false;
+            }
+        });
     }
 
     private void initWebView() {
@@ -341,6 +349,10 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
         }
 
         else if (scrollState == ScrollState.DOWN) {
+            showQuestSelector();
+            startHideQuestSelector();
+        }
+        else if ((scrollState == ScrollState.STOP || scrollState == null) && webView.getCurrentScrollY() == 0) {
             showQuestSelector();
             startHideQuestSelector();
         }
