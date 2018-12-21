@@ -80,6 +80,15 @@ public class GrandExchangeFragment extends BaseFragment {
     }
 
     @Override
+    public boolean onBackClick() {
+        if (grandExchangeViewHandler.isGeDataVisible()) {
+            grandExchangeViewHandler.toggleGeData(false);
+            return true;
+        }
+        return super.onBackClick();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         grandExchangeViewHandler.cancelRunningTasks();

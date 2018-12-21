@@ -761,7 +761,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
         geHistoryContainer.setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 
-    private boolean isGeDataVisible() {
+    public boolean isGeDataVisible() {
         return view.findViewById(R.id.ge_data).getVisibility() == View.VISIBLE;
     }
 }
