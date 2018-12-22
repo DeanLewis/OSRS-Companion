@@ -84,6 +84,8 @@ public class Constants {
     public static final String PREF_GE_SOURCE = "pref_ge_items_source";
     public static final String PREF_VERSION = "pref_version";
     public static final String PREF_START_EXTERNAL = "pref_start_external";
+    public static final String PREF_QUEST_SORT_TYPE = "pref_quest_sort_type";
+    public static final String PREF_QUEST_SORT_DIRECTION = "pref_quest_sort_direction";
 
     public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     public static final int CODE_STORAGE_PERMISSION = 2085;

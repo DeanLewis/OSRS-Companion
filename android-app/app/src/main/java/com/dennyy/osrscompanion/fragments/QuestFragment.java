@@ -1,15 +1,9 @@
 package com.dennyy.osrscompanion.fragments;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
+import android.view.*;
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.interfaces.QuestsLoadedListener;
+import com.dennyy.osrscompanion.interfaces.QuestListeners;
 import com.dennyy.osrscompanion.models.General.Quest;
 import com.dennyy.osrscompanion.viewhandlers.QuestViewHandler;
 
@@ -75,14 +69,15 @@ public class QuestFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getString(R.string.quest_guide));
 
-        questViewHandler = new QuestViewHandler(getActivity(), view, false, new QuestsLoadedListener() {
+        questViewHandler = new QuestViewHandler(getActivity(), view, false, new QuestListeners.LoadedListener() {
             @Override
             public void onQuestsLoaded(ArrayList<Quest> loadedQuests) {
                 loadFragment(savedInstanceState);
             }
 
             @Override
-            public void onQuestsLoadError() { }
+            public void onQuestsLoadError() {
+            }
         });
     }
 

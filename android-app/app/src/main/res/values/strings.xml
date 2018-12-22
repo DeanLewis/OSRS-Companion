@@ -311,6 +311,7 @@
     <string name="sort">Sort…</string>
     <string name="quest_sort_alphabetically">Alphabetically</string>
     <string name="quest_sort_qp">By quest points</string>
+    <string name="quest_sort_completion">By completion</string>
     <string name="no_bonus">No bonus</string>
     <string name="calculate">Calculate</string>
     <string name="bonus_not_applied">Bonus is not applied for this action</string>
@@ -371,6 +372,10 @@
     <string name="start_external_stop_info">To stop the service add an extra parameter with the name\n<b>stop</b> \nand a boolean value\n<b>true</b></string>
     <string name="copy">Copy</string>
     <string name="copied">Copied!</string>
+    <string name="quest_done">DONE</string>
+    <string name="quest_undo">UNDO</string>
+    <string name="quest_completed">Completed</string>
+    <string name="quest_quest_not_completed">Not completed</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

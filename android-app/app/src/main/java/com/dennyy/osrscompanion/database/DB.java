@@ -5,7 +5,7 @@ public final class DB {
     }
 
     public static final String name = "osrscompanion.db";
-    public static final int version = 13;
+    public static final int version = 14;
 
     public static class UserStats {
         public static final String tableName = "UserStats";
@@ -98,7 +98,6 @@ public final class DB {
         public static final String data = "data";
     }
 
-
     public static class GeHistory {
         public static final String tableName = "GeHistory";
 
@@ -106,6 +105,11 @@ public final class DB {
         public static final String name = "name";
         public static final String isFavorite = "isFavorite";
         public static final String dateModified = "dateModified";
+    }
 
+    public static class QuestCompletion {
+        public static final String tableName = "QuestCompletion";
+
+        public static final String name = "name";
     }
 }

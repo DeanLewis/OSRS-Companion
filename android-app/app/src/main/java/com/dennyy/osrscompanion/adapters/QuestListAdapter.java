@@ -1,26 +1,23 @@
 package com.dennyy.osrscompanion.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Paint;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
-
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.enums.QuestDifficulty;
 import com.dennyy.osrscompanion.enums.QuestLength;
 import com.dennyy.osrscompanion.enums.QuestSortType;
-import com.dennyy.osrscompanion.interfaces.QuestAdapterClickListener;
+import com.dennyy.osrscompanion.helpers.Constants;
+import com.dennyy.osrscompanion.interfaces.QuestListeners;
 import com.dennyy.osrscompanion.models.General.Quest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class QuestListAdapter extends BaseExpandableListAdapter {
     private Context context;
@@ -28,17 +25,20 @@ public class QuestListAdapter extends BaseExpandableListAdapter {
     private LayoutInflater inflater;
     private ArrayList<String> headers;
     private HashMap<String, ArrayList<Quest>> questsMap = new HashMap<>();
-    private QuestAdapterClickListener listener;
+    private QuestListeners.AdapterClickListener listener;
+    private QuestSortType questSortType;
     private boolean reversedSort;
-    private QuestSortType questSortType = null;
+    private SharedPreferences preferences;
 
-    public QuestListAdapter(Context context, ArrayList<Quest> quests, QuestAdapterClickListener listener) {
+    public QuestListAdapter(Context context, ArrayList<Quest> quests, QuestListeners.AdapterClickListener listener) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.quests = new ArrayList<>(quests);
         this.listener = listener;
-
-        updateSorting(QuestSortType.NAME);
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        this.questSortType = QuestSortType.fromValue(preferences.getInt(Constants.PREF_QUEST_SORT_TYPE, QuestSortType.NAME.getValue()));
+        this.reversedSort = preferences.getBoolean(Constants.PREF_QUEST_SORT_DIRECTION, false);
+        updateSorting(this.questSortType, true);
     }
 
     @Override
@@ -93,6 +93,10 @@ public class QuestListAdapter extends BaseExpandableListAdapter {
             String group = getGroup(groupPosition);
             viewHolder.textView.setText(context.getResources().getString(group.equals(String.valueOf(true)) ? R.string.members : R.string.freetoplay));
         }
+        else if (questSortType == QuestSortType.COMPLETION) {
+            String group = getGroup(groupPosition);
+            viewHolder.textView.setText(context.getString(group.equals(String.valueOf(true)) ? R.string.quest_completed : R.string.quest_quest_not_completed));
+        }
         else {
             viewHolder.textView.setText(getGroup(groupPosition));
         }
@@ -103,15 +107,36 @@ public class QuestListAdapter extends BaseExpandableListAdapter {
     public View getChildView(final int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup viewGroup) {
         convertView = inflater.inflate(R.layout.quest_list_item, null);
         TextView textView = convertView.findViewById(R.id.quest_list_name);
+        TextView doneButton = convertView.findViewById(R.id.quest_list_button_done);
 
         final Quest quest = getChild(groupPosition, childPosition);
         textView.setText(quest.name);
+        if (quest.isCompleted()) {
+            doneButton.setText(context.getString(R.string.quest_undo));
+            textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            textView.setAlpha(0.5f);
+            doneButton.setAlpha(0.5f);
+        }
+        else {
+            doneButton.setText(context.getString(R.string.quest_done));
+            textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+            textView.setAlpha(1f);
+            doneButton.setAlpha(1f);
+        }
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isCompleted = !quest.isCompleted();
+                quest.setCompleted(isCompleted);
+                listener.onQuestDoneClick(quest, isCompleted);
+                notifyDataSetChanged();
+            }
+        });
+
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (listener != null) {
-                    listener.onQuestClick(quest);
-                }
+                listener.onQuestClick(quest);
             }
         });
         return convertView;
@@ -123,8 +148,15 @@ public class QuestListAdapter extends BaseExpandableListAdapter {
     }
 
     public void updateSorting(QuestSortType questSortType) {
-        reversedSort = this.questSortType == questSortType && !reversedSort;
+        updateSorting(questSortType, false);
+    }
+
+    public void updateSorting(QuestSortType questSortType, boolean keepSortOrder) {
+        if (!keepSortOrder) {
+            reversedSort = this.questSortType == questSortType && !reversedSort;
+        }
         this.questSortType = questSortType;
+        saveSortPreferences();
         Set<String> tempHeaders = new LinkedHashSet<>();
 
         switch (questSortType) {
@@ -162,6 +194,14 @@ public class QuestListAdapter extends BaseExpandableListAdapter {
                 }
                 tempHeaders.addAll(members);
                 break;
+            case COMPLETION:
+                String[] completionTypesArray = { String.valueOf(true), String.valueOf(false) };
+                List<String> completionTypes = Arrays.asList(completionTypesArray);
+                if (reversedSort) {
+                    Collections.reverse(completionTypes);
+                }
+                tempHeaders.addAll(completionTypes);
+                break;
             default:
                 for (Quest quest : quests) {
                     tempHeaders.add(quest.name.substring(0, 1));
@@ -197,6 +237,10 @@ public class QuestListAdapter extends BaseExpandableListAdapter {
                     ArrayList<Quest> membersSortedList = questsMap.get(String.valueOf(quest.isMembers));
                     membersSortedList.add(quest);
                     break;
+                case COMPLETION:
+                    ArrayList<Quest> completionSortedList = questsMap.get(String.valueOf(quest.isCompleted()));
+                    completionSortedList.add(quest);
+                    break;
                 default:
                     String letter = quest.name.substring(0, 1);
                     ArrayList<Quest> questsInMap = questsMap.get(letter);
@@ -209,7 +253,19 @@ public class QuestListAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
+    private void saveSortPreferences() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(Constants.PREF_QUEST_SORT_TYPE, questSortType.getValue());
+        editor.putBoolean(Constants.PREF_QUEST_SORT_DIRECTION, reversedSort);
+        editor.apply();
+    }
+
+    public QuestSortType getQuestSortType() {
+        return questSortType;
+    }
+
     private static class ViewHolder {
         public TextView textView;
+        public TextView doneButton;
     }
 }

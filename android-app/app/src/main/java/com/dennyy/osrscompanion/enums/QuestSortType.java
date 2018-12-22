@@ -1,7 +1,7 @@
 package com.dennyy.osrscompanion.enums;
 
 public enum QuestSortType {
-    NAME(0, "Name"), LENGTH(1, "Length"), DIFFICULTY(2, "Difficulty"), QP(3, "Quest points"), MEMBERS(4, "Members");
+    NAME(0, "Name"), LENGTH(1, "Length"), DIFFICULTY(2, "Difficulty"), QP(3, "Quest points"), MEMBERS(4, "Members"), COMPLETION(5, "Completion");
     private final int value;
     private final String name;
 

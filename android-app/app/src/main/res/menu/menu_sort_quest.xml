@@ -25,4 +25,9 @@
         android:id="@+id/action_sort_qp"
         android:title="@string/quest_sort_qp">
     </item>
+
+    <item
+        android:id="@+id/action_sort_completion"
+        android:title="@string/quest_sort_completion">
+    </item>
 </menu>

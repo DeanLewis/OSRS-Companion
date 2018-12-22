@@ -18,6 +18,7 @@ import com.dennyy.osrscompanion.models.TodoList.TodoListEntry;
 import com.dennyy.osrscompanion.models.Tracker.TrackData;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class AppDb extends SQLiteOpenHelper {
     private static AppDb instance;
@@ -99,6 +100,9 @@ public class AppDb extends SQLiteOpenHelper {
                 DB.GeHistory.isFavorite + " INTEGER DEFAULT 0, " +
                 DB.GeHistory.dateModified + " INTEGER NOT NULL)";
 
+        String createQuestCompletionTable = "CREATE TABLE " + DB.QuestCompletion.tableName + " (" +
+                DB.QuestCompletion.name + " TEXT UNIQUE)";
+
         db.execSQL(createUserStatsTable);
         db.execSQL(createTrackTable);
         db.execSQL(createGrandExchangeTable);
@@ -110,6 +114,7 @@ public class AppDb extends SQLiteOpenHelper {
         db.execSQL(createTodoListTable);
         db.execSQL(createNpcTable);
         db.execSQL(createGeHistoryTable);
+        db.execSQL(createQuestCompletionTable);
     }
 
     @Override
@@ -180,6 +185,12 @@ public class AppDb extends SQLiteOpenHelper {
                     DB.GeHistory.dateModified + " INTEGER NOT NULL)";
 
             db.execSQL(createGeHistoryTable);
+        }
+        if (oldVersion < 15) {
+            String createQuestCompletionTable = "CREATE TABLE IF NOT EXISTS " + DB.QuestCompletion.tableName + " (" +
+                    DB.QuestCompletion.name + " TEXT UNIQUE)";
+
+            db.execSQL(createQuestCompletionTable);
         }
     }
 
@@ -598,4 +609,32 @@ public class AppDb extends SQLiteOpenHelper {
         cursor.close();
         return geHistory;
     }
+
+    public void insertOrUpdateQuestCompletion(String questName, boolean completed) {
+        String query = "SELECT * FROM " + DB.QuestCompletion.tableName + " WHERE " + DB.QuestCompletion.name + " = ?";
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ questName });
+        ContentValues cv = new ContentValues();
+        cv.put(DB.QuestCompletion.name, questName);
+        if (completed && !cursor.moveToFirst()) {
+            getWritableDatabase().insert(DB.QuestCompletion.tableName, null, cv);
+        }
+        else {
+            getReadableDatabase().delete(DB.QuestCompletion.tableName, DB.QuestCompletion.name + " = ?", new String[]{ questName });
+        }
+        cursor.close();
+    }
+
+    public HashSet<String> getQuestCompletions() {
+        String query = "SELECT * FROM " + DB.QuestCompletion.tableName;
+        Cursor cursor = getReadableDatabase().rawQuery(query, null);
+        HashSet<String> hashSet = new HashSet<>();
+
+        while (cursor.moveToNext()) {
+            String questName = cursor.getString(cursor.getColumnIndex(DB.QuestCompletion.name));
+            hashSet.add(questName);
+        }
+        cursor.close();
+        return hashSet;
+    }
+
 }
