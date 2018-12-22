@@ -620,7 +620,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:background="@drawable/button_background"
-                    android:text="@string/show_drops" />
+                    android:text="@string/show_drops"
+                    android:textColor="@color/text" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
