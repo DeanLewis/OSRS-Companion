@@ -85,6 +85,10 @@ public class AppDb extends SQLiteOpenHelper {
                 DB.Todo.content + " TEXT, " +
                 DB.Todo.done + " INTEGER DEFAULT 0)";
 
+        String createNpcTable = "CREATE TABLE " + DB.Npc.tableName + " (" +
+                DB.Npc.name + " TEXT UNIQUE, " +
+                DB.Npc.data + " TEXT)";
+
         db.execSQL(createUserStatsTable);
         db.execSQL(createTrackTable);
         db.execSQL(createGrandExchangeTable);
@@ -94,6 +98,7 @@ public class AppDb extends SQLiteOpenHelper {
         db.execSQL(createOSRSNewsTable);
         db.execSQL(createTimersTable);
         db.execSQL(createTodoListTable);
+        db.execSQL(createNpcTable);
     }
 
     @Override
@@ -149,6 +154,12 @@ public class AppDb extends SQLiteOpenHelper {
                     DB.Todo.content + " TEXT, " +
                     DB.Todo.done + " INTEGER DEFAULT 0);";
             db.execSQL(createTodoListTable);
+        }
+        if (oldVersion < 13) {
+            String createNpcTable = "CREATE TABLE IF NOT EXISTS " + DB.Npc.tableName + " (" +
+                    DB.Npc.name + " TEXT UNIQUE, " +
+                    DB.Npc.data + " TEXT)";
+            db.execSQL(createNpcTable);
         }
     }
 
@@ -501,9 +512,36 @@ public class AppDb extends SQLiteOpenHelper {
         }
     }
 
+    public String getNpcData(String npcName) {
+        String query = "SELECT * FROM " + DB.Npc.tableName + " WHERE " + DB.Npc.name + " = ?";
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ npcName });
+        String result = null;
+        if (cursor.moveToFirst()) {
+            result = cursor.getString(cursor.getColumnIndex(DB.Npc.data));
+        }
+        cursor.close();
+        return result;
+    }
+
+    public void insertOrUpdateNpc(String npcName, String npcData) {
+        String query = "SELECT * FROM " + DB.Npc.tableName + " WHERE " + DB.Npc.name + " = ?";
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ npcName });
+        ContentValues cv = new ContentValues();
+        cv.put(DB.Npc.name, npcName);
+        cv.put(DB.Npc.data, npcData);
+        if (cursor.moveToFirst()) {
+            getWritableDatabase().update(DB.Npc.tableName, cv, DB.Npc.name + " = ?", new String[]{ npcName });
+            cursor.close();
+        }
+        else {
+            getWritableDatabase().insert(DB.Npc.tableName, null, cv);
+            cursor.close();
+        }
+    }
+
     private static class DB {
         private static final String name = "osrscompanion.db";
-        private static final int version = 11;
+        private static final int version = 12;
 
         private static class UserStats {
             private static final String tableName = "UserStats";
@@ -587,6 +625,13 @@ public class AppDb extends SQLiteOpenHelper {
             private static final String sortOrder = "sortOrder";
             private static final String content = "content";
             private static final String done = "done";
+        }
+
+        private static class Npc {
+            private static final String tableName = "Npc";
+
+            private static final String name = "name";
+            private static final String data = "data";
         }
     }
 }

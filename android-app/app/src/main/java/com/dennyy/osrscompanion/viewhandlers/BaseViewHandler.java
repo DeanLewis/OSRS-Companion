@@ -51,7 +51,7 @@ public abstract class BaseViewHandler {
     }
 
     protected void hideKeyboard() {
-        cancelHideKeyboard();
+        cancelKeyboardRunnable();
         keyBoardRunnable = new Runnable() {
             @Override
             public void run() {
@@ -61,12 +61,12 @@ public abstract class BaseViewHandler {
         keyBoardHandler.postDelayed(keyBoardRunnable, 500);
     }
 
-    protected void cancelHideKeyboard() {
+    protected void cancelKeyboardRunnable() {
         keyBoardHandler.removeCallbacks(keyBoardRunnable);
     }
 
     protected void showKeyboard(final View view) {
-        cancelHideKeyboard();
+        cancelKeyboardRunnable();
         view.requestFocus();
         keyBoardRunnable = new Runnable() {
             @Override

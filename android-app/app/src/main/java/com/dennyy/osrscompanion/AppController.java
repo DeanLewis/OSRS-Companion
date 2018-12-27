@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.os.Build;
 import android.text.TextUtils;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -39,14 +40,12 @@ public class AppController extends Application {
         return mRequestQueue;
     }
 
-    public <T> void addToRequestQueue(Request<T> req, String tag) {
+    public <T> void addToRequestQueue(Request<T> req, String tag, boolean increaseTimeout) {
         // set the default tag if tag is empty
         req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-        getRequestQueue().add(req);
-    }
-
-    public <T> void addToRequestQueue(Request<T> req) {
-        req.setTag(TAG);
+        if (increaseTimeout) {
+            req.setRetryPolicy(new DefaultRetryPolicy(5000, 2, 2));
+        }
         getRequestQueue().add(req);
     }
 

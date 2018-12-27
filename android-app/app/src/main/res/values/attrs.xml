@@ -9,6 +9,7 @@
         <attr name="hint"/>
         <attr name="treshold" format="integer"/>
         <attr name="overrideDismiss" format="boolean"/>
+        <attr name="clearableAutoCompleteDelay" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="ClearableEditText">
@@ -55,4 +56,7 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="NpcPropertyLayout">
+        <attr name="propertyName" format="string"/>
+    </declare-styleable>
 </resources>

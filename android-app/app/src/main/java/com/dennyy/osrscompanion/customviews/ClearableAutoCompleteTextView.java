@@ -19,6 +19,7 @@ public class ClearableAutoCompleteTextView extends RelativeLayout implements Tex
     private DelayedAutoCompleteTextView textView;
     private String hint;
     private int threshold;
+    private int autoCompleteDelay;
     private boolean overrrideDismiss;
 
     public ClearableAutoCompleteTextView(Context context, AttributeSet attrs) {
@@ -28,6 +29,7 @@ public class ClearableAutoCompleteTextView extends RelativeLayout implements Tex
             hint = ta.getString(R.styleable.ClearableAutoCompleteTextView_hint);
             threshold = ta.getInt(R.styleable.ClearableAutoCompleteTextView_treshold, 3);
             overrrideDismiss = ta.getBoolean(R.styleable.ClearableAutoCompleteTextView_overrideDismiss, false);
+            autoCompleteDelay = ta.getInt(R.styleable.ClearableAutoCompleteTextView_clearableAutoCompleteDelay, DelayedAutoCompleteTextView.DEFAULT_DELAY);
         }
         finally {
             ta.recycle();
@@ -44,6 +46,7 @@ public class ClearableAutoCompleteTextView extends RelativeLayout implements Tex
         clearButton = findViewById(R.id.autocomplete_textview_clear_button);
         clearButton.setOnClickListener(this);
         textView = findViewById(R.id.delayed_autocomplete_textview);
+        textView.setAutoCompleteDelayMs(autoCompleteDelay);
         textView.setHint(hint);
         textView.addTextChangedListener(this);
         textView.setOverrideDismiss(overrrideDismiss);

@@ -2,7 +2,7 @@ package com.dennyy.osrscompanion.customviews;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
@@ -11,16 +11,19 @@ import android.widget.AutoCompleteTextView;
 import com.dennyy.osrscompanion.R;
 
 public class DelayedAutoCompleteTextView extends AutoCompleteTextView {
-    private CountDownTimer autoCompleteTimer;
+
+    public static final int DEFAULT_DELAY = 500;
     private int autoCompleteDelayMs;
     private boolean overrideDismiss;
+    private final Handler handler = new Handler();
+    private Runnable runnable;
 
     public DelayedAutoCompleteTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.DelayedAutoCompleteTextView, 0, 0);
         setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         try {
-            autoCompleteDelayMs = ta.getInt(R.styleable.DelayedAutoCompleteTextView_autoCompleteDelay, 500);
+            autoCompleteDelayMs = ta.getInt(R.styleable.DelayedAutoCompleteTextView_autoCompleteDelay, DEFAULT_DELAY);
         }
         finally {
             ta.recycle();
@@ -42,22 +45,20 @@ public class DelayedAutoCompleteTextView extends AutoCompleteTextView {
         overrideDismiss = shouldOverride;
     }
 
+    public void setAutoCompleteDelayMs(int autoCompleteDelayMs) {
+        this.autoCompleteDelayMs = autoCompleteDelayMs;
+    }
+
     @Override
     protected void performFiltering(final CharSequence text, final int keyCode) {
-        if (autoCompleteTimer != null) {
-            autoCompleteTimer.cancel();
-        }
-        autoCompleteTimer = new CountDownTimer(autoCompleteDelayMs, autoCompleteDelayMs) {
+        handler.removeCallbacks(runnable);
+        runnable = new Runnable() {
             @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
+            public void run() {
                 DelayedAutoCompleteTextView.super.performFiltering(text, keyCode);
             }
-        }.start();
+        };
+        handler.postDelayed(runnable, autoCompleteDelayMs);
     }
 
     @Override

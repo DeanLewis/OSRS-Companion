@@ -11,8 +11,6 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
-
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -21,7 +19,6 @@ import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.customviews.ChangelogDialog;
 import com.dennyy.osrscompanion.customviews.InfoDialog;
 import com.dennyy.osrscompanion.models.Changelog.Changelogs;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,14 +29,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.RoundingMode;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 public class Utils {
@@ -70,10 +68,8 @@ public class Utils {
                 callback.always();
             }
         });
-        if (increaseTimeout) {
-            strReq.setRetryPolicy(new DefaultRetryPolicy(5000, 2, 2));
-        }
-        AppController.getInstance().addToRequestQueue(strReq, tag);
+
+        AppController.getInstance().addToRequestQueue(strReq, tag, increaseTimeout);
     }
 
     public static String formatNumber(long number) {
@@ -258,7 +254,7 @@ public class Utils {
 
     public static void showKeyboard(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null)
+        if (imm != null && view != null)
             imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
     }
 
@@ -420,16 +416,31 @@ public class Utils {
         }
     }
 
-    public static List<String> jsonArrayToList(JSONArray jsonArray) throws JSONException {
-        List<String> list = new ArrayList<>();
+    @SuppressWarnings("unchecked")
+    public static <T> ArrayList<T> jsonArrayToList(Class<T> type, JSONArray jsonArray) throws JSONException {
+        ArrayList<T> list = new ArrayList<>();
         if (jsonArray == null) {
             return list;
         }
         for (int i = 0; i < jsonArray.length(); i++) {
-            list.add(jsonArray.getString(i));
+            Object o = jsonArray.get(i);
+            if (type.isInstance(o)) {
+                list.add((T) jsonArray.get(i));
+            }
         }
         return list;
     }
+
+    //    public static List<String> jsonArrayToList(JSONArray jsonArray) throws JSONException {
+    //        List<String> list = new ArrayList<>();
+    //        if (jsonArray == null) {
+    //            return list;
+    //        }
+    //        for (int i = 0; i < jsonArray.length(); i++) {
+    //            list.add(jsonArray.getString(i));
+    //        }
+    //        return list;
+    //    }
 
     public static void clearWebView(WebView webView) {
         if (webView != null) {
@@ -471,5 +482,32 @@ public class Utils {
             }
         }
         return true;
+    }
+
+    public static String getEncodedString(String url) {
+        try {
+            url = URLEncoder.encode(url, "utf-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            url = url.replace(" ", "+");
+            Logger.log(e, "failed to encode url", url);
+        }
+        return url;
+    }
+
+    public static String capitalize(String input) {
+        String[] words = input.toLowerCase().split(" ");
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+
+            if (i > 0 && word.length() > 0) {
+                builder.append(" ");
+            }
+
+            String cap = word.substring(0, 1).toUpperCase() + word.substring(1);
+            builder.append(cap);
+        }
+        return builder.toString();
     }
 }

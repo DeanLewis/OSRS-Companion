@@ -23,6 +23,7 @@ import com.dennyy.osrscompanion.models.Notes.NoteChangeEvent;
 import com.dennyy.osrscompanion.models.Timers.ReloadTimersEvent;
 import com.dennyy.osrscompanion.models.TodoList.ReloadTodoListEvent;
 import com.dennyy.osrscompanion.models.Worldmap.WorldmapDownloadedEvent;
+import com.dennyy.osrscompanion.viewhandlers.BestiaryViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.CalculatorViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.CombatCalculatorViewHandler;
 import com.dennyy.osrscompanion.viewhandlers.DiaryCalculatorViewHandler;
@@ -76,6 +77,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
     private final static String timersHeadName = TimersViewHandler.class.getSimpleName();
     private final static String worldmapHeadName = WorldmapViewHandler.class.getSimpleName();
     private final static String todoHeadName = TodoViewHandler.class.getSimpleName();
+    private final static String bestiaryHeadName = BestiaryViewHandler.class.getSimpleName();
 
     private DefaultChatHeadManager chatHeadManager;
     private WindowManagerContainer windowManagerContainer;
@@ -184,6 +186,10 @@ public class FloatingViewService extends Service implements WindowManagerContain
                     else if (key.equals(todoHeadName)) {
                         cachedView = inflater.inflate(R.layout.todo_layout, parent, false);
                         todoViewHandler = new TodoViewHandler(FloatingViewService.this, cachedView, true);
+                    }
+                    else if (key.equals(bestiaryHeadName)) {
+                        cachedView = inflater.inflate(R.layout.bestiary_layout, parent, false);
+                        new BestiaryViewHandler(FloatingViewService.this, cachedView, true);
                     }
                     viewCache.put(key, cachedView);
                 }
@@ -347,6 +353,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
         iconsMap.put(timersHeadName, R.drawable.timers_floating_view);
         iconsMap.put(worldmapHeadName, R.drawable.worldmap_floating_view);
         iconsMap.put(todoHeadName, R.drawable.todo_floating_view);
+        iconsMap.put(bestiaryHeadName, R.drawable.bestiary_floating_view);
     }
 
     private void initNamesMap() {
@@ -368,6 +375,7 @@ public class FloatingViewService extends Service implements WindowManagerContain
         namesMap.put("timers", timersHeadName);
         namesMap.put("worldmap", worldmapHeadName);
         namesMap.put("todo_list", todoHeadName);
+        namesMap.put("bestiary", bestiaryHeadName);
     }
 
     @Override
