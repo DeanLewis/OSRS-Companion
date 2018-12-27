@@ -83,6 +83,7 @@ public class Constants {
     public static final String PREF_SIZE = "pref_size";
     public static final String PREF_GE_SOURCE = "pref_ge_items_source";
     public static final String PREF_VERSION = "pref_version";
+    public static final String PREF_START_EXTERNAL = "pref_start_external";
 
     public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     public static final int CODE_STORAGE_PERMISSION = 2085;

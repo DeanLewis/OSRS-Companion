@@ -1,6 +1,5 @@
 package com.dennyy.osrscompanion.fragments;
 
-
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
@@ -35,6 +34,7 @@ import com.dennyy.osrscompanion.customviews.CheckboxDialogPreference;
 import com.dennyy.osrscompanion.enums.AppStart;
 import com.dennyy.osrscompanion.fragments.calculators.CalculatorsFragment;
 import com.dennyy.osrscompanion.fragments.hiscores.HiscoresFragment;
+import com.dennyy.osrscompanion.fragments.preferences.UserPreferenceFragment;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;

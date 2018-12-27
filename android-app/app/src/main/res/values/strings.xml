@@ -135,7 +135,7 @@
     <string name="notes">Notes</string>
 
     <string name="libraries">Libraries</string>
-    <string name="libraries_info">Show used libraries for this project</string>
+    <string name="libraries_info">Show libraries used for this project</string>
     <string name="lib_view_pager_indicator">ViewPagerIndicator</string>
     <string name="lib_view_pager_indicator_author">JakeWharton</string>
     <string name="lib_glide">Glide</string>
@@ -362,6 +362,15 @@
     <string name="custom_exp_optional">Custom exp (optional)</string>
     <string name="ge_history_clear">Clear history</string>
     <string name="ge_favorites_history">Favorites &amp; History</string>
+    <string name="advanced_settings">Advanced</string>
+    <string name="start_service_externally">Start service externally</string>
+    <string name="start_service_externally_info">Settings for advanced usage to start the floating views from Tasker/Macrodroid or other automation apps</string>
+    <string name="start_service_externally_description">If you want to start and stop the service from an automation app, you can use the following information to do so</string>
+    <string name="package_name">Package name</string>
+    <string name="data_or_class">Data/class name</string>
+    <string name="start_external_stop_info">To stop the service add an extra parameter with the name\n<b>stop</b> \nand a boolean value\n<b>true</b></string>
+    <string name="copy">Copy</string>
+    <string name="copied">Copied!</string>
 
     <string-array name="view_names">
         <item>Grand Exchange</item>

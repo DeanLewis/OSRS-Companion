@@ -1,6 +1,5 @@
-package com.dennyy.osrscompanion.fragments;
+package com.dennyy.osrscompanion.fragments.preferences;
 
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -14,15 +13,9 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.NoConnectionError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
@@ -32,6 +25,7 @@ import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.asynctasks.UpdateItemIdListTask;
 import com.dennyy.osrscompanion.customviews.CheckboxDialogPreference;
 import com.dennyy.osrscompanion.customviews.SeekBarPreference;
+import com.dennyy.osrscompanion.fragments.BaseFragment;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
@@ -109,7 +103,8 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
                 Constants.PREF_SHOW_LIBRARIES,
                 Constants.PREF_DOWNLOAD_ITEMIDLIST,
                 Constants.PREF_QUEST_SOURCE,
-                Constants.PREF_VERSION };
+                Constants.PREF_VERSION,
+                Constants.PREF_START_EXTERNAL };
         return prefs;
     }
 
@@ -253,12 +248,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
                 }
                 break;
             case Constants.PREF_SHOW_LIBRARIES:
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                Fragment fragment = new LibrariesFragment();
-
-                transaction.replace(R.id.fragment_container, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                openFragment(new LibrariesFragment());
                 break;
             case Constants.PREF_PADDING_SIDE:
                 showToast(getResources().getString(R.string.restart_to_take_effect), Toast.LENGTH_LONG);
@@ -272,8 +262,18 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
                     showToast(getResources().getString(R.string.error_please_try_again), Toast.LENGTH_SHORT);
                 }
                 break;
+            case Constants.PREF_START_EXTERNAL:
+                openFragment(new StartExternalInfoFragment());
+                break;
         }
         return false;
+    }
+
+    private void openFragment(BaseFragment fragment) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override

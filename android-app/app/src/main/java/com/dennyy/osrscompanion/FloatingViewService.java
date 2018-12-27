@@ -58,6 +58,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class FloatingViewService extends Service implements WindowManagerContainer.ArrangementChangeListener {
+    private final static String STOP_SERVICE_PARAMETER = "stop";
     private final static int NOTIFICATION_ID = 1337;
     private final static String calcHeadName = CalculatorViewHandler.class.getSimpleName();
     private final static String geHeadName = GrandExchangeViewHandler.class.getSimpleName();
@@ -96,7 +97,6 @@ public class FloatingViewService extends Service implements WindowManagerContain
 
     @Override
     public void onCreate() {
-        super.onCreate();
         initIconsMap();
         initNamesMap();
         if (namesMap.size() != iconsMap.size()) {
@@ -227,7 +227,12 @@ public class FloatingViewService extends Service implements WindowManagerContain
             }
         });
 
-        String[] selected = preferences.getString(Constants.PREF_FLOATING_VIEWS, "").split("~");
+        String floatingViews = preferences.getString(Constants.PREF_FLOATING_VIEWS, "");
+        String[] selected = floatingViews.split("~");
+        if (Utils.isNullOrEmpty(floatingViews) || selected.length < 1) {
+            this.onDestroy();
+            return;
+        }
         for (String selection : selected) {
             chatHeadManager.addChatHead(namesMap.get(selection), false);
         }
@@ -305,12 +310,15 @@ public class FloatingViewService extends Service implements WindowManagerContain
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && intent.getBooleanExtra(STOP_SERVICE_PARAMETER, false)) {
+            this.onDestroy();
+        }
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(windowManagerContainer.getReceiver());
+        unregisterReceiver();
         windowManagerContainer.destroy();
         stopForeground(true);
         stopSelf();
@@ -381,5 +389,14 @@ public class FloatingViewService extends Service implements WindowManagerContain
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void unregisterReceiver() {
+        try {
+            unregisterReceiver(windowManagerContainer.getReceiver());
+        }
+        catch (Exception ignored) {
+            Logger.log("trying to unregister receiver", ignored);
+        }
     }
 }

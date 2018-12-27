@@ -1,4 +1,4 @@
-package com.dennyy.osrscompanion.fragments;
+package com.dennyy.osrscompanion.fragments.preferences;
 
 
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.customviews.LibraryCardview;
+import com.dennyy.osrscompanion.fragments.BaseFragment;
 
 public class LibrariesFragment extends BaseFragment {
 
