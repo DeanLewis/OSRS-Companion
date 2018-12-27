@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <changelogversion versionName="1.11-beta1">
-        <changelognew>Added a npc lookup which uses data from the osrs wiki. If a specific npc lookup doesn't work correctly, please contact me through mail</changelognew>
+    <changelogversion versionName="1.11">
+        <changelognew>Added a monster lookup which uses data from the osrs wiki. If a specific monster lookup doesn't work correctly, please contact me through mail</changelognew>
+        <changelognew>Added favorites and history to the Grand Exchange</changelognew>
+        <changelognew>Added option to set a custom exp in the skill calc</changelognew>
+        <changelognew>Added combat skills to skill calculator</changelognew>
+        <changelognew>Added option to mark quests as completed</changelognew>
+        <changelogtext>Updated buy limits</changelogtext>
         <changelogtext>Improvements to rswiki/quest guides header to automatically hide when scrolling stops</changelogtext>
         <changelogtext>Added a scroll to top button for rswiki/quest guide pages</changelogtext>
+        <changelogtext>Added guild trophies, long/curved bones to construction calc</changelogtext>
+        <changelogtext>Added pay-dirt to mining calc</changelogtext>
+        <changelogtext>For advanced users: allow starting service from automation apps such as Tasker. See settings for more information</changelogtext>
+        <changelogtext>Under the hood improvements</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="1.10">
