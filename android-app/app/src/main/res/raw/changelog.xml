@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <changelogversion versionName="1.11.1">
+        <changelogtext>Fixed some npcs not being found</changelogtext>
+        <changelogtext>Fixed bug in prayer skill calculator</changelogtext>
+    </changelogversion>
 
     <changelogversion versionName="1.11">
         <changelognew>Added a monster lookup which uses data from the osrs wiki. If a specific monster lookup doesn't work correctly, please contact me through mail</changelognew>
