@@ -68,9 +68,9 @@ public enum SkillType {
         boolean excluded = false;
         for (SkillType exclusion : exclusions) {
             excluded = type == exclusion;
+            if (excluded) break;
         }
         return !excluded && (type == SkillType.ATTACK || type == SkillType.STRENGTH || type == SkillType.DEFENCE || type == SkillType.HITPOINTS ||
                 type == SkillType.RANGED || type == SkillType.MAGIC || type == SkillType.PRAYER);
-
     }
 }
