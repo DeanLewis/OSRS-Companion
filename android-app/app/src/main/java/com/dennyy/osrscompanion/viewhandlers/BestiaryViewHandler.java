@@ -64,7 +64,7 @@ public class BestiaryViewHandler extends BaseViewHandler implements View.OnClick
                 String search = adapter.getItem(position);
                 loadNpc(search);
                 toggleProgressBar(true);
-               }
+            }
         });
 
         autoCompleteTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -80,11 +80,6 @@ public class BestiaryViewHandler extends BaseViewHandler implements View.OnClick
         }
     }
 
-    public void loadNpc(String search) {
-        new NpcAsyncTasks.GetNpcData(context, search, BestiaryViewHandler.this).execute();
-    }
-
-
     @Override
     public void onContentLoaded(String content) {
         ArrayList<String> data = new ArrayList<>(Arrays.asList(content.split(",")));
@@ -97,9 +92,13 @@ public class BestiaryViewHandler extends BaseViewHandler implements View.OnClick
         }
     }
 
+    public void loadNpc(String search) {
+        new NpcAsyncTasks.GetNpcData(context, search, BestiaryViewHandler.this).execute();
+    }
+
     @Override
     public void onNpcLoaded(String npcName, String data) {
-        updateNpc(data);
+        updateNpc(npcName, data);
         toggleProgressBar(false);
         toggleCacheMessage(true);
     }
@@ -115,8 +114,7 @@ public class BestiaryViewHandler extends BaseViewHandler implements View.OnClick
         Utils.getString(url, NPC_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
-                updateNpc(result);
-                new NpcAsyncTasks.InsertNpcData(context, npcName, result, null).execute();
+                updateNpc(npcName, result);
                 toggleCacheMessage(false);
                 if (forceReload) {
                     showToast(getString(R.string.npc_data_updated), Toast.LENGTH_SHORT);
@@ -136,9 +134,10 @@ public class BestiaryViewHandler extends BaseViewHandler implements View.OnClick
         });
     }
 
-    private void updateNpc(String npcData) {
+    private void updateNpc(String npcName, String npcData) {
         npc = Npc.fromJson(context, npcData);
         if (npc.successfulBuild) {
+            new NpcAsyncTasks.InsertNpcData(context, npcName, npcData, null).execute();
             updateVersionsListView(npc.versions);
             updateDropsListView(npc.drops);
             versionSpinner.setSelection(0, false);
@@ -146,7 +145,8 @@ public class BestiaryViewHandler extends BaseViewHandler implements View.OnClick
             toggleContent(true);
         }
         else {
-            Logger.log(npcData, new IllegalArgumentException("failed to build npc"));
+            new NpcAsyncTasks.DeleteMonsterData(context, npcName).execute();
+            Logger.log(npcData, new IllegalArgumentException(String.format("failed to build npc: %s", npcName)));
             showToast(getString(R.string.npc_build_failed), Toast.LENGTH_LONG);
         }
     }
@@ -252,7 +252,6 @@ public class BestiaryViewHandler extends BaseViewHandler implements View.OnClick
     public boolean isNpcDetailsVisible() {
         return view.findViewById(R.id.listview_container).getVisibility() != View.VISIBLE;
     }
-
 
     @Override
     public void onClick(View v) {

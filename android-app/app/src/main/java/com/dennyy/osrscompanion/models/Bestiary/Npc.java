@@ -2,12 +2,9 @@ package com.dennyy.osrscompanion.models.Bestiary;
 
 import android.content.Context;
 import android.text.Html;
-
 import com.dennyy.osrscompanion.helpers.Logger;
-
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -367,8 +364,12 @@ public final class Npc {
                 String value = Html.fromHtml(line[1].trim().replace("[[", "").replace("]]", "")).toString();
                 if (key.startsWith("version"))
                     builder.addVersion(value);
-                if (key.startsWith("image"))
-                    builder.addImg(value.split(":")[1].replace(" ", "_"));
+                if (key.startsWith("image")) {
+                    String[] values = value.split(":");
+                    if (values.length > 1) {
+                        builder.addImg(values[1].replace(" ", "_"));
+                    }
+                }
                 if (key.startsWith("release"))
                     builder.setReleaseDate(value);
                 if (key.startsWith("cb") || key.startsWith("combat") || key.startsWith("level"))
@@ -448,7 +449,7 @@ public final class Npc {
                     String[] line = drop.split("=");
                     if (line.length < 2) continue;
                     String key = line[0].trim().toLowerCase();
-                    String value = Html.fromHtml(line[1].trim().replace("}}", "").replace("{{", "").replace("NamedRef","" ).replace("[[", "").replace("]]", "")).toString();
+                    String value = Html.fromHtml(line[1].trim().replace("}}", "").replace("{{", "").replace("NamedRef", "").replace("[[", "").replace("]]", "")).toString();
                     switch (key) {
                         case "name":
                             dropBuilder.setName(value);
@@ -469,7 +470,6 @@ public final class Npc {
             }
             builder.setDrops(drops);
             builder.setSuccessfulBuild(true);
-
         }
         catch (Exception e) {
             Logger.log(e, "failed to parse npc data", result);

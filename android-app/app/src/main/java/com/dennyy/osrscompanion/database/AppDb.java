@@ -558,16 +558,20 @@ public class AppDb extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + DB.Npc.tableName + " WHERE " + DB.Npc.name + " = ?";
         Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{ npcName });
         ContentValues cv = new ContentValues();
-        cv.put(DB.Npc.name, npcName);
         cv.put(DB.Npc.data, npcData);
         if (cursor.moveToFirst()) {
             getWritableDatabase().update(DB.Npc.tableName, cv, DB.Npc.name + " = ?", new String[]{ npcName });
             cursor.close();
         }
         else {
+            cv.put(DB.Npc.name, npcName);
             getWritableDatabase().insert(DB.Npc.tableName, null, cv);
             cursor.close();
         }
+    }
+
+    public void deleteMonsterData(String monsterName) {
+        getReadableDatabase().delete(DB.Npc.tableName, DB.Npc.name + " = ?", new String[]{ monsterName });
     }
 
     public void insertOrUpdateGeHistory(String itemId, String itemName, boolean isFavorite) {

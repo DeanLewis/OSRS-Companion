@@ -7,10 +7,7 @@ import com.dennyy.osrscompanion.interfaces.NpcListeners;
 
 import java.lang.ref.WeakReference;
 
-public final class NpcAsyncTasks {
-    private NpcAsyncTasks() {
-
-    }
+public abstract class NpcAsyncTasks {
 
     public static class InsertNpcData extends AsyncTask<Void, Void, Void> {
         private WeakReference<Context> weakContext;
@@ -70,6 +67,25 @@ public final class NpcAsyncTasks {
             else {
                 callback.onNpcLoaded(npcName, data);
             }
+        }
+    }
+
+    public static class DeleteMonsterData extends AsyncTask<Void, Void, Void> {
+        private WeakReference<Context> weakContext;
+        private String npcName;
+
+        public DeleteMonsterData(final Context context, String npcName) {
+            this.weakContext = new WeakReference<>(context);
+            this.npcName = npcName;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Context context = weakContext.get();
+            if (context != null) {
+                AppDb.getInstance(context).deleteMonsterData(npcName);
+            }
+            return null;
         }
     }
 }

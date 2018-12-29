@@ -431,17 +431,6 @@ public class Utils {
         return list;
     }
 
-    //    public static List<String> jsonArrayToList(JSONArray jsonArray) throws JSONException {
-    //        List<String> list = new ArrayList<>();
-    //        if (jsonArray == null) {
-    //            return list;
-    //        }
-    //        for (int i = 0; i < jsonArray.length(); i++) {
-    //            list.add(jsonArray.getString(i));
-    //        }
-    //        return list;
-    //    }
-
     public static void clearWebView(WebView webView) {
         if (webView != null) {
             webView.clearHistory();
