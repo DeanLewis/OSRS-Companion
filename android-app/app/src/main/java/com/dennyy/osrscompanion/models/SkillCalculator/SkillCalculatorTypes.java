@@ -18,7 +18,7 @@ public class SkillCalculatorTypes extends LinkedHashMap<SkillType, String> {
         types.put(SkillType.HITPOINTS, "skill_combat.json");
         types.put(SkillType.RANGED, "skill_combat.json");
         types.put(SkillType.PRAYER, "skill_prayer.json");
-        types.put(SkillType.MAGIC, "skill_combat.json");
+        types.put(SkillType.MAGIC, "skill_magic.json");
         types.put(SkillType.COOKING, "skill_cooking.json");
         types.put(SkillType.WOODCUTTING, "skill_woodcutting.json");
         types.put(SkillType.FLETCHING, "skill_fletching.json");

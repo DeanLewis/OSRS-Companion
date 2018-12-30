@@ -95,7 +95,7 @@ public class ActionsAdapter extends GenericAdapter<SkillDataAction> {
     }
 
     private String getExpText(SkillDataAction action, double exp) {
-        if (SkillType.isCombat(action.skillType, SkillType.PRAYER)) {
+        if (SkillType.isCombat(action.skillType, SkillType.PRAYER, SkillType.MAGIC)) {
             return String.format("%s (%shp)", decimalFormat.format(exp * getCombatFactor(action)), (int) exp);
         }
         else {
