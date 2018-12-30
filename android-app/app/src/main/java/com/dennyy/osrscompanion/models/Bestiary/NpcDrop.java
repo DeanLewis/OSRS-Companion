@@ -1,15 +1,18 @@
 package com.dennyy.osrscompanion.models.Bestiary;
 
 import com.dennyy.osrscompanion.enums.DropRarity;
+import com.dennyy.osrscompanion.helpers.Utils;
 
 public final class NpcDrop {
-    public String name;
-    public String quantity;
-    public DropRarity rarity;
-    public String rarityNotes;
+    public final String name;
+    public final String nameNotes;
+    public final String quantity;
+    public final DropRarity rarity;
+    public final String rarityNotes;
 
     public NpcDrop(Builder builder) {
         this.name = builder.name;
+        this.nameNotes = builder.nameNotes;
         this.quantity = builder.quantity;
         this.rarity = builder.rarity;
         this.rarityNotes = builder.rarityNotes;
@@ -17,12 +20,20 @@ public final class NpcDrop {
 
     public static class Builder {
         private String name;
+        private String nameNotes;
         private String quantity;
         private DropRarity rarity;
         private String rarityNotes;
 
         public Builder setName(String name) {
-            this.name = name;
+            if (Utils.isNullOrEmpty(this.name)) {
+                this.name = name;
+            }
+            return this;
+        }
+
+        public Builder setNameNotes(String nameNotes) {
+            this.nameNotes = nameNotes;
             return this;
         }
 
@@ -43,6 +54,7 @@ public final class NpcDrop {
 
         Builder() {
             this.rarity = DropRarity.VERY_RARE;
+            this.nameNotes = "";
         }
 
         public NpcDrop build() {

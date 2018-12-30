@@ -34,7 +34,7 @@ public class NpcDropsAdapter extends GenericAdapter<NpcDrop> {
 
         NpcDrop drop = getItem(i);
 
-        viewHolder.drop.setText(drop.name);
+        viewHolder.drop.setText(String.format("%s %s", drop.name, drop.nameNotes));
         viewHolder.quantity.setText(drop.quantity);
         int color;
         switch (drop.rarity) {

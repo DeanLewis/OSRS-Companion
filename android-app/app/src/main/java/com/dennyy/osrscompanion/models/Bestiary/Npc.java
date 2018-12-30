@@ -330,7 +330,7 @@ public final class Npc {
         }
     }
 
-    public static Npc fromJson(Context context, String result) {
+    public static Npc fromJson(Context context, String npcName, String result) {
         Npc.Builder builder = new Npc.Builder(context);
         try {
             JSONObject root = new JSONObject(result);
@@ -437,22 +437,24 @@ public final class Npc {
                 if (key.startsWith("mbns"))
                     builder.addMageBonus(value);
             }
-
+            String dropsLine = "{{DropsLine";
             ArrayList<NpcDrop> drops = new ArrayList<>();
-            Pattern dropsPattern = Pattern.compile("\\{\\{DropsLine.*?\\}\\}", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
-            Matcher dropsMatcher = dropsPattern.matcher(wikiText);
-            while (dropsMatcher.find()) {
-                String dropString = dropsMatcher.group();
-                String[] dropInfo = dropString.split("\\|");
+            startPos = wikiText.indexOf(dropsLine);
+            endPos = findClosingParen(wikiText, startPos);
+            while (startPos > -1 && endPos > -1) {
+                String[] dropInfo = wikiText.substring(startPos, endPos).split("\\|");
                 NpcDrop.Builder dropBuilder = new NpcDrop.Builder();
                 for (String drop : dropInfo) {
                     String[] line = drop.split("=");
                     if (line.length < 2) continue;
                     String key = line[0].trim().toLowerCase();
-                    String value = Html.fromHtml(line[1].trim().replace("}}", "").replace("{{", "").replace("NamedRef", "").replace("[[", "").replace("]]", "")).toString();
+                    String value = Html.fromHtml(line[1].trim().replace("}", "").replace("{", "").replace("NamedRef", "").replace("[[", "").replace("]]", "").replace("CiteTwitter", "")).toString();
                     switch (key) {
                         case "name":
                             dropBuilder.setName(value);
+                            break;
+                        case "namenotes":
+                            dropBuilder.setNameNotes(value);
                             break;
                         case "quantity":
                             dropBuilder.setQuantity(value);
@@ -467,12 +469,15 @@ public final class Npc {
                 }
 
                 drops.add(dropBuilder.build());
+                startPos = wikiText.indexOf(dropsLine, endPos);
+                endPos = findClosingParen(wikiText, startPos);
             }
+
             builder.setDrops(drops);
             builder.setSuccessfulBuild(true);
         }
         catch (Exception e) {
-            Logger.log(e, "failed to parse npc data", result);
+            Logger.log(e, String.format("failed to parse npc %s", npcName), result);
             builder.setSuccessfulBuild(false);
         }
         return builder.build();

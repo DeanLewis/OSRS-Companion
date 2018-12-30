@@ -135,7 +135,7 @@ public class BestiaryViewHandler extends BaseViewHandler implements View.OnClick
     }
 
     private void updateNpc(String npcName, String npcData) {
-        npc = Npc.fromJson(context, npcData);
+        npc = Npc.fromJson(context, npcName, npcData);
         if (npc.successfulBuild) {
             new NpcAsyncTasks.InsertNpcData(context, npcName, npcData, null).execute();
             updateVersionsListView(npc.versions);
