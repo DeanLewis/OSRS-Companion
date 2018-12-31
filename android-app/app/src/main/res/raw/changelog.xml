@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <changelogversion versionName="1.11.1">
-        <changelogtext>Fixed some npcs not being found</changelogtext>
+    <changelogversion versionName="1.11.1-1.11.2">
+        <changelogtext>Fixed some monsters not being found</changelogtext>
+        <changelogtext>Fixed magic skill calculator not using spell data</changelogtext>
+        <changelogtext>Added some missing slayer monsters</changelogtext>
+        <changelogtext>Fixed some drops showing incorrect rarity</changelogtext>
         <changelogtext>Fixed bug in prayer skill calculator</changelogtext>
     </changelogversion>
 
