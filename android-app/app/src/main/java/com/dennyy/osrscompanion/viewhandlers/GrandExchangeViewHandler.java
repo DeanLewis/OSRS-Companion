@@ -55,7 +55,7 @@ import java.util.concurrent.TimeUnit;
 public class GrandExchangeViewHandler extends BaseViewHandler implements View.OnClickListener, JsonItemsLoadedListener, GeListeners.GeHistoryLoadedListener, AdapterGeHistoryClickListener {
 
     private JsonItem jsonItem;
-    private GeGraphDays currentSelectedDays = GeGraphDays.MONTH;
+    private GeGraphDays currentSelectedDays = GeGraphDays.WEEK;
     private boolean wasRequestingGe;
     private boolean wasRequestingGeupdate;
     private boolean wasRequestingGegraph;
@@ -80,6 +80,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     private JsonItemsLoadedListener jsonItemsLoadedListener;
     private HashMap<String, OSBuddySummaryItem> summaryItems = new HashMap<>();
     private long summaryItemsDateModified;
+    private LineChart chart;
 
     public GrandExchangeViewHandler(Context context, View view, boolean isFloatingView, JsonItemsLoadedListener listener) {
         super(context, view, isFloatingView);
@@ -177,7 +178,7 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     }
 
     private void initChartSettings() {
-        LineChart chart = view.findViewById(R.id.ge_item_graph);
+        chart = view.findViewById(R.id.ge_item_graph);
         int white = getResources().getColor(R.color.text);
         chart.getDescription().setEnabled(false);
         chart.getAxisRight().setEnabled(false);
@@ -467,6 +468,8 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
     private void loadGraph() {
         final String id = jsonItem.id;
         wasRequestingGegraph = true;
+        chart.setNoDataText(getString(R.string.ge_graph_loading));
+        chart.clear();
         Utils.getString(Constants.GE_GRAPH_URL(id), GEGRAPH_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
@@ -476,17 +479,13 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
             @Override
             public void onError(VolleyError error) {
-                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    GrandExchangeGraphData cachedData = AppDb.getInstance(context).getGrandExchangeGraphData(Integer.parseInt(id));
-                    if (cachedData == null) {
-                        showToast(getResources().getString(R.string.failed_to_obtain_data, "ge data", getResources().getString(R.string.network_error)), Toast.LENGTH_LONG);
-                        return;
-                    }
+                GrandExchangeGraphData cachedData = AppDb.getInstance(context).getGrandExchangeGraphData(Integer.parseInt(id));
+                if ((error instanceof TimeoutError || error instanceof NoConnectionError) && cachedData != null) {
                     handleGeGraphData(cachedData.data);
-
                 }
                 else {
-                    showToast(getResources().getString(R.string.failed_to_obtain_data, "ge graph data", error.getMessage()), Toast.LENGTH_LONG);
+                    chart.setNoDataText(getString(R.string.failed_to_obtain_data, "ge graph data", error.getClass().getSimpleName()));
+                    chart.invalidate();
                 }
             }
 
@@ -499,7 +498,6 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
 
     private void handleGeGraphData(String geGraphData) {
         try {
-            LineChart chart = view.findViewById(R.id.ge_item_graph);
             JSONObject dailyGraphData = new JSONObject(geGraphData).getJSONObject("daily");
             List<Entry> data = new ArrayList<>();
             for (Iterator<String> iter = dailyGraphData.keys(); iter.hasNext(); ) {
@@ -531,20 +529,18 @@ public class GrandExchangeViewHandler extends BaseViewHandler implements View.On
                     SimpleDateFormat sdf = new SimpleDateFormat("MMM dd", Locale.getDefault());
                     return sdf.format(date);
                 }
-
             });
             chart.setData(lineData);
-            chart.invalidate();
+            zoomGraphToDays(currentSelectedDays);
         }
         catch (JSONException ex) {
             Logger.log(geGraphData, ex);
-            showToast(getResources().getString(R.string.exception_occurred, ex.getClass().getCanonicalName(), "parsing ge graph data"), Toast.LENGTH_LONG);
-
+            chart.setNoDataText(getString(R.string.exception_occurred, ex.getClass().getCanonicalName(), "parsing ge graph data"));
+            chart.invalidate();
         }
     }
 
     private void zoomGraphToDays(GeGraphDays days) {
-        LineChart chart = view.findViewById(R.id.ge_item_graph);
         chart.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
         chart.fitScreen();
         chart.setVisibleXRangeMaximum((long) days.getDays() * 86400000);
