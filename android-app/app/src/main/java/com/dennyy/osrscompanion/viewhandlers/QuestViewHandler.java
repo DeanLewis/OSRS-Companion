@@ -255,7 +255,7 @@ public class QuestViewHandler extends BaseViewHandler implements AdvancedWebView
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
         if (adapterView.getId() == R.id.quest_source_spinner) {
             QuestSource questSource = questSources.get(pos);
-            if (selectedQuestSource == questSource || adapter.isEmpty()) {
+            if (selectedQuestSource == questSource || adapter == null || adapter.isEmpty()) {
                 return;
             }
             selectedQuestSource = questSource;
