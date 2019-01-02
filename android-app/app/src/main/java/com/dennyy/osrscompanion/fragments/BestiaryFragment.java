@@ -1,6 +1,5 @@
 package com.dennyy.osrscompanion.fragments;
 
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,4 +61,3 @@ public class BestiaryFragment extends BaseFragment {
         bestiaryViewHandler.cancelRunningTasks();
     }
 }
-

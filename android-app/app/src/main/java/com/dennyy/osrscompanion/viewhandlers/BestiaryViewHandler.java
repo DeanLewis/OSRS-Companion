@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.*;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
+import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.BestiaryAdapter;
 import com.dennyy.osrscompanion.adapters.NpcDropsAdapter;
@@ -236,12 +237,12 @@ public class BestiaryViewHandler extends BaseViewHandler implements View.OnClick
 
     @Override
     public boolean wasRequesting() {
-        return false;
+        return wasRequesting;
     }
 
     @Override
     public void cancelRunningTasks() {
-
+        AppController.getInstance().cancelPendingRequests(NPC_REQUEST_TAG);
     }
 
     public void toggleNpcDetails(boolean visible) {
