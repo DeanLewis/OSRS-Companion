@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -18,20 +19,19 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.ImageViewState;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+import com.dennyy.osrscompanion.BuildConfig;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.adapters.WorldmapCitiesAdapter;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.interfaces.WorldmapCityClickListener;
 import com.dennyy.osrscompanion.models.Worldmap.City;
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 import java.io.File;
-
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 
@@ -76,7 +76,7 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
             deleteWorldmap();
         }
         try {
-            Uri url = Uri.parse("https://cdn.runescape.com/assets/img/external/oldschool/web/osrs_world_map_sept06_2018.png");
+            Uri url = Uri.parse("https://cdn.runescape.com/assets/img/external/oldschool/2019/newsposts/2019-01-10/osrs_world_map_jan4_2019.png");
             DownloadManager.Request request = new DownloadManager.Request(url);
             request.setTitle(context.getResources().getString(R.string.downloading_worldmap));
             request.setVisibleInDownloadsUi(false);
@@ -209,8 +209,18 @@ public class WorldmapViewHandler extends BaseViewHandler implements SubsamplingS
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         hideMenu();
-        return false;
+        return !BuildConfig.DEBUG && gestureDetector.onTouchEvent(motionEvent);
     }
+
+    private final GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (worldmapView.isReady()) {
+                Logger.log(String.format("%s", worldmapView.viewToSourceCoord(e.getX(), e.getY())));
+            }
+            return true;
+        }
+    });
 
     public boolean storagePermissionDenied() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;

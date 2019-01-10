@@ -123,6 +123,11 @@ public class WorldmapCitiesAdapter extends GenericAdapter<City> {
         cities.add(new City("West Ardougne", new Point(4151, 2386)));
         cities.add(new City("Barrows", new Point(7266, 2439)));
         cities.add(new City("Duel Arena", new Point(6650, 2610)));
+        cities.add(new City("Kebos Lowlands", new Point(358, 1358)));
+        cities.add(new City("Farming Guild", new Point(308, 1092)));
+        cities.add(new City("Mount Karuulm", new Point(504, 890)));
+        cities.add(new City("The Forsaken Tower", new Point(716, 832)));
+        cities.add(new City("Molch", new Point(500, 1308)));
 
         Collections.sort(cities, new Comparator<City>() {
             @Override
