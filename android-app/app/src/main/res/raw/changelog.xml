@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <changelogversion versionName="1.12">
+        <changelognew>Updated interface to sort and select your floating views</changelognew>
+        <changelognew>Possible to sort tiles in the homescreen of the app </changelognew>
+        <changelogtext>Added Kebos to the diary calculator</changelogtext>
+        <changelogtext>Updated worldmap (download to apply)</changelogtext>
+        <changelogtext>Updated GE with new Kebos items</changelogtext>
+        <changelogtext>Added new bones to prayer calculator</changelogtext>
+        <changelogtext>Added new Zeah quests to quest list</changelogtext>
+        <changelogtext>Added new Kebos fairy ring</changelogtext>
+        <changelogtext>Added new Kebos cryptic clue</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="1.11.1-1.11.2">
         <changelogtext>Fixed some monsters not being found</changelogtext>
         <changelogtext>Fixed magic skill calculator not using spell data</changelogtext>
