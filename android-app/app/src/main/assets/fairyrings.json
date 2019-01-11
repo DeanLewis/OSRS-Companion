@@ -129,6 +129,11 @@
 	"points of interest": "Sinclair Mansion east, Seers' Village south"
 },
 {
+	"code": "CIR",
+	"location": "North-east of the Farming Guild",
+	"points of interest": "Mount Karuulm, Konar"
+},
+{
 	"code": "CKP",
 	"location": "Other Realms: Cosmic entity's plane",
 	"points of interest": "Used in Fairy Tale II - Cure a Queen quest"
