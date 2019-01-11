@@ -56,7 +56,7 @@ public class BestiaryViewHandler extends BaseViewHandler implements View.OnClick
         view.findViewById(R.id.npc_force_refresh_button).setOnClickListener(this);
         autoCompleteTextView = ((ClearableAutoCompleteTextView) view.findViewById(R.id.npc_search_input)).getAutoCompleteTextView();
         progressBar = view.findViewById(R.id.loading_spinner);
-        new ReadFromAssetsTask(context, "npc_list.txt", this).execute();
+        new ReadFromAssetsTask(context, "monster_list.txt", this).execute();
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
