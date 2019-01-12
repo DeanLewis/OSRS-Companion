@@ -85,7 +85,7 @@ public class ActionsAdapter extends GenericAdapter<SkillDataAction> {
 
     private double getCombatFactor(SkillDataAction action) {
         double combatFactor = 1;
-        if (SkillType.isCombat(action.skillType, SkillType.PRAYER, SkillType.HITPOINTS)) {
+        if (SkillType.isCombat(action.skillType, SkillType.PRAYER, SkillType.HITPOINTS, SkillType.MAGIC)) {
             combatFactor = 4;
         }
         else if (action.skillType == SkillType.HITPOINTS) {
