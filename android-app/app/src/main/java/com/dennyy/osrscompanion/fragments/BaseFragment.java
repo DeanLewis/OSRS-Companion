@@ -3,6 +3,7 @@ package com.dennyy.osrscompanion.fragments;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -27,6 +28,8 @@ public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackC
     protected View view;
     protected TextView toolbarTitle;
     protected String defaultRsn;
+    protected SharedPreferences preferences;
+
     private Toast toast;
     private IBackButtonHandler.BackButtonHandlerInterface backButtonHandler;
     private boolean isTransactionSafe;
@@ -64,7 +67,8 @@ public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackC
         super.onActivityCreated(savedInstanceState);
         toolbarTitle = getActivity().findViewById(R.id.toolbar_title);
         toolbarTitle.setTextColor(getResources().getColor(R.color.text));
-        defaultRsn = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(Constants.PREF_RSN, "");
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        defaultRsn = preferences.getString(Constants.PREF_RSN, "");
 
         backButtonHandler = (IBackButtonHandler.BackButtonHandlerInterface) getActivity();
         backButtonHandler.addBackClickListener(this);
@@ -132,7 +136,7 @@ public class BaseFragment extends Fragment implements IBackButtonHandler.OnBackC
         isTransactionSafe = true;
     }
 
-    public boolean isTransactionSafe() {
+    protected boolean isTransactionSafe() {
         return isTransactionSafe;
     }
 }

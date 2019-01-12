@@ -3,18 +3,13 @@ package com.dennyy.osrscompanion.fragments.hiscores;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
-
+import android.view.*;
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.adapters.TileAdapter;
 import com.dennyy.osrscompanion.fragments.BaseTileFragment;
+import com.dennyy.osrscompanion.interfaces.AdapterTileClickListener;
 import com.dennyy.osrscompanion.models.General.TileData;
 
-public class HiscoresFragment extends BaseTileFragment implements AdapterView.OnItemClickListener {
+public class HiscoresFragment extends BaseTileFragment implements AdapterTileClickListener {
 
     public HiscoresFragment() {
         super(2, 4);
@@ -31,29 +26,32 @@ public class HiscoresFragment extends BaseTileFragment implements AdapterView.On
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         toolbarTitle.setText(getResources().getString(R.string.hiscores));
-        initializeTiles();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_tile, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     protected void initializeTiles() {
         if (tiles.isEmpty()) {
-            tiles.add(new TileData(getString(R.string.hiscore_lookup), getDrawable(R.drawable.hiscores)));
-            tiles.add(new TileData(getString(R.string.hiscore_compare), getDrawable(R.drawable.hiscores_compare)));
+            tiles.add(new TileData(100, getString(R.string.hiscore_lookup), getDrawable(R.drawable.hiscores)));
+            tiles.add(new TileData(101, getString(R.string.hiscore_compare), getDrawable(R.drawable.hiscores_compare)));
         }
-
-        GridView gridView = view.findViewById(R.id.hiscores_grid_layout);
-        TileAdapter tileAdapter = new TileAdapter(getActivity(), tiles);
-        gridView.setNumColumns(currentColumns);
-        gridView.setAdapter(tileAdapter);
-        gridView.setOnItemClickListener(this);
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    protected void initializeGridView() {
+        gridView = view.findViewById(R.id.hiscores_grid_layout);
+    }
+
+    @Override
+    public void onTileClick(TileData tileData) {
         if (!isTransactionSafe()) {
             return;
         }
-        TileData tileData = tiles.get(i);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         Fragment fragment = null;
         String tag = "";

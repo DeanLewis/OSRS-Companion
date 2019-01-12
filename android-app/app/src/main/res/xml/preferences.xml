@@ -21,14 +21,10 @@
     <PreferenceCategory
         android:layout="@layout/preference_category"
         android:title="@string/floating_view_settings">
-        <com.dennyy.osrscompanion.customviews.CheckboxDialogPreference
-            android:defaultValue="@array/default_floating_views_selection"
-            android:dialogTitle="@string/select_floating_views"
-            android:entries="@array/view_names"
-            android:entryValues="@array/view_name_value"
+
+        <Preference
             android:key="pref_floating_views"
             android:layout="@layout/preference_setting_layout"
-            android:persistent="true"
             android:summary="@string/select_floating_views_summary"
             android:title="@string/select_floating_views" />
 

@@ -39,6 +39,7 @@
     <color name="quest_popup_menu_background">#3A3A3A</color>
     <color name="button_red">#a94442</color>
     <color name="todo_background">#3c3c3e</color>
+    <color name="floating_view_list_background">#3c3c3e</color>
     <color name="button_background_green">#72923F</color>
 
     <color name="npc_drop_always">#AFEEEE</color>

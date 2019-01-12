@@ -23,7 +23,6 @@ import com.dennyy.osrscompanion.AppController;
 import com.dennyy.osrscompanion.BuildConfig;
 import com.dennyy.osrscompanion.R;
 import com.dennyy.osrscompanion.asynctasks.UpdateItemIdListTask;
-import com.dennyy.osrscompanion.customviews.CheckboxDialogPreference;
 import com.dennyy.osrscompanion.customviews.SeekBarPreference;
 import com.dennyy.osrscompanion.fragments.BaseFragment;
 import com.dennyy.osrscompanion.helpers.Constants;
@@ -32,14 +31,10 @@ import com.dennyy.osrscompanion.helpers.Utils;
 import com.dennyy.osrscompanion.interfaces.ItemIdListResultListener;
 import com.dennyy.osrscompanion.interfaces.SeekBarPreferenceListener;
 
-import java.util.Arrays;
 
-
-public class UserPreferenceFragment extends PreferenceFragment implements CheckboxDialogPreference.DialogClosedListener, Preference.OnPreferenceClickListener, SeekBarPreferenceListener {
+public class UserPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, SeekBarPreferenceListener {
     private SharedPreferences preferences;
-    private SharedPreferences.Editor editor;
     private Toast toast;
-    private CharSequence[] currentPrefs;
     private static final String ITEMIDLIST_REQUEST_TAG = "item_id_list_request";
     private static final String LAST_UPDATE_TIME_KEY = "last_item_id_list_update_time";
 
@@ -115,9 +110,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
         toolbar.setTextColor(getResources().getColor(R.color.text));
         toolbar.setText(getResources().getString(R.string.settings));
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        editor = preferences.edit();
 
-        ((CheckboxDialogPreference) findPreference(Constants.PREF_FLOATING_VIEWS)).addListener(this);
         String[] prefs = getPreferenceKeys();
         for (String pref : prefs) {
             findPreference(pref).setOnPreferenceClickListener(this);
@@ -133,24 +126,6 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
     public void onResume() {
         super.onResume();
         ((CheckBoxPreference) findPreference(Constants.PREF_RIGHT_SIDE)).setChecked(preferences.getBoolean(Constants.PREF_RIGHT_SIDE, true));
-        currentPrefs = new CharSequence[]{};
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-
-    @Override
-    public void onClose(CheckboxDialogPreference self, String selection) {
-        self.setValueAndEvent(selection);
-        String[] newSelections = selection.split(CheckboxDialogPreference.DEFAULT_SEPARATOR);
-        Arrays.sort(newSelections);
-        Arrays.sort(currentPrefs);
-        if (!Arrays.equals(newSelections, currentPrefs)) {
-            showToast(getResources().getString(R.string.restart_to_take_effect), Toast.LENGTH_SHORT);
-        }
     }
 
     @Override
@@ -193,6 +168,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
 
             @Override
             public void always() {
+                SharedPreferences.Editor editor = preferences.edit();
                 editor.putLong(LAST_UPDATE_TIME_KEY, System.currentTimeMillis());
                 editor.apply();
             }
@@ -204,7 +180,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Checkb
         String key = preference.getKey();
         switch (key) {
             case Constants.PREF_FLOATING_VIEWS:
-                currentPrefs = ((CheckboxDialogPreference) findPreference(Constants.PREF_FLOATING_VIEWS)).getCheckedValues();
+                openFragment(new FloatingViewSelectorFragment());
                 break;
             case Constants.PREF_DOWNLOAD_ITEMIDLIST:
                 long refreshPeriod = System.currentTimeMillis() - preferences.getLong(LAST_UPDATE_TIME_KEY, 0);

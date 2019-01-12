@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -16,20 +15,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.*;
 import android.widget.CompoundButton;
-import android.widget.GridView;
 import android.widget.Switch;
 import android.widget.Toast;
-
 import com.dennyy.osrscompanion.FloatingViewService;
 import com.dennyy.osrscompanion.R;
-import com.dennyy.osrscompanion.adapters.TileAdapter;
 import com.dennyy.osrscompanion.customviews.CheckboxDialogPreference;
 import com.dennyy.osrscompanion.enums.AppStart;
 import com.dennyy.osrscompanion.fragments.calculators.CalculatorsFragment;
@@ -38,10 +29,11 @@ import com.dennyy.osrscompanion.fragments.preferences.UserPreferenceFragment;
 import com.dennyy.osrscompanion.helpers.Constants;
 import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.helpers.Utils;
+import com.dennyy.osrscompanion.interfaces.AdapterTileClickListener;
 import com.dennyy.osrscompanion.models.General.TileData;
-
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
-public class HomeFragment extends BaseTileFragment implements AdapterView.OnItemClickListener{
+
+public class HomeFragment extends BaseTileFragment implements AdapterTileClickListener {
     private Switch mainSwitch;
     private long lastSwitchTimeMs;
     private SharedPreferences preferences;
@@ -98,40 +90,29 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (getActivity() != null) {
-            initializeTiles();
+    public void initializeTiles() {
+        if (tiles.isEmpty()) {
+            tiles.add(new TileData(0, getString(R.string.grandexchange), getDrawable(R.drawable.coins)));
+            tiles.add(new TileData(1, getString(R.string.tracker), getDrawable(R.drawable.tracker)));
+            tiles.add(new TileData(2, getString(R.string.hiscores), getDrawable(R.drawable.hiscores)));
+            tiles.add(new TileData(3, getString(R.string.calculators), getDrawable(R.drawable.calculators)));
+            tiles.add(new TileData(4, getString(R.string.treasure_trails), getDrawable(R.drawable.clue_scroll_clear)));
+            tiles.add(new TileData(5, getString(R.string.notes), getDrawable(R.drawable.notes)));
+            tiles.add(new TileData(6, getString(R.string.quest_guide), getDrawable(R.drawable.quest_icon)));
+            tiles.add(new TileData(7, getString(R.string.fairy_rings), getDrawable(R.drawable.fairy_rings)));
+            tiles.add(new TileData(8, getString(R.string.osrs_wiki), getDrawable(R.drawable.rswiki_logo)));
+            tiles.add(new TileData(9, getString(R.string.rsnews), getDrawable(R.drawable.newspaper)));
+            tiles.add(new TileData(10, getString(R.string.timers), getDrawable(R.drawable.stopwatch)));
+            tiles.add(new TileData(11, getString(R.string.worldmap), getDrawable(R.drawable.worldmap)));
+            tiles.add(new TileData(12, getString(R.string.todo_list), getDrawable(R.drawable.todo)));
+            tiles.add(new TileData(13, getString(R.string.bestiary), getDrawable(R.drawable.npc_examine)));
+            tiles.add(new TileData(14, getString(R.string.settings), getDrawable(R.drawable.settings)));
         }
     }
 
     @Override
-    public void initializeTiles() {
-        if (tiles.isEmpty()) {
-            tiles.add(new TileData(getString(R.string.grandexchange), getDrawable(R.drawable.coins)));
-            tiles.add(new TileData(getString(R.string.tracker), getDrawable(R.drawable.tracker)));
-            tiles.add(new TileData(getString(R.string.hiscores), getDrawable(R.drawable.hiscores)));
-            tiles.add(new TileData(getString(R.string.calculators), getDrawable(R.drawable.calculators)));
-            tiles.add(new TileData(getString(R.string.treasure_trails), getDrawable(R.drawable.clue_scroll_clear)));
-            tiles.add(new TileData(getString(R.string.notes), getDrawable(R.drawable.notes)));
-            tiles.add(new TileData(getString(R.string.quest_guide), getDrawable(R.drawable.quest_icon)));
-            tiles.add(new TileData(getString(R.string.fairy_rings), getDrawable(R.drawable.fairy_rings)));
-            tiles.add(new TileData(getString(R.string.osrs_wiki), getDrawable(R.drawable.rswiki_logo)));
-            tiles.add(new TileData(getString(R.string.rsnews), getDrawable(R.drawable.newspaper)));
-            tiles.add(new TileData(getString(R.string.timers), getDrawable(R.drawable.stopwatch)));
-            tiles.add(new TileData(getString(R.string.worldmap), getDrawable(R.drawable.worldmap)));
-            tiles.add(new TileData(getString(R.string.todo_list), getDrawable(R.drawable.todo)));
-            tiles.add(new TileData(getString(R.string.bestiary), getDrawable(R.drawable.npc_examine)));
-            tiles.add(new TileData(getString(R.string.settings), getDrawable(R.drawable.settings)));
-        }
-
-        GridView gridView = view.findViewById(R.id.home_grid_layout);
-        gridView.setNumColumns(currentColumns);
-        gridView.setOnItemClickListener(this);
-        if (gridView.getAdapter() == null) {
-            TileAdapter tileAdapter = new TileAdapter(getActivity(), tiles);
-            gridView.setAdapter(tileAdapter);
-        }
+    protected void initializeGridView() {
+        gridView = view.findViewById(R.id.home_grid_layout);
     }
 
     @Override
@@ -216,11 +197,10 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onTileClick(TileData tileData) {
         if (!isTransactionSafe()) {
             return;
         }
-        TileData tileData = tiles.get(i);
         Fragment fragment = null;
         String tag = "";
         if (tileData.text.equals(getString(R.string.grandexchange))) {
@@ -273,7 +253,6 @@ public class HomeFragment extends BaseTileFragment implements AdapterView.OnItem
         transaction.addToBackStack(null);
         transaction.commit();
     }
-
 
     private AppStart checkAppStart() {
         AppStart appStart = AppStart.NORMAL;

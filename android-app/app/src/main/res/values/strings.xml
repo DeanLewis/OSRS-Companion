@@ -376,53 +376,8 @@
     <string name="quest_undo">UNDO</string>
     <string name="quest_completed">Completed</string>
     <string name="quest_quest_not_completed">Not completed</string>
+    <string name="tile_edit_mode">Rearrange tiles</string>
 
-    <string-array name="view_names">
-        <item>Grand Exchange</item>
-        <item>Tracker</item>
-        <item>Hiscores Lookup</item>
-        <item>Hiscores Compare</item>
-        <item>Calculator (math)</item>
-        <item>Treasure Trails</item>
-        <item>Notes</item>
-        <item>Combat Calculator</item>
-        <item>Experience Calculator</item>
-        <item>Skill Calculator</item>
-        <item>Quest guides</item>
-        <item>Fairy Rings</item>
-        <item>Diary Calculator</item>
-        <item>OSRS Wiki</item>
-        <item>OSRS News</item>
-        <item>Timers</item>
-        <item>Worldmap</item>
-        <item>To-do list</item>
-        <item>Monster Lookup</item>
-    </string-array>
-
-    <string-array name="view_name_value">
-        <item>ge</item>
-        <item>tracker</item>
-        <item>hiscores_lookup</item>
-        <item>hiscores_compare</item>
-        <item>math_calc</item>
-        <item>treasuretrails</item>
-        <item>notes</item>
-        <item>cmb_calc</item>
-        <item>exp_calc</item>
-        <item>skill_calc</item>
-        <item>quest_guide</item>
-        <item>fairy_ring</item>
-        <item>diary_calc</item>
-        <item>osrs_wiki</item>
-        <item>osrs_news</item>
-        <item>timers</item>
-        <item>worldmap</item>
-        <item>todo_list</item>
-        <item>bestiary</item>
-    </string-array>
-
-    <string-array name="default_floating_views_selection">
-    </string-array>
 
     <string-array name="quest_sources">
         <item>OSRS Wiki</item>

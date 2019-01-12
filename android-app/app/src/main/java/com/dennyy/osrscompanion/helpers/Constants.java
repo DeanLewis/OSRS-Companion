@@ -68,6 +68,7 @@ public class Constants {
 
     public final static String PREF_RSN = "pref_rsn";
     public final static String PREF_FLOATING_VIEWS = "pref_floating_views";
+    public final static String PREF_FLOATING_VIEWS_SORT_ORDER = "pref_floating_views_sort_order";
     public final static String PREF_RIGHT_SIDE = "pref_right_side";
     public final static String PREF_FEEDBACK = "pref_feedback";
     public final static String PREF_VIEW_OTHER_APPS = "pref_view_other_apps";
@@ -114,4 +115,6 @@ public class Constants {
 
     public static final int CLICK_DURATION_THRESHOLD = 300;
     public static final int CLICK_DISTANCE_THRESHOLD = 15;
+
+    public static final String SORT_DELIMITER = ":";
 }

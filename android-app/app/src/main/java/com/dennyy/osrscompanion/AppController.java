@@ -25,6 +25,7 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        FloatingViewService.init(this);
         new UpdateDbTask(this).execute();
         createNotificationChannel();
     }
