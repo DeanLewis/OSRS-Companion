@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <changelogversion versionName="1.12.1">
+        <changelogtext>Fix for magic using a wrong combat factor</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="1.12">
         <changelognew>Updated interface to sort and select your floating views</changelognew>
         <changelognew>Possible to sort tiles in the homescreen of the app </changelognew>
