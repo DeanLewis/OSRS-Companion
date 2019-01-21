@@ -139,6 +139,7 @@ public class UserPreferenceFragment extends PreferenceFragment implements Prefer
         Utils.getString(Constants.ITEMIDLIST_URL, ITEMIDLIST_REQUEST_TAG, new Utils.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
+                if (getActivity() == null || getActivity().isFinishing() || !isAdded()) return;
                 new UpdateItemIdListTask(getActivity(), result, new ItemIdListResultListener() {
                     @Override
                     public void onItemsUpdated() {
