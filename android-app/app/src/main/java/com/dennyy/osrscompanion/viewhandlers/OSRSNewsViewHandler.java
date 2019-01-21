@@ -73,7 +73,6 @@ public class OSRSNewsViewHandler extends BaseViewHandler implements SwipeRefresh
     }
 
     private void initWebView() {
-        webView.addPermittedHostname("runescape.com");
         webView.setThirdPartyCookiesEnabled(false);
         webView.setMixedContentAllowed(false);
         webView.getSettings().setUseWideViewPort(true);
