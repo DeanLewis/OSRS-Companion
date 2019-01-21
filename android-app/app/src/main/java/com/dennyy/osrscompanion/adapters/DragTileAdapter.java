@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.dennyy.osrscompanion.R;
+import com.dennyy.osrscompanion.helpers.Logger;
 import com.dennyy.osrscompanion.interfaces.AdapterTileClickListener;
 import com.dennyy.osrscompanion.models.General.TileData;
 import com.dennyy.osrscompanion.models.General.Tiles;
@@ -63,7 +64,12 @@ public class DragTileAdapter extends DragItemAdapter<TileData, DragTileAdapter.V
             String[] split = s.split(SORT_DELIMITER);
             long id = Long.parseLong(split[0]);
             int order = Integer.parseInt(split[1]);
-            tiles.getById(id).setSortOrder(order);
+            TileData tileData = tiles.getById(id);
+            if (tileData == null) {
+                Logger.log(new IllegalArgumentException("could not find tile in set with id " + id));
+                continue;
+            }
+            tileData.setSortOrder(order);
         }
         Collections.sort(tiles);
         notifyDataSetChanged();
