@@ -59,7 +59,15 @@ public class Utils {
                 callback.onError(error);
                 callback.always();
             }
-        });
+        })
+        {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("User-Agent", Constants.USER_AGENT);
+                return headers;
+            }
+        };
 
         AppController.getInstance().addToRequestQueue(strReq, tag, increaseTimeout);
     }

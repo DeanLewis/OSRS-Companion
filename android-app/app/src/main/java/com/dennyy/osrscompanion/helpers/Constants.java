@@ -66,6 +66,8 @@ public class Constants {
         return url;
     }
 
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36";
+
     public final static String PREF_RSN = "pref_rsn";
     public final static String PREF_FLOATING_VIEWS = "pref_floating_views";
     public final static String PREF_FLOATING_VIEWS_SORT_ORDER = "pref_floating_views_sort_order";
